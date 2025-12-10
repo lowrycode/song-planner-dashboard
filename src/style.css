@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-darkpurple-1000: #240442;
+}
+
+body {
+    background-color: rgb(214, 214, 214);
+    color: #240442;
+}
