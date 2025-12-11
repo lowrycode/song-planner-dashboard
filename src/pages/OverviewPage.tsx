@@ -1,4 +1,5 @@
 import TableSortSearch from "../components/TableSortSearch.tsx";
+import HeaderOverview from "../components/HeaderOverview.tsx";
 import PieChart from "../components/PieChart.tsx";
 import songs from "../../sample_data/song_list.json";
 import hymn_pie from "../../sample_data/hymn_pie.json";
@@ -33,6 +34,7 @@ const keyPieData   = key_pie.map(obj => Object.values(obj)[0]);
 function OverviewPage() {
   return (
     <div>
+      <HeaderOverview />
       <div className="flex flex-wrap gap-5 m-5">
         <div className="flex-3">
           <TableSortSearch
