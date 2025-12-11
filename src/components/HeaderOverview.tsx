@@ -1,7 +1,6 @@
 const serviceNames = ["Hessle", "Network", "Newland", "Orchard Park", "Riverside"]
-// const serviceNames = ["Hessle"]
 
-function Header() {
+function HeaderOverview() {
   return (
     <form className="flex flex-col md:flex-row justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 ">
       <div className="flex flex-1 justify-between bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-2">
@@ -47,4 +46,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default HeaderOverview;
