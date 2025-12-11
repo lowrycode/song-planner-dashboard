@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import LoginPage from "./pages/LoginPage.tsx";
+import LogoutPage from "./pages/LogoutPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/logout" element={<LogoutPage />} />
         </Route>
 
         <Route element={<DashboardLayout />}>
