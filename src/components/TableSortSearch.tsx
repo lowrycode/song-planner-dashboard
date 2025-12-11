@@ -75,7 +75,7 @@ export default function TableSortSearch({
         />
       </div>
 
-      <div className="overflow-y-auto max-h-[400px] mt-3">
+      <div className="overflow-y-auto h-[450px] mt-3">
         <table className="min-w-full border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
