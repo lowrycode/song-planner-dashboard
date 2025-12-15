@@ -1,0 +1,1 @@
+export type SongMetric = "usage_count" | "first_used" | "last_used";

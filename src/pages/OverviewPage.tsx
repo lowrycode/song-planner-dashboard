@@ -6,12 +6,22 @@ import hymn_pie from "../../sample_data/hymn_pie.json";
 import key_pie from "../../sample_data/key_pie.json";
 
 // Songs Table
-const songs_processed = songs.map((song) => ({
-  id: song.id,
-  first_line: song.first_line,
-  ...song.venues,
-  total: song.total,
-}));
+const songs_processed = songs.map((song) => {
+  const venueCounts = Object.fromEntries(
+    Object.entries(song.venues).map(([venue, data]) => [
+      venue,
+      data.usage_count,
+    ])
+  );
+
+  return {
+    id: song.id,
+    first_line: song.first_line,
+    ...venueCounts,
+    total: song.overall.usage_count,
+  };
+});
+
 
 const headerMap = {
   first_line: "Song (First Line)",

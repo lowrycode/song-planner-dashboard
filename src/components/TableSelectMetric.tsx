@@ -1,4 +1,6 @@
 import React from "react";
+import type { SongMetric } from "../types/songs.ts";
+import MetricSelector from "./MetricSelector";
 import {
   flexRender,
   getCoreRowModel,
@@ -9,21 +11,21 @@ import {
 
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 
-type TableSortSearchProps = {
+type TableSelectMetricProps = {
   data: any[];
   headerMap: Record<string, string>;
-  searchKeys?: string[];
-  searchPlaceholder?: string;
   title?: string;
+  metric: SongMetric;
+  setMetric: React.Dispatch<React.SetStateAction<SongMetric>>;
 };
 
-export default function TableSortSearch({
+function TableSelectMetric({
   data,
   headerMap,
-  searchKeys = [],
-  searchPlaceholder = "Search...",
   title = "Song List",
-}: TableSortSearchProps) {
+  metric,
+  setMetric,
+}: TableSelectMetricProps) {
   // Global search value
   const [globalFilter, setGlobalFilter] = React.useState("");
 
@@ -33,13 +35,12 @@ export default function TableSortSearch({
       Object.entries(headerMap).map(([key, header]) => ({
         accessorKey: key,
         header,
-        enableGlobalFilter: searchKeys.includes(key),
         filterFn: (row, columnId, filterValue) => {
           const value = String(row.getValue(columnId) ?? "").toLowerCase();
           return value.includes(String(filterValue).toLowerCase());
         },
       })),
-    [headerMap, searchKeys]
+    [headerMap]
   );
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -59,9 +60,10 @@ export default function TableSortSearch({
   });
 
   const filteredCount = table.getFilteredRowModel().rows.length;
+  const totalCount = table.getPreFilteredRowModel().rows.length;
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
+    <div className="w-full bg-gray-100 p-4 rounded-lg">
       <div className="flex flex-wrap gap-x-10 gap-y-2 justify-between items-center align-middle">
         <h2 className="text-xl font-extrabold text-purple-900">
           {title}
@@ -69,17 +71,7 @@ export default function TableSortSearch({
             ({filteredCount} rows)
           </span>
         </h2>
-        <div className="italic my-3 text-purple-900">
-          Click on column headers to sort
-        </div>
-        {/* GLOBAL SEARCH INPUT */}
-        <input
-          type="text"
-          placeholder={searchPlaceholder}
-          value={globalFilter ?? ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border border-purple-900 text-purple-900 bg-white px-3 py-1"
-        />
+        <MetricSelector metric={metric} setMetric={setMetric} />
       </div>
 
       <div className="overflow-y-auto h-[450px] mt-3">
@@ -126,3 +118,5 @@ export default function TableSortSearch({
     </div>
   );
 }
+
+export default TableSelectMetric;
