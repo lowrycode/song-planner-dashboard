@@ -1,6 +1,53 @@
-import React from "react";
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function LoginForm() {
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Read redirect param from query string:
+  const redirectTo = location.state?.from?.pathname || "/overview";
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+    const username = (formData.get("username") as string).trim();
+    const password = (formData.get("password") as string).trim();
+    const body = new URLSearchParams();
+    body.append("username", username);
+    body.append("password", password);
+
+    try {
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body.toString(),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        setError(errData.detail || "An error occured.");
+        return;
+      }
+
+      const data = await response.json();
+
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+
+      // Redirect
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      console.error("Login failed", err);
+      setError("Login failed. Please try again.");
+    }
+  }
+
   return (
     <>
       <h1 className="text-4xl font-bold text-purple-950 text-center">
@@ -9,7 +56,16 @@ function LoginForm() {
       <p className="text-gray-600 text-center text-sm">
         Login with your credentials
       </p>
-      <form className="flex flex-col mt-5">
+      {error && (
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mt-5"
+          role="alert"
+          aria-live="assertive"
+        >
+          {error}
+        </div>
+      )}
+      <form className="flex flex-col mt-5" onSubmit={handleSubmit}>
         <label htmlFor="username" className="text-purple-950 font-semibold">
           Username
         </label>
@@ -37,7 +93,12 @@ function LoginForm() {
         >
           Log In
         </button>
-        <p className="mt-3 text-end">Don't have an account? <a href="#" className="font-semibold text-purple-950">Sign up now</a></p>
+        <p className="mt-3 text-end">
+          Don't have an account?{" "}
+          <a href="#" className="font-semibold text-purple-950">
+            Sign up now
+          </a>
+        </p>
       </form>
     </>
   );
