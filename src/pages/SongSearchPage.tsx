@@ -1,18 +1,16 @@
-import { useState } from "react";
-import type { SongMetric } from "../types/songs.ts"
+import { useState, useEffect } from "react";
+import type { SongMetric } from "../types/songs.ts";
 import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
-
-import songs from "../../sample_data/song_list.json";
 import HeaderOverview from "../components/HeaderOverview.tsx";
 
 const baseHeaderMap = {
   first_line: "Song (First Line)",
-  newland: "Newland",
-  riverside: "Riverside",
-  hessle: "Hessle",
-  orchard_park: "Orchard Park",
-  network: "Network",
+  Newland: "Newland",
+  Riverside: "Riverside",
+  Hessle: "Hessle",
+  Orchard_Park: "Orchard Park",
+  Network: "Network",
 };
 
 function getHeaderMap(metric: SongMetric) {
@@ -63,7 +61,7 @@ interface TableRow {
 function normalizeMetric(value: any, metric: SongMetric): string | number {
   if (metric === "first_used" || metric === "last_used") {
     if (!value) return "";
-    
+
     const date = new Date(value);
     const now = new Date();
 
@@ -106,23 +104,93 @@ function processSongsForTable(songs: Song[], metric: SongMetric): TableRow[] {
 
 function SongSearchPage() {
   const [metric, setMetric] = useState<SongMetric>("usage_count");
+  const [songs, setSongs] = useState<Song[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Filters state
+  const [filters, setFilters] = useState({
+    lyric: "",
+    songType: "both",
+    songKey: "",
+    filterFirstUsedInRange: false,
+    filterLastUsedInRange: false,
+  });
+
+  const [headerFilters, setHeaderFilters] = useState({
+    from_date: "",
+    to_date: "",
+    services: [] as string[],
+  });
+
+  useEffect(() => {
+    async function fetchSongs() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Optionally send filters as query params
+        const params = new URLSearchParams();
+
+        if (filters.lyric) params.append("lyric", filters.lyric);
+        if (filters.songType !== "both") params.append("song_type", filters.songType);
+        if (filters.songKey) params.append("song_key", filters.songKey);
+        if (filters.filterFirstUsedInRange) params.append("first_used_in_range", "true");
+        if (filters.filterLastUsedInRange) params.append("last_used_in_range", "true");
+
+        // HeaderOverview filters
+        if (headerFilters.from_date) params.append("from_date", headerFilters.from_date);
+        if (headerFilters.to_date) params.append("to_date", headerFilters.to_date);
+        if (headerFilters.services.length > 0) {
+          // Append multiple services as repeated params or comma separated
+          headerFilters.services.forEach((service) => params.append("used_at", service));
+          // Or params.append("services", headerFilters.services.join(","));
+        }
+
+        const url = `http://127.0.0.1:8000/songs/usage-summary?${params.toString()}`;
+  
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: Song[] = await response.json();
+        setSongs(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch songs");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSongs();
+  }, [filters, headerFilters]);
+
   const headerMap = getHeaderMap(metric);
-  const songs_processed = processSongsForTable(songs, metric);
+  const songs_processed = songs ? processSongsForTable(songs, metric) : [];
+
+  // Handler to update filters on form submit
+  function handleFilterChange(newFilters: typeof filters) {
+    setFilters(newFilters);
+  }
 
   return (
     <>
-      <HeaderOverview />
+      <HeaderOverview headerFilters={headerFilters} setHeaderFilters={setHeaderFilters} />
       <div className="flex flex-wrap gap-5 m-5">
-        <SongForm />
+        <SongForm filters={filters} onFilterChange={handleFilterChange} />
+        {loading && <p>Loading songs...</p>}
+        {error && <p className="text-red-500">Error: {error}</p>}
 
         {/* Table */}
-        <TableSelectMetric
-          headerMap={headerMap}
-          data={songs_processed}
-          title="Results"
-          metric={metric}
-          setMetric={setMetric}
-        />
+        {!loading && !error && (
+          <TableSelectMetric
+            headerMap={headerMap}
+            data={songs_processed}
+            title="Results"
+            metric={metric}
+            setMetric={setMetric}
+          />
+        )}
       </div>
     </>
   );
