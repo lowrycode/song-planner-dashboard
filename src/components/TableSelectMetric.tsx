@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   useReactTable,
   getSortedRowModel,
-  getFilteredRowModel,
 } from "@tanstack/react-table";
 
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
@@ -19,61 +18,54 @@ type TableSelectMetricProps = {
   setMetric: React.Dispatch<React.SetStateAction<SongMetric>>;
 };
 
-function TableSelectMetric({
+export default function TableSelectMetric({
   data,
   headerMap,
   title = "Song List",
   metric,
   setMetric,
 }: TableSelectMetricProps) {
-  // Global search value
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
-  // Build columns dynamically
+  // State
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  
+  // Build table columns dynamically
   const columns = React.useMemo<ColumnDef<any>[]>(
     () =>
       Object.entries(headerMap).map(([key, header]) => ({
         accessorKey: key,
         header,
-        filterFn: (row, columnId, filterValue) => {
-          const value = String(row.getValue(columnId) ?? "").toLowerCase();
-          return value.includes(String(filterValue).toLowerCase());
-        },
       })),
     [headerMap]
   );
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-
+  // React Table
   const table = useReactTable({
     data,
     columns,
     state: {
       sorting,
-      globalFilter, // register global filter
     },
-    onGlobalFilterChange: setGlobalFilter, // handler
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const filteredCount = table.getFilteredRowModel().rows.length;
-  const totalCount = table.getPreFilteredRowModel().rows.length;
+  // Table row count
+  const rowCount = table.getRowModel().rows.length;
 
   return (
     <div className="w-full bg-gray-100 p-4 rounded-lg">
+      {/* Header and metric selector */}
       <div className="flex flex-wrap gap-x-10 gap-y-2 justify-between items-center align-middle">
         <h2 className="text-xl font-extrabold text-purple-900">
           {title}
           <span className="ml-2 text-sm font-normal text-gray-600">
-            ({filteredCount} rows)
+            ({rowCount} rows)
           </span>
         </h2>
         <MetricSelector metric={metric} setMetric={setMetric} />
       </div>
-
+      {/* Table */}
       <div className="overflow-y-auto h-[450px] mt-3">
         <table className="min-w-full border border-gray-300">
           <thead>
@@ -98,7 +90,6 @@ function TableSelectMetric({
               </tr>
             ))}
           </thead>
-
           <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="even:bg-violet-100">
@@ -118,5 +109,3 @@ function TableSelectMetric({
     </div>
   );
 }
-
-export default TableSelectMetric;
