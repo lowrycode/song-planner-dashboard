@@ -1,29 +1,40 @@
 import { useState } from "react";
 
-function SongForm({
+interface SongFilter {
+  lyric: string;
+  songType: string;
+  songKey: string;
+  filterFirstUsedInRange: boolean;
+  filterLastUsedInRange: boolean;
+}
+
+export default function SongForm({
   filters,
   onFilterChange,
 }: {
-  filters: {
-    lyric: string;
-    songType: string;
-    songKey: string;
-    filterFirstUsedInRange: boolean;
-    filterLastUsedInRange: boolean;
-  };
-  onFilterChange: (filters: typeof filters) => void;
+  filters: SongFilter;
+  onFilterChange: (filters: SongFilter) => void;
 }) {
-  // Local state to hold form inputs before submit (optional)
+  // State
   const [localFilters, setLocalFilters] = useState(filters);
 
   // Update local state on input changes
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) {
-    const { name, value, type, checked } = e.target;
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, type, checked, value } = e.currentTarget;
+
     setLocalFilters((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  // Update local state on select changes
+  function handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const { name, value } = e.currentTarget;
+
+    setLocalFilters((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   }
 
@@ -54,7 +65,7 @@ function SongForm({
               id="lyric"
               className="py-1 px-2 border border-purple-950"
               value={localFilters.lyric}
-              onChange={handleChange}
+              onChange={handleInputChange}
             />
           </div>
           {/* Hymn / Song */}
@@ -70,7 +81,7 @@ function SongForm({
               id="songType"
               className="py-1 px-2 border border-purple-950"
               value={localFilters.songType}
-              onChange={handleChange}
+              onChange={handleSelectChange}
             >
               <option value="both">Both</option>
               <option value="hymn">Hymn</option>
@@ -90,12 +101,12 @@ function SongForm({
               id="songKey"
               className="py-1 px-2 border border-purple-950"
               value={localFilters.songKey}
-              onChange={handleChange}
+              onChange={handleSelectChange}
             >
               <option value="">Any</option>
-              <option value="a">A</option>
-              <option value="bb">Bb</option>
-              <option value="b">B</option>
+              <option value="A">A</option>
+              <option value="Bb">Bb</option>
+              <option value="B">B</option>
               <option value="C">C</option>
               <option value="D">D</option>
               <option value="Eb">Eb</option>
@@ -110,12 +121,12 @@ function SongForm({
             <div>
               <div className="flex items-center gap-2">
                 <input
-                  id="filterFirstUsedInRange"
+                  id="filter-first-used-in-range"
                   name="filterFirstUsedInRange"
                   type="checkbox"
                   className="w-4 h-4 accent-purple-700 border border-purple-950"
                   checked={localFilters.filterFirstUsedInRange}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                 />
                 <label
                   htmlFor="filter-first-used-in-range"
@@ -126,12 +137,12 @@ function SongForm({
               </div>
               <div className="flex items-center gap-2">
                 <input
-                  id="filterLastUsedInRange"
+                  id="filter-last-used-in-range"
                   name="filterLastUsedInRange"
                   type="checkbox"
                   className="w-4 h-4 accent-purple-700 border border-purple-950"
                   checked={localFilters.filterLastUsedInRange}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                 />
                 <label
                   htmlFor="filter-last-used-in-range"
@@ -153,5 +164,3 @@ function SongForm({
     </div>
   );
 }
-
-export default SongForm;
