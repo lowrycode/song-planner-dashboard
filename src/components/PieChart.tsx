@@ -62,7 +62,7 @@ function PieChart({
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
+    <div className="bg-gray-100 p-4 rounded-lg w-110">
       <h2 className="text-xl font-extrabold text-purple-900 mb-5">{title}</h2>
       <div className="flex flex-1">
         <Doughnut data={chartData} options={options} />
