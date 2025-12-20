@@ -40,7 +40,7 @@ export default function OverviewPage() {
         );
 
         const response = await fetch(
-          `http://127.0.0.1:8000/songs/usage-summary?${params.toString()}`
+          `http://127.0.0.1:8000/songs/usages/summary?${params.toString()}`
         );
         if (!response.ok) throw new Error("Failed to fetch songs");
 
@@ -79,6 +79,7 @@ export default function OverviewPage() {
     };
   });
 
+  // Specify searchable columns in table
   const searchKeys = ["first_line"];
 
   return (

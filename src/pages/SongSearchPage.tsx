@@ -138,7 +138,7 @@ export default function SongSearchPage() {
           params.append("last_used_in_range", "true");
 
         const response = await fetch(
-          `http://127.0.0.1:8000/songs/usage-summary?${params.toString()}`
+          `http://127.0.0.1:8000/songs/usages/summary?${params.toString()}`
         );
 
         if (!response.ok) {
