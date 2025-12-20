@@ -4,20 +4,16 @@ import type { DashboardContext } from "../types/dashboard.ts";
 import type { Song } from "../types/songs.ts";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
-import hymn_pie from "../../sample_data/hymn_pie.json";
-import key_pie from "../../sample_data/key_pie.json";
-
-// Pie Charts
-const hymnPieLabels = hymn_pie.map((obj) => Object.keys(obj)[0]);
-const hymnPieData = hymn_pie.map((obj) => Object.values(obj)[0]);
-const keyPieLabels = key_pie.map((obj) => Object.keys(obj)[0]);
-const keyPieData = key_pie.map((obj) => Object.values(obj)[0]);
-
 
 export default function OverviewPage() {
   const { selectedActivities, headerFilters, filtersReady } =
     useOutletContext<DashboardContext>();
   const [songs, setSongs] = useState<any[]>([]);
+  const [keySummary, setKeySummary] = useState<Record<string, number>>({});
+  const [typeSummary, setTypeSummary] = useState<{
+    hymn: number;
+    song: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,13 +35,25 @@ export default function OverviewPage() {
           params.append("church_activity_id", id)
         );
 
-        const response = await fetch(
-          `http://127.0.0.1:8000/songs/usages/summary?${params.toString()}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch songs");
+        const [songsRes, keysRes, typesRes] = await Promise.all([
+          fetch(`http://127.0.0.1:8000/songs/usages/summary?${params}`),
+          fetch(`http://127.0.0.1:8000/songs/keys/summary?${params}`),
+          fetch(`http://127.0.0.1:8000/songs/types/summary?${params}`),
+        ]);
 
-        const data: Song[] = await response.json();
-        setSongs(data);
+        if (!songsRes.ok) throw new Error("Failed to fetch songs");
+        if (!keysRes.ok) throw new Error("Failed to fetch key summary");
+        if (!typesRes.ok) throw new Error("Failed to fetch type summary");
+
+        const [songsData, keysData, typesData] = await Promise.all([
+          songsRes.json(),
+          keysRes.json(),
+          typesRes.json(),
+        ]);
+
+        setSongs(songsData);
+        setKeySummary(keysData);
+        setTypeSummary(typesData);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -55,6 +63,12 @@ export default function OverviewPage() {
 
     fetchSongs();
   }, [filtersReady, headerFilters]);
+
+  // Get labels and data for pie charts
+  const hymnPieLabels = typeSummary ? Object.keys(typeSummary) : [];
+  const hymnPieData = typeSummary ? Object.values(typeSummary) : [];
+  const keyPieLabels = Object.keys(keySummary);
+  const keyPieData = Object.values(keySummary);
 
   // Get headers and data for table component
   const headerMap = {
@@ -84,29 +98,30 @@ export default function OverviewPage() {
 
   return (
     <div className="flex flex-wrap gap-5 m-5">
-      {loading && <p>Loading songs...</p>}
+      {loading && <p>Loading data...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
       {!loading && !error && (
-        <div className="flex-3">
-          <TableSortSearch
-            headerMap={headerMap}
-            data={songs_processed}
-            searchKeys={searchKeys}
-            searchPlaceholder="Filter by song"
-            title="Song Counts"
-          />
-        </div>
+        <>
+          <div className="flex flex-1 justify-between flex-wrap gap-5">
+            <PieChart
+              data={hymnPieData}
+              labels={hymnPieLabels}
+              title="Hymn vs Song"
+            />
+            <PieChart data={keyPieData} labels={keyPieLabels} title="Key" />
+          </div>
+          <div className="flex-3">
+            <TableSortSearch
+              headerMap={headerMap}
+              data={songs_processed}
+              searchKeys={searchKeys}
+              searchPlaceholder="Filter by song"
+              title="Song Counts"
+            />
+          </div>
+        </>
       )}
-
-      <div className="flex flex-1 justify-between flex-wrap gap-5">
-        <PieChart
-          data={hymnPieData}
-          labels={hymnPieLabels}
-          title="Hymn vs Song"
-        />
-        <PieChart data={keyPieData} labels={keyPieLabels} title="Key" />
-      </div>
     </div>
   );
 }
