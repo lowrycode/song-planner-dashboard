@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import type { DashboardContext } from "../layouts/DashboardLayout";
+import type { DashboardContext } from "../types/dashboard.ts";
+import type { Song } from "../types/songs.ts";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
 import hymn_pie from "../../sample_data/hymn_pie.json";
@@ -12,6 +13,7 @@ const hymnPieData = hymn_pie.map((obj) => Object.values(obj)[0]);
 const keyPieLabels = key_pie.map((obj) => Object.keys(obj)[0]);
 const keyPieData = key_pie.map((obj) => Object.values(obj)[0]);
 
+
 export default function OverviewPage() {
   const { selectedActivities, headerFilters, filtersReady } =
     useOutletContext<DashboardContext>();
@@ -19,6 +21,7 @@ export default function OverviewPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch song data
   useEffect(() => {
     if (!filtersReady) return;
 
@@ -41,7 +44,7 @@ export default function OverviewPage() {
         );
         if (!response.ok) throw new Error("Failed to fetch songs");
 
-        const data = await response.json();
+        const data: Song[] = await response.json();
         setSongs(data);
       } catch (err: any) {
         setError(err.message);
@@ -53,18 +56,13 @@ export default function OverviewPage() {
     fetchSongs();
   }, [filtersReady, headerFilters]);
 
+  // Get headers and data for table component
   const headerMap = {
     first_line: "Song (First Line)",
     ...Object.fromEntries(selectedActivities.map((a) => [a.slug, a.name])),
     total: "Total",
   };
-
-  const songs_processed = songs.map((song) => {
-    console.log("song activities:", Object.keys(song.activities));
-    console.log(
-      "selected slugs:",
-      selectedActivities.map((a) => a.slug)
-    );
+  const songs_processed = songs.map((song: Song) => {
     const activityCounts = Object.fromEntries(
       Object.entries(song.activities)
         .filter(([activity]) =>

@@ -1,26 +1,8 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import type { Activity, HeaderFilter } from "../types/dashboard";
 import Sidebar from "../components/Sidebar";
 import HeaderOverview from "../components/HeaderOverview";
-
-// Types
-export interface Activity {
-  id: number;
-  slug: string;
-  name: string;
-}
-
-export interface HeaderFilter {
-  from_date: string;
-  to_date: string;
-  church_activities: string[];
-}
-
-export interface DashboardContext {
-  headerFilters: HeaderFilter;
-  selectedActivities: Activity[];
-  filtersReady: boolean;
-}
 
 // Helper functions
 function oneYearAgoISO(): string {

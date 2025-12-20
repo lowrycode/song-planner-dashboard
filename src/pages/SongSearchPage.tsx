@@ -1,33 +1,11 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import type { SongMetric } from "../types/songs.ts";
+import type { SongMetric, Song } from "../types/songs.ts";
 import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
-import type {
-  Activity,
-  DashboardContext,
-} from "../layouts/DashboardLayout.tsx";
+import type { Activity, DashboardContext } from "../types/dashboard.ts";
 
 // Types
-interface ActivityData {
-  usage_count: number;
-  first_used: string | null; // ISO date string or null
-  last_used: string | null; // ISO date string or null
-}
-
-interface OverallData {
-  usage_count: number;
-  first_used: string | null;
-  last_used: string | null;
-}
-
-interface Song {
-  id: number;
-  first_line: string;
-  activities: Record<string, ActivityData>; // e.g. { newland: ActivityData, riverside: ActivityData, ... }
-  overall: OverallData;
-}
-
 interface TableRow {
   id: number;
   first_line: string;
