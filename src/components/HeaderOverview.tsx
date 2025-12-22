@@ -34,6 +34,23 @@ export default function HeaderOverview({
       localFilters.church_activities.includes(activity.id.toString())
     );
 
+  // Helper: Check if filters are equal (simple shallow comparison)
+  function filtersAreEqual(a: HeaderFilters, b: HeaderFilters) {
+    if (a.from_date !== b.from_date) return false;
+    if (a.to_date !== b.to_date) return false;
+
+    // Compare church_activities ignoring order:
+    if (a.church_activities.length !== b.church_activities.length) return false;
+    const sortedA = [...a.church_activities].sort();
+    const sortedB = [...b.church_activities].sort();
+    for (let i = 0; i < sortedA.length; i++) {
+      if (sortedA[i] !== sortedB[i]) return false;
+    }
+    return true;
+  }
+
+  const noChanges = filtersAreEqual(localFilters, headerFilters);
+
   // Handle input changes
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, checked } = e.target;
@@ -59,13 +76,15 @@ export default function HeaderOverview({
       }
     } else {
       // For date inputs
-      setLocalFilters((prev) => ({ ...prev, [name]: e.target.value }));
+      setLocalFilters((prev) => ({ ...prev, [name]: value }));
     }
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setHeaderFilters(localFilters);
+    if (!noChanges) {
+      setHeaderFilters(localFilters);
+    }
   }
 
   return (
@@ -74,6 +93,7 @@ export default function HeaderOverview({
       className="flex flex-col md:flex-row justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 "
     >
       <div className="flex flex-1 justify-between bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
+        {/* Date Inputs */}
         <div className="flex gap-x-5 gap-y-1">
           <div className="flex gap-x-3 justify-end items-center">
             <label htmlFor="from">From</label>
@@ -113,6 +133,7 @@ export default function HeaderOverview({
           </label>
         </div>
 
+        {/* Activities checkboxes */}
         <div className="flex gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap">
           {activities.map(({ id, name }) => (
             <label key={id} className="flex items-center gap-2">
@@ -131,7 +152,13 @@ export default function HeaderOverview({
       </div>
       <button
         type="submit"
-        className="bg-purple-900 rounded-lg text-gray-100 px-4 py-2 shadow-md hover:bg-purple-700 hover:cursor-pointer"
+        disabled={noChanges}
+        aria-disabled={noChanges}
+        className={`rounded-lg text-gray-100 px-4 py-2 shadow-md ${
+          noChanges
+            ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+            : "bg-purple-900 hover:bg-purple-700 hover:cursor-pointer"
+        }`}
       >
         Update
       </button>
