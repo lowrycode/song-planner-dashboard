@@ -32,8 +32,20 @@ export default function TableSelectMetric({
   const columns = React.useMemo<ColumnDef<any>[]>(
     () =>
       Object.entries(headerMap).map(([key, header]) => ({
-        accessorKey: key,
+        id: key,
         header,
+        accessorFn: (row) => {
+          const value = row[key];
+          if (
+            typeof value === "object" &&
+            value !== null &&
+            "display" in value
+          ) {
+            return value.display;
+          }
+          return value;
+        },
+        sortingFn: "basic",
       })),
     [headerMap]
   );
