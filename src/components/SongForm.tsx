@@ -4,6 +4,7 @@ interface SongFilter {
   lyric: string;
   songType: string;
   songKey: string;
+  filterUsedInRange: boolean;
   filterFirstUsedInRange: boolean;
   filterLastUsedInRange: boolean;
 }
@@ -116,8 +117,24 @@ export default function SongForm({
           </select>
         </div>
         {/* DIV - checkbox + submit */}
-        <div className="flex flex-1 gap-x-5 gap-y-3 justify-end items-center">
+        <div className="flex flex-1 gap-x-5 gap-y-3 justify-end items-end">
           <div>
+            <div className="flex items-center gap-2">
+              <input
+                id="filter-used-in-range"
+                name="filterUsedInRange"
+                type="checkbox"
+                className="w-4 h-4 accent-purple-700 border border-purple-950"
+                checked={localFilters.filterUsedInRange}
+                onChange={handleInputChange}
+              />
+              <label
+                htmlFor="filter-used-in-range"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+              >
+                Filter used in range
+              </label>
+            </div>
             <div className="flex items-center gap-2">
               <input
                 id="filter-first-used-in-range"

@@ -27,7 +27,7 @@ export default function TableSelectMetric({
 }: TableSelectMetricProps) {
   // State
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  
+
   // Build table columns dynamically
   const columns = React.useMemo<ColumnDef<any>[]>(
     () =>
@@ -97,8 +97,29 @@ export default function TableSelectMetric({
                   <td
                     key={cell.id}
                     className="border border-purple-900 px-3 py-1"
+                    title={(() => {
+                      const value = cell.getValue();
+                      if (
+                        typeof value === "object" &&
+                        value !== null &&
+                        "raw" in value
+                      ) {
+                        return (value as { raw?: string }).raw;
+                      }
+                      return undefined;
+                    })()}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {(() => {
+                      const value = cell.getValue();
+                      if (
+                        typeof value === "object" &&
+                        value !== null &&
+                        "display" in value
+                      ) {
+                        return (value as { display?: React.ReactNode }).display;
+                      }
+                      return value as React.ReactNode;
+                    })()}
                   </td>
                 ))}
               </tr>

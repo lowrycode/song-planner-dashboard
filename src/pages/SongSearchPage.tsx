@@ -12,8 +12,8 @@ interface TableRow {
   first_line: string;
   [venue: string]: string | number | null | undefined;
   overall_usage_count?: number;
-  overall_first_used?: string | null;
-  overall_last_used?: string | null;
+  overall_first_used?: number;
+  overall_last_used?: number;
 }
 
 // Helper functions
@@ -60,6 +60,18 @@ function normalizeMetric(value: any, metric: SongMetric): string | number {
   return value ?? 0;
 }
 
+function formatDateDDMMYY(dateStr: string | null | undefined): string {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "";
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = String(date.getFullYear());
+
+  return `${day}/${month}/${year}`;
+}
+
 function processSongsForTable(
   songs: Song[],
   metric: SongMetric,
@@ -69,24 +81,39 @@ function processSongsForTable(
     const activityValues = Object.fromEntries(
       Object.entries(song.activities)
         .filter(([slug]) => selectedActivities.some((a) => a.slug === slug))
-        .map(([activity, data]) => [
-          activity,
-          normalizeMetric(data[metric], metric),
-        ])
+        .map(([activity, data]) => {
+          if (metric === "first_used" || metric === "last_used") {
+            return [
+              activity,
+              {
+                display: normalizeMetric(data[metric], metric), // weeks ago
+                raw: formatDateDDMMYY(data[metric]), // date string
+              },
+            ];
+          }
+          return [activity, data[metric] ?? 0];
+        })
     );
+
+    let overallValue;
+    let overallRaw;
+    if (metric === "usage_count") {
+      overallValue = song.overall.usage_count;
+    } else if (metric === "first_used" || metric === "last_used") {
+      overallValue = normalizeMetric(song.overall[metric], metric);
+      overallRaw = formatDateDDMMYY(song.overall[metric]);
+    }
 
     return {
       id: song.id,
       first_line: song.first_line,
       ...activityValues,
-      ...(metric === "usage_count" && {
-        overall_usage_count: song.overall.usage_count,
-      }),
+      ...(metric === "usage_count" && { overall_usage_count: overallValue }),
       ...(metric === "first_used" && {
-        overall_first_used: song.overall.first_used,
+        overall_first_used: { display: overallValue, raw: overallRaw },
       }),
       ...(metric === "last_used" && {
-        overall_last_used: song.overall.last_used,
+        overall_last_used: { display: overallValue, raw: overallRaw },
       }),
     };
   });
@@ -104,8 +131,9 @@ export default function SongSearchPage() {
     lyric: "",
     songType: "both",
     songKey: "",
+    filterUsedInRange: true,
     filterFirstUsedInRange: false,
-    filterLastUsedInRange: true,
+    filterLastUsedInRange: false,
   });
 
   // Fetch song data when filters updated
@@ -133,6 +161,7 @@ export default function SongSearchPage() {
         if (filters.songType && filters.songType !== "both")
           params.append("song_type", filters.songType);
         if (filters.songKey) params.append("song_key", filters.songKey);
+        if (filters.filterUsedInRange) params.append("used_in_range", "true");
         if (filters.filterFirstUsedInRange)
           params.append("first_used_in_range", "true");
         if (filters.filterLastUsedInRange)
@@ -173,7 +202,6 @@ export default function SongSearchPage() {
     <div className="flex flex-wrap gap-5 m-5">
       <DashboardPanel className="w-full">
         <SongForm filters={filters} onFilterChange={handleFilterChange} />
-
       </DashboardPanel>
       {loading && <p>Loading songs...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
