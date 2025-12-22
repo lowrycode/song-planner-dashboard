@@ -135,19 +135,23 @@ export default function HeaderOverview({
 
         {/* Activities checkboxes */}
         <div className="flex gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap">
-          {activities.map(({ id, name }) => (
-            <label key={id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-500"
-                name="church_activities"
-                value={id.toString()} // use ID as string value for checkbox
-                checked={localFilters.church_activities.includes(id.toString())} // check based on ID string
-                onChange={handleChange}
-              />
-              {name}
-            </label>
-          ))}
+          {[...activities]
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(({ id, name }) => (
+              <label key={id} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="accent-purple-500"
+                  name="church_activities"
+                  value={id.toString()} // use ID as string value for checkbox
+                  checked={localFilters.church_activities.includes(
+                    id.toString()
+                  )} // check based on ID string
+                  onChange={handleChange}
+                />
+                {name}
+              </label>
+            ))}
         </div>
       </div>
       <button
