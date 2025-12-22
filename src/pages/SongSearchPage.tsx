@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import type { SongMetric, Song } from "../types/songs.ts";
+import DashboardPanel from "../components/DashboardPanel.tsx";
 import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
 import type { Activity, DashboardContext } from "../types/dashboard.ts";
@@ -170,19 +171,24 @@ export default function SongSearchPage() {
 
   return (
     <div className="flex flex-wrap gap-5 m-5">
-      <SongForm filters={filters} onFilterChange={handleFilterChange} />
+      <DashboardPanel className="w-full">
+        <SongForm filters={filters} onFilterChange={handleFilterChange} />
+
+      </DashboardPanel>
       {loading && <p>Loading songs...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {/* Table */}
       {!loading && !error && (
-        <TableSelectMetric
-          headerMap={headerMap}
-          data={songs_processed}
-          title="Results"
-          metric={metric}
-          setMetric={setMetric}
-        />
+        <DashboardPanel className="w-full">
+          <TableSelectMetric
+            headerMap={headerMap}
+            data={songs_processed}
+            title="Results"
+            metric={metric}
+            setMetric={setMetric}
+          />
+        </DashboardPanel>
       )}
     </div>
   );

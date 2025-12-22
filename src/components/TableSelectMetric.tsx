@@ -54,7 +54,7 @@ export default function TableSelectMetric({
   const rowCount = table.getRowModel().rows.length;
 
   return (
-    <div className="w-full bg-gray-100 p-4 rounded-lg">
+    <>
       {/* Header and metric selector */}
       <div className="flex flex-wrap gap-x-10 gap-y-2 justify-between items-center align-middle">
         <h2 className="text-xl font-extrabold text-purple-900">
@@ -106,6 +106,6 @@ export default function TableSelectMetric({
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }
