@@ -12,7 +12,7 @@ interface HeaderFilters {
   church_activities: string[];
 }
 
-function HeaderOverview({
+export default function HeaderOverview({
   activities,
   headerFilters,
   setHeaderFilters,
@@ -27,9 +27,16 @@ function HeaderOverview({
     setLocalFilters(headerFilters);
   }, [headerFilters]);
 
+  // Check if all activities are selected
+  const allSelected =
+    activities.length > 0 &&
+    activities.every((activity) =>
+      localFilters.church_activities.includes(activity.id.toString())
+    );
+
   // Handle input changes
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value, type, checked } = e.target;
+    const { name, value, checked } = e.target;
 
     if (name === "church_activities") {
       // For checkboxes
@@ -40,9 +47,19 @@ function HeaderOverview({
         newServices = newServices.filter((s) => s !== value);
       }
       setLocalFilters((prev) => ({ ...prev, church_activities: newServices }));
+    } else if (name === "select_all") {
+      // Select All checkbox toggled
+      if (checked) {
+        // Select all activities by ID as strings
+        const allIds = activities.map((a) => a.id.toString());
+        setLocalFilters((prev) => ({ ...prev, church_activities: allIds }));
+      } else {
+        // Deselect all
+        setLocalFilters((prev) => ({ ...prev, church_activities: [] }));
+      }
     } else {
       // For date inputs
-      setLocalFilters((prev) => ({ ...prev, [name]: value }));
+      setLocalFilters((prev) => ({ ...prev, [name]: e.target.value }));
     }
   }
 
@@ -56,7 +73,7 @@ function HeaderOverview({
       onSubmit={handleSubmit}
       className="flex flex-col md:flex-row justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 "
     >
-      <div className="flex flex-1 justify-between bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-2">
+      <div className="flex flex-1 justify-between bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
         <div className="flex gap-x-5 gap-y-1">
           <div className="flex gap-x-3 justify-end items-center">
             <label htmlFor="from">From</label>
@@ -81,7 +98,22 @@ function HeaderOverview({
             />
           </div>
         </div>
-        <div className="flex gap-x-5 flex-wrap">
+
+        {/* Select All checkbox */}
+        <div className="flex items-center">
+          <label className="flex items-center gap-2 text-gray-100">
+            <input
+              type="checkbox"
+              name="select_all"
+              checked={allSelected}
+              onChange={handleChange}
+              className="accent-purple-500"
+            />
+            Toggle Activities
+          </label>
+        </div>
+
+        <div className="flex gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap">
           {activities.map(({ id, name }) => (
             <label key={id} className="flex items-center gap-2">
               <input
@@ -106,5 +138,3 @@ function HeaderOverview({
     </form>
   );
 }
-
-export default HeaderOverview;
