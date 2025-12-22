@@ -51,9 +51,8 @@ function PieChart({
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "right" as const, // default is 'top', change it to 'right'
+        position: "right" as const,
         labels: {
-          // Optional: customize label styles here
           boxWidth: 20,
           padding: 10,
         },
@@ -62,9 +61,9 @@ function PieChart({
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg w-110">
+    <div className="flex flex-col">
       <h2 className="text-xl font-extrabold text-purple-900 mb-5">{title}</h2>
-      <div className="flex flex-1">
+      <div className="flex">
         <Doughnut data={chartData} options={options} />
       </div>
     </div>

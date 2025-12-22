@@ -61,7 +61,7 @@ export default function TableSortSearch({
   const filteredCount = table.getFilteredRowModel().rows.length;
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
+    <>
       <div className="flex flex-wrap gap-x-10 gap-y-2 justify-between items-center align-middle">
         <h2 className="text-xl font-extrabold text-purple-900">
           {title}
@@ -123,6 +123,6 @@ export default function TableSortSearch({
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }
