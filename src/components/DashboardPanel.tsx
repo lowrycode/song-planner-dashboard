@@ -11,7 +11,7 @@ export default function DashboardPanel({
 }: DashboardPanelProps) {
   return (
     <div
-      className={`bg-gray-100 p-4 rounded-lg shadow-sm ${className}`}
+      className={`bg-gray-100 px-5 py-3 rounded-lg shadow-sm ${className}`}
     >
       {children}
     </div>
