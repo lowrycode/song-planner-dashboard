@@ -7,20 +7,43 @@ import {
   useReactTable,
   getSortedRowModel,
 } from "@tanstack/react-table";
-
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import type { ColumnDef, SortingState, SortingFn } from "@tanstack/react-table";
 
 type TableSelectMetricProps = {
   data: any[];
   headerMap: Record<string, string>;
+  textHeaders?: string[];
   title?: string;
   metric: SongMetric;
   setMetric: React.Dispatch<React.SetStateAction<SongMetric>>;
 };
 
+// Alphabetical, case-insensitive sort
+export const stringSort: SortingFn<any> = (rowA, rowB, columnId) => {
+  const a = rowA.getValue(columnId);
+  const b = rowB.getValue(columnId);
+
+  return String(a ?? "").localeCompare(String(b ?? ""), undefined, {
+    sensitivity: "base",
+  });
+};
+
+// Numeric sort using `display` when present
+export const numericDisplaySort: SortingFn<any> = (rowA, rowB, columnId) => {
+  const getNumeric = (row: any) => {
+    const v = row.getValue(columnId);
+    return typeof v === "object" && v !== null && "display" in v
+      ? Number(v.display)
+      : Number(v);
+  };
+
+  return getNumeric(rowA) - getNumeric(rowB);
+};
+
 export default function TableSelectMetric({
   data,
   headerMap,
+  textHeaders = [],
   title = "Song List",
   metric,
   setMetric,
@@ -29,26 +52,16 @@ export default function TableSelectMetric({
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   // Build table columns dynamically
-  const columns = React.useMemo<ColumnDef<any>[]>(
-    () =>
-      Object.entries(headerMap).map(([key, header]) => ({
-        id: key,
-        header,
-        accessorFn: (row) => {
-          const value = row[key];
-          if (
-            typeof value === "object" &&
-            value !== null &&
-            "display" in value
-          ) {
-            return value.display;
-          }
-          return value;
-        },
-        sortingFn: "basic",
-      })),
-    [headerMap]
-  );
+  const columns = React.useMemo<ColumnDef<any>[]>(() => {
+    const textHeaderSet = new Set(textHeaders);
+
+    return Object.entries(headerMap).map(([key, header]) => ({
+      id: key,
+      header,
+      accessorFn: (row) => row[key],
+      sortingFn: textHeaderSet.has(key) ? stringSort : numericDisplaySort,
+    }));
+  }, [headerMap, textHeaders]);
 
   // React Table
   const table = useReactTable({
@@ -105,35 +118,37 @@ export default function TableSelectMetric({
           <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="even:bg-violet-100">
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className="border border-purple-900 px-3 py-1"
-                    title={(() => {
-                      const value = cell.getValue();
-                      if (
-                        typeof value === "object" &&
-                        value !== null &&
-                        "raw" in value
-                      ) {
-                        return (value as { raw?: string }).raw;
+                {row.getVisibleCells().map((cell) => {
+                  const value = cell.getValue();
+
+                  const hasHover =
+                    value &&
+                    typeof value === "object" &&
+                    value !== null &&
+                    "hover" in value &&
+                    typeof value.hover === "string" &&
+                    Boolean((value).hover);
+
+                  return (
+                    <td
+                      key={cell.id}
+                      className={`border border-purple-900 px-3 py-1 ${
+                        hasHover ? "cursor-help" : ""
+                      }`}
+                      title={
+                        hasHover
+                          ? (value as { hover?: string }).hover
+                          : undefined
                       }
-                      return undefined;
-                    })()}
-                  >
-                    {(() => {
-                      const value = cell.getValue();
-                      if (
-                        typeof value === "object" &&
-                        value !== null &&
-                        "display" in value
-                      ) {
-                        return (value as { display?: React.ReactNode }).display;
-                      }
-                      return value as React.ReactNode;
-                    })()}
-                  </td>
-                ))}
+                    >
+                      {typeof value === "object" &&
+                      value !== null &&
+                      "display" in value
+                        ? (value as { display?: React.ReactNode }).display
+                        : (String(value) as React.ReactNode)}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

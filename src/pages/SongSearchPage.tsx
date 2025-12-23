@@ -7,13 +7,15 @@ import TableSelectMetric from "../components/TableSelectMetric.tsx";
 import type { Activity, DashboardContext } from "../types/dashboard.ts";
 
 // Types
+type CellValue = {
+  display: React.ReactNode;
+  hover?: string;
+};
+
 interface TableRow {
   id: number;
   first_line: string;
-  [venue: string]: string | number | null | undefined;
-  overall_usage_count?: number;
-  overall_first_used?: number;
-  overall_last_used?: number;
+  [key: string]: CellValue | number | string;
 }
 
 // Helper functions
@@ -42,9 +44,9 @@ function buildTableHeaderMap(
   };
 }
 
-function normalizeMetric(value: any, metric: SongMetric): string | number {
+function normalizeMetric(value: any, metric: SongMetric): number | null {
   if (metric === "first_used" || metric === "last_used") {
-    if (!value) return "";
+    if (!value) return null;
 
     const date = new Date(value);
     const now = new Date();
@@ -87,33 +89,44 @@ function processSongsForTable(
               activity,
               {
                 display: normalizeMetric(data[metric], metric), // weeks ago
-                raw: formatDateDDMMYY(data[metric]), // date string
+                hover: formatDateDDMMYY(data[metric]), // date string shown on hover
+              },
+            ];
+          } else {
+            return [
+              activity,
+              {
+                display: data[metric] ?? 0,
+                hover: undefined, // No hover tooltip for usage_count
               },
             ];
           }
-          return [activity, data[metric] ?? 0];
         })
     );
 
-    let overallValue;
-    let overallRaw;
+    let overallDisplay: number | null = null;
+    let overallHover: string | undefined = undefined;
+
     if (metric === "usage_count") {
-      overallValue = song.overall.usage_count;
+      overallDisplay = song.overall.usage_count;
+      overallHover = undefined;
     } else if (metric === "first_used" || metric === "last_used") {
-      overallValue = normalizeMetric(song.overall[metric], metric);
-      overallRaw = formatDateDDMMYY(song.overall[metric]);
+      overallDisplay = normalizeMetric(song.overall[metric], metric);
+      overallHover = formatDateDDMMYY(song.overall[metric]);
     }
 
     return {
       id: song.id,
       first_line: song.first_line,
       ...activityValues,
-      ...(metric === "usage_count" && { overall_usage_count: overallValue }),
+      ...(metric === "usage_count" && {
+        overall_usage_count: { display: overallDisplay, hover: overallHover },
+      }),
       ...(metric === "first_used" && {
-        overall_first_used: { display: overallValue, raw: overallRaw },
+        overall_first_used: { display: overallDisplay, hover: overallHover },
       }),
       ...(metric === "last_used" && {
-        overall_last_used: { display: overallValue, raw: overallRaw },
+        overall_last_used: { display: overallDisplay, hover: overallHover },
       }),
     };
   });
@@ -211,6 +224,7 @@ export default function SongSearchPage() {
         <DashboardPanel className="w-full">
           <TableSelectMetric
             headerMap={headerMap}
+            textHeaders={["first_line"]}
             data={songs_processed}
             title="Results"
             metric={metric}
