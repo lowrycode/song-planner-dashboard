@@ -1,6 +1,6 @@
-import HeaderOverview from "../components/HeaderOverview.tsx";
 import SongDetails from "../components/SongDetails.tsx";
 import Lyrics from "../components/Lyrics.tsx";
+import DashboardPanel from "../components/DashboardPanel.tsx";
 import SongResources from "../components/SongResources.tsx";
 import SongExtraInfo from "../components/SongExtraInfo.tsx";
 import SongUsageChart from "../components/SongUsageChart.tsx";
@@ -13,37 +13,38 @@ const { labels, datasets } = prepareUsageData(
   new Date(2020, 11, 31)
 );
 
-function SongDetailsPage() {
+export default function SongDetailsPage() {
   return (
     <div>
-      <HeaderOverview />
       <div className="flex flex-row flex-wrap justify-between gap-5 m-5">
         {/* Left */}
         <div className="flex flex-1 flex-wrap gap-5">
-          <div className="flex-1 shrink-0 bg-gray-100 px-5 py-3 rounded-lg">
+          <DashboardPanel className="flex-1 shrink-0">
             <SongDetails
               title={song_details.title}
               author={song_details.author}
               copyright={song_details.copyright}
             />
-          </div>
-          <div className="overflow-y-auto overflow-x-hidden bg-gray-100 px-5 py-3 rounded-lg">
-            <SongExtraInfo song_key={song_details.key} is_hymn={song_details.is_hymn}/>
-          </div>
-          <div className="flex-1 bg-gray-100 px-5 py-3 rounded-lg">
+          </DashboardPanel>
+
+          <DashboardPanel className="overflow-y-auto overflow-x-hidden">
+            <SongExtraInfo
+              song_key={song_details.key}
+              is_hymn={song_details.is_hymn}
+            />
+          </DashboardPanel>
+          <DashboardPanel className="flex-1">
             <SongResources />
-          </div>
-          <div className="w-full bg-gray-100 px-5 py-3 rounded-lg">
-            <SongUsageChart labels={labels} datasets={datasets}/>
-          </div>
+          </DashboardPanel>
+          <DashboardPanel className="w-full">
+            <SongUsageChart labels={labels} datasets={datasets} />
+          </DashboardPanel>
         </div>
         {/* Right */}
-        <div className="w-full lg:w-auto overflow-y-auto bg-gray-100 px-5 py-3 rounded-lg text-sm">
+        <DashboardPanel className="w-full lg:w-auto overflow-y-auto">
           <Lyrics content={song_details.lyrics} />
-        </div>
+        </DashboardPanel>
       </div>
     </div>
   );
 }
-
-export default SongDetailsPage;
