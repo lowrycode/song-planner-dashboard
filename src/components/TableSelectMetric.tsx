@@ -21,10 +21,15 @@ type TableSelectMetricProps = {
 
 // Alphabetical, case-insensitive sort
 export const stringSort: SortingFn<any> = (rowA, rowB, columnId) => {
-  const a = rowA.getValue(columnId);
-  const b = rowB.getValue(columnId);
+  const getString = (row: any) => {
+    const v = row.getValue(columnId);
+    if (typeof v === "object" && v !== null && "display" in v) {
+      return String(v.display ?? "");
+    }
+    return String(v ?? "");
+  };
 
-  return String(a ?? "").localeCompare(String(b ?? ""), undefined, {
+  return getString(rowA).localeCompare(getString(rowB), undefined, {
     sensitivity: "base",
   });
 };
