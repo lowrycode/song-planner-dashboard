@@ -10,11 +10,12 @@ import type { Activity, DashboardContext } from "../types/dashboard.ts";
 type CellValue = {
   display: React.ReactNode;
   hover?: string;
+  to?: string;
 };
 
 interface TableRow {
   id: number;
-  first_line: string;
+  first_line: CellValue;
   [key: string]: CellValue | number | string;
 }
 
@@ -117,7 +118,10 @@ function processSongsForTable(
 
     return {
       id: song.id,
-      first_line: song.first_line,
+      first_line: {
+        display: song.first_line,
+        to: `/songs/${song.id}`,
+      },
       ...activityValues,
       ...(metric === "usage_count" && {
         overall_usage_count: { display: overallDisplay, hover: overallHover },
