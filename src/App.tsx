@@ -20,7 +20,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route path="/overview" element={<OverviewPage />} />
-            <Route path="/song" element={<SongDetailsPage />} />
+            <Route path="/songs/:song_id" element={<SongDetailsPage />} />
             <Route path="/search" element={<SongSearchPage />} />
             {/* Add more protected pages here */}
           </Route>

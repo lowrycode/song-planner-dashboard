@@ -20,3 +20,8 @@ export interface Song  {
   activities: Record<string, ActivityData>; // e.g. { newland: ActivityData, riverside: ActivityData, ... }
   overall: OverallData;
 }
+
+export interface SongUsage {
+  used_date: string; // ISO date
+  church_activity_id: number;
+}

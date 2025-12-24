@@ -1,3 +1,6 @@
+import type { HeaderFilter, Activity } from "../types/dashboard.ts";
+import type { SongUsage } from "../types/songs.ts";
+
 export function generateMonthRange(start: Date, end: Date): string[] {
   const months: string[] = [];
   const date = new Date(start);
@@ -16,7 +19,7 @@ export function generateMonthRange(start: Date, end: Date): string[] {
 }
 
 function formatMonth(dateStr: string): string {
-  const [day, month, year] = dateStr.split("/").map(Number);
+  const [year, month, day] = dateStr.split("-").map(Number);
   const date = new Date(year, month - 1, day);
   return date.toLocaleDateString("en-GB", {
     month: "short",
@@ -25,37 +28,63 @@ function formatMonth(dateStr: string): string {
 }
 
 export function prepareUsageData(
-  usages: { used_on: string; used_at: string }[],
-  start: Date,
-  end: Date
+  usages: SongUsage[],
+  activities: Activity[],
+  headerFilters: HeaderFilter
 ) {
-  const allMonths = generateMonthRange(start, end);
+  // Get month range for chart x-axis
+  const from_date_str: string | undefined = headerFilters.from_date;
+  const to_date_str: string | undefined = headerFilters.to_date;
 
-  const venues = Array.from(new Set(usages.map(u => u.used_at)));
+  const from_date: Date = from_date_str
+    ? new Date(from_date_str)
+    : new Date("1990-01-01");
+  const to_date: Date = to_date_str ? new Date(to_date_str) : new Date();
 
-  // build month→venue→count structure
-  const monthVenueMap: Record<string, Record<string, number>> = {};
+  const allMonths = generateMonthRange(from_date, to_date);
 
-  allMonths.forEach(month => {
-    monthVenueMap[month] = {};
-    venues.forEach(v => (monthVenueMap[month][v] = 0));
+  // monthActivityMap in format [month][activity] = count
+  const monthActivityMap: Record<string, Record<number, number>> = {};
+
+  // Initialise monthActivityMap for each church activity (to zero)
+  allMonths.forEach((month) => {
+    monthActivityMap[month] = {};
+    activities.forEach((activity) => {
+      monthActivityMap[month][activity.id] = 0;
+    });
   });
 
-  // fill actual usage
-  usages.forEach(({ used_on, used_at }) => {
-    const month = formatMonth(used_on);
-    if (monthVenueMap[month]) {
-      monthVenueMap[month][used_at]++;
+  // populate counts
+  usages.forEach(({ used_date, church_activity_id }) => {
+    const month = formatMonth(used_date);
+    if (monthActivityMap[month]) {
+      monthActivityMap[month][church_activity_id]++;
     }
   });
 
-  const datasets = venues.map((venue, i) => ({
-    label: venue,
-    backgroundColor: ["#3b82f6", "#10b981", "#f97316", "#e11d48"][i],
-    data: allMonths.map(m => monthVenueMap[m][venue]),
+  const colors = [
+    "#1f77b4", // strong blue
+    "#ff7f0e", // vivid orange
+    "#2ca02c", // bright green
+    "#d62728", // strong red
+    "#9467bd", // purple
+    "#8c564b", // brown
+    "#e377c2", // pink
+    "#bcbd22", // olive green
+    "#17becf", // cyan
+    "#393b79", // dark navy
+    "#ff9896", // light coral
+    "#7f7f7f", // gray
+  ];
+
+  const datasets = activities.map((activity, index) => ({
+    label: activity.name,
+    backgroundColor: colors[index % colors.length],
+    data: allMonths.map((month) => monthActivityMap[month][activity.id]),
   }));
 
-  return { labels: allMonths, datasets };
+  return {
+    labels: allMonths,
+    datasets,
+  };
 }
-
-
