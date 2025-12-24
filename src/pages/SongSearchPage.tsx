@@ -5,6 +5,7 @@ import DashboardPanel from "../components/DashboardPanel.tsx";
 import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
 import type { Activity, DashboardContext } from "../types/dashboard.ts";
+import { authFetch } from "../utils/auth_fetch.ts";
 
 // Types
 type CellValue = {
@@ -184,7 +185,7 @@ export default function SongSearchPage() {
         if (filters.filterLastUsedInRange)
           params.append("last_used_in_range", "true");
 
-        const response = await fetch(
+        const response = await authFetch(
           `http://127.0.0.1:8000/songs/usages/summary?${params.toString()}`
         );
 

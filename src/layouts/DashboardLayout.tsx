@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import type { Activity, HeaderFilter } from "../types/dashboard";
 import Sidebar from "../components/Sidebar";
 import HeaderOverview from "../components/HeaderOverview";
+import { authFetch } from "../utils/auth_fetch";
 
 // Helper functions
 function oneYearAgoISO(): string {
@@ -30,7 +31,7 @@ export default function DashboardLayout() {
       setActivitiesError(null);
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/activities");
+        const response = await authFetch("http://127.0.0.1:8000/activities");
         if (!response.ok) {
           throw new Error("Failed to fetch activities");
         }

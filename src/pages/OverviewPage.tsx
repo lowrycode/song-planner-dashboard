@@ -6,6 +6,7 @@ import DashboardPanel from "../components/DashboardPanel.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
 import PieChartController from "../components/PieChartController.tsx";
+import { authFetch } from "../utils/auth_fetch.ts";
 
 function buildParams(headerFilters: HeaderFilter) {
   const params = new URLSearchParams();
@@ -44,7 +45,7 @@ export default function OverviewPage() {
 
       try {
         const params = buildParams(headerFilters);
-        const res = await fetch(
+        const res = await authFetch(
           `http://127.0.0.1:8000/songs/usages/summary?${params}`
         );
         if (!res.ok) throw new Error("Failed to fetch songs");
@@ -74,8 +75,8 @@ export default function OverviewPage() {
         if (pieWeightByUsage === false) params.append("unique", "true");
 
         const [keysRes, typesRes] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/songs/keys/summary?${params}`),
-          fetch(`http://127.0.0.1:8000/songs/types/summary?${params}`),
+          authFetch(`http://127.0.0.1:8000/songs/keys/summary?${params}`),
+          authFetch(`http://127.0.0.1:8000/songs/types/summary?${params}`),
         ]);
 
         if (!keysRes.ok) throw new Error("Failed to fetch key summary");

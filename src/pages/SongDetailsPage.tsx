@@ -8,6 +8,7 @@ import SongResources from "../components/SongResources.tsx";
 import SongExtraInfo from "../components/SongExtraInfo.tsx";
 import SongUsageChart from "../components/SongUsageChart.tsx";
 import { prepareUsageData } from "../utils/process_usage_data.ts";
+import { authFetch } from "../utils/auth_fetch.ts";
 
 function buildParams(headerFilters: HeaderFilter) {
   const params = new URLSearchParams();
@@ -89,8 +90,8 @@ export default function SongDetailsPage() {
         const params = buildParams(headerFilters).toString();
 
         const [detailsRes, usageRes] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/songs/${song_id}`),
-          fetch(`http://127.0.0.1:8000/songs/${song_id}/usages?${params}`),
+          authFetch(`http://127.0.0.1:8000/songs/${song_id}`),
+          authFetch(`http://127.0.0.1:8000/songs/${song_id}/usages?${params}`),
         ]);
 
         if (!detailsRes.ok) throw new Error("Failed to fetch song details");
