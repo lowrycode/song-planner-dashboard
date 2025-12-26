@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import DashboardLayout from "./layouts/DashboardLayout";
+import SongLayout from "./layouts/SongLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import LoginPage from "./pages/LoginPage.tsx";
 import LogoutPage from "./pages/LogoutPage.tsx";
@@ -14,15 +15,17 @@ function App() {
       <Routes>
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/logout" element={<LogoutPage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
-            <Route path="/overview" element={<OverviewPage />} />
-            <Route path="/songs/:song_id" element={<SongDetailsPage />} />
-            <Route path="/search" element={<SongSearchPage />} />
-            {/* Add more protected pages here */}
+            <Route element={<SongLayout />}>
+              <Route path="/overview" element={<OverviewPage />} />
+              <Route path="/songs/:song_id" element={<SongDetailsPage />} />
+              <Route path="/search" element={<SongSearchPage />} />
+              {/* Add more protected pages here */}
+            </Route>
+          <Route path="/logout" element={<LogoutPage />} />
           </Route>
         </Route>
       </Routes>
