@@ -149,7 +149,7 @@ export default function SongDetailsPage() {
               </DashboardPanel>
               {/* Song Resources */}
               <DashboardPanel className="flex-1">
-                <SongResources />
+                <SongResources resources={songDetails.resources} />
               </DashboardPanel>
 
               {/* Usage Chart */}
