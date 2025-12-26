@@ -3,18 +3,7 @@ import LogoutForm from "../components/LogoutForm";
 function LogoutPage() {
   return (
     <div className="flex w-full h-screen overflow-hidden">
-      
-      {/* Left image, hidden on mobile */}
-      <div className="hidden md:block md:w-2/5">
-        <img
-          src="/images/worship.webp"
-          alt="Corporate worship"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Right form */}
-      <div className="w-full md:w-3/5 bg-gray-50 relative">
+      <div className="w-full bg-gray-50 relative">
         <img
           src="/images/ccn_logo_desat.png"
           alt="Corporate worship"
