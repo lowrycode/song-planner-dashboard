@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import DashboardLayout from "./layouts/DashboardLayout";
 import SongLayout from "./layouts/SongLayout";
@@ -18,6 +18,7 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Navigate to="/overview" replace />} />
           <Route element={<DashboardLayout />}>
             <Route element={<SongLayout />}>
               <Route path="/overview" element={<OverviewPage />} />
