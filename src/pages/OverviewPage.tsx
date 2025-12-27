@@ -1,29 +1,28 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
 import type { DashboardContext, HeaderFilter } from "../types/dashboard.ts";
 import type { Song } from "../types/songs.ts";
 import DashboardPanel from "../components/DashboardPanel.tsx";
+import TableSort from "../components/TableSort.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
 import PieChartController from "../components/PieChartController.tsx";
 import { authFetch } from "../utils/auth_fetch.ts";
 
-function buildParams(headerFilters: HeaderFilter) {
-  const params = new URLSearchParams();
-  params.append("used_in_range", "true");
-  if (headerFilters.from_date)
-    params.append("from_date", headerFilters.from_date);
-  if (headerFilters.to_date) params.append("to_date", headerFilters.to_date);
-  headerFilters.church_activities.forEach((id) =>
-    params.append("church_activity_id", id)
-  );
-  return params;
+interface ActivitySummaryCount {
+  church_activity_id: number;
+  church_activity_name: string;
+  unique_count: number;
+  total_count: number;
 }
 
 export default function OverviewPage() {
   const { selectedActivities, headerFilters, filtersReady } =
     useOutletContext<DashboardContext>();
   const [songs, setSongs] = useState<Song[]>([]);
+  const [activitySongCounts, setActivitySongCounts] = useState<
+    ActivitySummaryCount[]
+  >([]);
   const [keySummary, setKeySummary] = useState<Record<string, number>>({});
   const [typeSummary, setTypeSummary] = useState<{
     hymn: number;
@@ -31,9 +30,26 @@ export default function OverviewPage() {
   } | null>(null);
   const [pieWeightByUsage, setPieWeightByUsage] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const [activitySongCountTableLoading, setActivitySongCountTableLoading] =
+    useState(false);
   const [pieLoading, setPieLoading] = useState(false);
   const [tableError, setTableError] = useState<string | null>(null);
+  const [activitySongCountTableError, setActivitySongCountTableError] =
+    useState<string | null>(null);
   const [pieError, setPieError] = useState<string | null>(null);
+
+  // Helper function
+  const buildParams = useCallback((headerFilters: HeaderFilter) => {
+    const params = new URLSearchParams();
+    params.append("used_in_range", "true");
+    if (headerFilters.from_date)
+      params.append("from_date", headerFilters.from_date);
+    if (headerFilters.to_date) params.append("to_date", headerFilters.to_date);
+    headerFilters.church_activities.forEach((id) =>
+      params.append("church_activity_id", id)
+    );
+    return params;
+  }, []);
 
   // Fetch table data
   useEffect(() => {
@@ -60,7 +76,34 @@ export default function OverviewPage() {
     }
 
     fetchSongs();
-  }, [filtersReady, headerFilters]);
+  }, [filtersReady, headerFilters, buildParams]);
+
+  // Fetch Activity Summary table data
+  useEffect(() => {
+    if (!filtersReady) return;
+
+    async function fetchActivitySongCounts() {
+      setActivitySongCountTableLoading(true);
+      setActivitySongCountTableError(null);
+
+      try {
+        const params = buildParams(headerFilters);
+        const res = await authFetch(
+          `http://127.0.0.1:8000/songs/usages/activity/summary?${params}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch songs");
+
+        const data = await res.json();
+        setActivitySongCounts(data);
+      } catch (err: any) {
+        setActivitySongCountTableError(err.message);
+      } finally {
+        setActivitySongCountTableLoading(false);
+      }
+    }
+
+    fetchActivitySongCounts();
+  }, [filtersReady, headerFilters, buildParams]);
 
   // Fetch pie data
   useEffect(() => {
@@ -97,13 +140,20 @@ export default function OverviewPage() {
     }
 
     fetchSummaries();
-  }, [filtersReady, headerFilters, pieWeightByUsage]);
+  }, [filtersReady, headerFilters, pieWeightByUsage, buildParams]);
 
   // Get labels and data for pie charts
   const hymnPieLabels = typeSummary ? Object.keys(typeSummary) : [];
   const hymnPieData = typeSummary ? Object.values(typeSummary) : [];
   const keyPieLabels = Object.keys(keySummary);
   const keyPieData = Object.values(keySummary);
+
+  // Get headers and data for table component
+  const activityHeaderMap = {
+    church_activity_name: "Church Activity",
+    unique_count: "Unique",
+    total_count: "Total",
+  };
 
   // Get headers and data for table component
   const headerMap = {
@@ -136,7 +186,7 @@ export default function OverviewPage() {
   return (
     <div className="flex flex-wrap gap-5 m-5">
       {/* Pie section */}
-      <DashboardPanel className="flex flex-wrap w-full items-start gap-x-15 gap-y-5 min-h-[270px]">
+      <DashboardPanel className="flex flex-2 flex-wrap items-start gap-x-15 gap-y-5 min-h-[270px]">
         <PieChartController
           pieWeightByUsage={pieWeightByUsage}
           setPieWeightByUsage={setPieWeightByUsage}
@@ -162,14 +212,27 @@ export default function OverviewPage() {
         </div>
       </DashboardPanel>
 
+      {/* Usage by Church Activity Summary Table */}
+      <DashboardPanel className="flex flex-col flex-1 flex-wrap items-start gap-x-15 min-h-[270px]">
+        {activitySongCountTableError && (
+          <p className="text-red-500">{activitySongCountTableError}</p>
+        )}
+        {activitySongCountTableLoading && <p>Loading table…</p>}
+        {!activitySongCountTableLoading && !activitySongCountTableError && (
+          <TableSort
+            data={activitySongCounts}
+            headerMap={activityHeaderMap}
+            title="Unique vs Total Used"
+          />
+        )}
+      </DashboardPanel>
+
       {/* Table section */}
-      {tableError && <p className="text-red-500">{tableError}</p>}
-
-      {tableLoading && <p>Loading table…</p>}
-
-      {!tableLoading && !tableError && (
-        <div className="flex-3">
-          <DashboardPanel>
+      <div className="max-w-full">
+        <DashboardPanel>
+          {tableError && <p className="text-red-500">{tableError}</p>}
+          {tableLoading && <p>Loading table…</p>}
+          {!tableLoading && !tableError && (
             <TableSortSearch
               headerMap={headerMap}
               data={songs_processed}
@@ -177,9 +240,9 @@ export default function OverviewPage() {
               searchPlaceholder="Filter by song"
               title="Song Usages"
             />
-          </DashboardPanel>
-        </div>
-      )}
+          )}
+        </DashboardPanel>
+      </div>
     </div>
   );
 }
