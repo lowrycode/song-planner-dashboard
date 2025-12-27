@@ -69,9 +69,6 @@ export default function TableSortSearch({
             ({filteredCount} rows)
           </span>
         </h2>
-        <div className="italic my-3 text-purple-900">
-          Click on column headers to sort
-        </div>
         {/* GLOBAL SEARCH INPUT */}
         <input
           type="text"
@@ -82,7 +79,7 @@ export default function TableSortSearch({
         />
       </div>
 
-      <div className="overflow-y-auto h-[450px] mt-3">
+      <div className="overflow-auto max-w-full h-[450px] mt-3">
         <table className="min-w-full border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
