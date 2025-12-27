@@ -4,6 +4,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import SongLayout from "./layouts/SongLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import LoginPage from "./pages/LoginPage.tsx";
+import ChangePasswordPage from "./pages/ChangePasswordPage.tsx";
 import LogoutPage from "./pages/LogoutPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import SongSearchPage from "./pages/SongSearchPage.tsx";
@@ -26,6 +27,7 @@ function App() {
               <Route path="/search" element={<SongSearchPage />} />
               {/* Add more protected pages here */}
             </Route>
+          <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/logout" element={<LogoutPage />} />
           </Route>
         </Route>
