@@ -89,7 +89,7 @@ function LoginForm() {
         />
         <button
           type="submit"
-          className="bg-purple-900 mt-3 px-3 py-1 text-gray-50"
+          className="bg-purple-900 mt-5 px-3 py-1.5 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
         >
           Log In
         </button>
