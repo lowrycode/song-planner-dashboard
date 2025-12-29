@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import type { SongMetric } from "../types/songs.ts";
 import MetricSelector from "./MetricSelector";
 import {
@@ -10,6 +9,8 @@ import {
 } from "@tanstack/react-table";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { stringDisplaySort, numericDisplaySort } from "../utils/table-data-helpers.ts";
+import { renderCell } from "../utils/table-cell-renderers.tsx";
+
 
 type TableSelectMetricProps = {
   data: any[];
@@ -20,22 +21,6 @@ type TableSelectMetricProps = {
   setMetric: React.Dispatch<React.SetStateAction<SongMetric>>;
 };
 
-
-function renderCell(value: any) {
-  if (value && typeof value === "object" && "display" in value) {
-    const content = <span title={value.hover}>{value.display}</span>;
-
-    return value.to ? (
-      <Link to={value.to} className="text-purple-900 font-semibold hover:underline">
-        {content}
-      </Link>
-    ) : (
-      content
-    );
-  }
-
-  return String(value);
-}
 
 export default function TableSelectMetric({
   data,
