@@ -8,7 +8,7 @@ import SongResources from "../components/SongResources.tsx";
 import SongExtraInfo from "../components/SongExtraInfo.tsx";
 import SongUsageChart from "../components/SongUsageChart.tsx";
 import { prepareUsageData } from "../utils/process-usage-data.ts";
-import { authFetch } from "../utils/auth_fetch.ts";
+import { authFetch } from "../utils/auth-fetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 
 function buildParams(headerFilters: HeaderFilter) {

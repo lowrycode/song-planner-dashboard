@@ -8,7 +8,7 @@ import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
 import PieChartController from "../components/PieChartController.tsx";
 import FadeLoader from "../components/FadeLoader.tsx";
-import { authFetch } from "../utils/auth_fetch.ts";
+import { authFetch } from "../utils/auth-fetch.ts";
 
 interface ActivitySummaryCount {
   church_activity_id: number;

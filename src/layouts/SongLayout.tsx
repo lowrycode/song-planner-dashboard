@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import type { Activity, HeaderFilter } from "../types/dashboard";
 import HeaderOverview from "../components/HeaderOverview";
-import { authFetch } from "../utils/auth_fetch";
+import { authFetch } from "../utils/auth-fetch";
 
 // Helper functions
 function oneYearAgoISO(): string {

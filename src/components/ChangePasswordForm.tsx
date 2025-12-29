@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authFetch } from "../utils/auth_fetch";
+import { authFetch } from "../utils/auth-fetch";
 
 export default function ChangePasswordForm() {
   const [error, setError] = useState<string | null>(null);

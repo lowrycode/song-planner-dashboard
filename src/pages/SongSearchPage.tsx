@@ -5,7 +5,7 @@ import DashboardPanel from "../components/DashboardPanel.tsx";
 import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
 import type { Activity, DashboardContext } from "../types/dashboard.ts";
-import { authFetch } from "../utils/auth_fetch.ts";
+import { authFetch } from "../utils/auth-fetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 
 // Types
