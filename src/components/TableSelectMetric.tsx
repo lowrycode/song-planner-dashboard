@@ -9,7 +9,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import { stringDisplaySort, numericDisplaySort } from "../utils/table_sorting.ts";
+import { stringDisplaySort, numericDisplaySort } from "../utils/table-data-helpers.ts";
 
 type TableSelectMetricProps = {
   data: any[];
