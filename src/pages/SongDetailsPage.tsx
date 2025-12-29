@@ -7,7 +7,7 @@ import DashboardPanel from "../components/DashboardPanel.tsx";
 import SongResources from "../components/SongResources.tsx";
 import SongExtraInfo from "../components/SongExtraInfo.tsx";
 import SongUsageChart from "../components/SongUsageChart.tsx";
-import { prepareUsageData } from "../utils/process_usage_data.ts";
+import { prepareUsageData } from "../utils/process-usage-data.ts";
 import { authFetch } from "../utils/auth_fetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 
