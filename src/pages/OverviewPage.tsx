@@ -7,6 +7,7 @@ import TableSort from "../components/TableSort.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
 import PieChartController from "../components/PieChartController.tsx";
+import FadeLoader from "../components/FadeLoader.tsx";
 import { authFetch } from "../utils/auth_fetch.ts";
 
 interface ActivitySummaryCount {
@@ -29,10 +30,10 @@ export default function OverviewPage() {
     song: number;
   } | null>(null);
   const [pieWeightByUsage, setPieWeightByUsage] = useState(false);
-  const [tableLoading, setTableLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(true);
   const [activitySongCountTableLoading, setActivitySongCountTableLoading] =
-    useState(false);
-  const [pieLoading, setPieLoading] = useState(false);
+    useState(true);
+  const [pieLoading, setPieLoading] = useState(true);
   const [tableError, setTableError] = useState<string | null>(null);
   const [activitySongCountTableError, setActivitySongCountTableError] =
     useState<string | null>(null);
@@ -186,53 +187,57 @@ export default function OverviewPage() {
   return (
     <div className="flex flex-wrap gap-5 m-5">
       {/* Pie section */}
-      <DashboardPanel className="flex flex-2 flex-wrap items-start gap-x-15 gap-y-5 min-h-[270px]">
+      <DashboardPanel className="flex flex-2 flex-wrap items-start gap-x-15 gap-y-5 min-h-[220px]">
         <PieChartController
           pieWeightByUsage={pieWeightByUsage}
           setPieWeightByUsage={setPieWeightByUsage}
           pieLoading={pieLoading}
         />
-        <div className="flex flex-1 justify-around flex-wrap gap-x-15 gap-y-5">
-          {pieError && <p className="text-center text-red-500">{pieError}</p>}
-          {pieLoading && <p className="text-center">Loading ...</p>}
-          {!pieLoading && !pieError && (
-            <>
-              <PieChart
-                data={hymnPieData}
-                labels={hymnPieLabels}
-                title="Song Type"
-              />
-              <PieChart
-                data={keyPieData}
-                labels={keyPieLabels}
-                title="Song Key"
-              />
-            </>
-          )}
-        </div>
+        <FadeLoader
+          loading={pieLoading}
+          error={pieError}
+          minHeight="min-h-[220px]"
+        >
+          <div className="flex flex-1 flex-wrap justify-around gap-x-15 gap-y-5">
+            <PieChart
+              data={hymnPieData}
+              labels={hymnPieLabels}
+              title="Song Type"
+            />
+            <PieChart
+              data={keyPieData}
+              labels={keyPieLabels}
+              title="Song Key"
+            />
+          </div>
+        </FadeLoader>
       </DashboardPanel>
 
       {/* Usage by Church Activity Summary Table */}
-      <DashboardPanel className="flex flex-col flex-1 flex-wrap items-start gap-x-15 min-h-[270px]">
+      <DashboardPanel className="flex flex-col flex-1 min-h-[220px]">
         {activitySongCountTableError && (
           <p className="text-red-500">{activitySongCountTableError}</p>
         )}
-        {activitySongCountTableLoading && <p>Loading table…</p>}
-        {!activitySongCountTableLoading && !activitySongCountTableError && (
+
+        <FadeLoader
+          loading={activitySongCountTableLoading}
+          error={activitySongCountTableError}
+          minHeight="min-h-[220px]"
+        >
           <TableSort
             data={activitySongCounts}
             headerMap={activityHeaderMap}
             title="Unique vs Total Used"
           />
-        )}
+        </FadeLoader>
       </DashboardPanel>
 
       {/* Table section */}
-      <div className="max-w-full">
-        <DashboardPanel>
+      <div className="w-full">
+        <DashboardPanel className="flex flex-col min-h-[450px]">
           {tableError && <p className="text-red-500">{tableError}</p>}
-          {tableLoading && <p>Loading table…</p>}
-          {!tableLoading && !tableError && (
+
+          <FadeLoader loading={tableLoading} error={tableError}>
             <TableSortSearch
               headerMap={headerMap}
               data={songs_processed}
@@ -240,7 +245,7 @@ export default function OverviewPage() {
               searchPlaceholder="Filter by song"
               title="Song Usages"
             />
-          )}
+          </FadeLoader>
         </DashboardPanel>
       </div>
     </div>

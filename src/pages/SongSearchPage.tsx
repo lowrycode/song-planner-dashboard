@@ -6,6 +6,7 @@ import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
 import type { Activity, DashboardContext } from "../types/dashboard.ts";
 import { authFetch } from "../utils/auth_fetch.ts";
+import FadeLoader from "../components/FadeLoader.tsx";
 
 // Types
 type CellValue = {
@@ -143,7 +144,7 @@ export default function SongSearchPage() {
     useOutletContext<DashboardContext>();
   const [metric, setMetric] = useState<SongMetric>("usage_count");
   const [songs, setSongs] = useState<Song[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
     lyric: "",
@@ -221,12 +222,11 @@ export default function SongSearchPage() {
       <DashboardPanel className="w-full">
         <SongForm filters={filters} onFilterChange={handleFilterChange} />
       </DashboardPanel>
-      {loading && <p>Loading songs...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {/* Table */}
-      {!loading && !error && (
-        <DashboardPanel className="w-full">
+      <DashboardPanel className="w-full">
+        <FadeLoader loading={loading} error={error} minHeight="min-h-[450px]">
           <TableSelectMetric
             headerMap={headerMap}
             textHeaders={["first_line"]}
@@ -235,8 +235,8 @@ export default function SongSearchPage() {
             metric={metric}
             setMetric={setMetric}
           />
-        </DashboardPanel>
-      )}
+        </FadeLoader>
+      </DashboardPanel>
     </div>
   );
 }
