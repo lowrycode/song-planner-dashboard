@@ -8,7 +8,8 @@ import {
   useReactTable,
   getSortedRowModel,
 } from "@tanstack/react-table";
-import type { ColumnDef, SortingState, SortingFn } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import { stringDisplaySort, numericDisplaySort } from "../utils/table_sorting.ts";
 
 type TableSelectMetricProps = {
   data: any[];
@@ -19,32 +20,6 @@ type TableSelectMetricProps = {
   setMetric: React.Dispatch<React.SetStateAction<SongMetric>>;
 };
 
-// Alphabetical, case-insensitive sort
-export const stringSort: SortingFn<any> = (rowA, rowB, columnId) => {
-  const getString = (row: any) => {
-    const v = row.getValue(columnId);
-    if (typeof v === "object" && v !== null && "display" in v) {
-      return String(v.display ?? "");
-    }
-    return String(v ?? "");
-  };
-
-  return getString(rowA).localeCompare(getString(rowB), undefined, {
-    sensitivity: "base",
-  });
-};
-
-// Numeric sort using `display` when present
-export const numericDisplaySort: SortingFn<any> = (rowA, rowB, columnId) => {
-  const getNumeric = (row: any) => {
-    const v = row.getValue(columnId);
-    return typeof v === "object" && v !== null && "display" in v
-      ? Number(v.display)
-      : Number(v);
-  };
-
-  return getNumeric(rowA) - getNumeric(rowB);
-};
 
 function renderCell(value: any) {
   if (value && typeof value === "object" && "display" in value) {
@@ -81,7 +56,7 @@ export default function TableSelectMetric({
       id: key,
       header,
       accessorFn: (row) => row[key],
-      sortingFn: textHeaderSet.has(key) ? stringSort : numericDisplaySort,
+      sortingFn: textHeaderSet.has(key) ? stringDisplaySort : numericDisplaySort,
     }));
   }, [headerMap, textHeaders]);
 
