@@ -14,7 +14,7 @@ function oneYearAgoISO(): string {
 export default function DashboardLayout() {
   // States
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [activitiesLoading, setActivitiesLoading] = useState(false);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [activitiesError, setActivitiesError] = useState<string | null>(null);
   const [filtersReady, setFiltersReady] = useState(false);
   const [headerFilters, setHeaderFilters] = useState<HeaderFilter>({
@@ -79,14 +79,13 @@ export default function DashboardLayout() {
   return (
     <>
       {/* Header */}
-      {activitiesLoading && <p>Loading Header…</p>}
-      {!activitiesLoading && !activitiesError && (
-        <HeaderOverview
-          activities={activities}
-          headerFilters={headerFilters}
-          setHeaderFilters={setHeaderFilters}
-        />
-      )}
+      <HeaderOverview
+        activities={activities}
+        activitiesLoading={activitiesLoading}
+        activitiesError={activitiesError}
+        headerFilters={headerFilters}
+        setHeaderFilters={setHeaderFilters}
+      />
       {/* Dashboard content */}
       <Outlet context={{ headerFilters, selectedActivities, filtersReady }} />
     </>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import FadeLoader from "../components/FadeLoader";
 
 interface ChurchActivity {
   id: number;
@@ -12,15 +13,21 @@ interface HeaderFilters {
   church_activities: string[];
 }
 
+interface HeaderOverviewProps {
+  activities: ChurchActivity[];
+  activitiesLoading: boolean;
+  activitiesError: string | null;
+  headerFilters: HeaderFilters;
+  setHeaderFilters: React.Dispatch<React.SetStateAction<HeaderFilters>>;
+}
+
 export default function HeaderOverview({
   activities,
+  activitiesLoading,
+  activitiesError,
   headerFilters,
   setHeaderFilters,
-}: {
-  activities: ChurchActivity[];
-  headerFilters: HeaderFilters;
-  setHeaderFilters: (filters: HeaderFilters) => void;
-}) {
+}: HeaderOverviewProps) {
   const [localFilters, setLocalFilters] = useState(headerFilters);
 
   useEffect(() => {
@@ -92,67 +99,72 @@ export default function HeaderOverview({
       onSubmit={handleSubmit}
       className="flex flex-col md:flex-row justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 "
     >
-      <div className="flex flex-1 justify-between bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
-        {/* Date Inputs */}
-        <div className="flex gap-x-5 gap-y-1">
-          <div className="flex gap-x-3 justify-end items-center">
-            <label htmlFor="from">From</label>
-            <input
-              type="date"
-              name="from_date"
-              id="from_date"
-              className="bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-sm"
-              value={localFilters.from_date}
-              onChange={handleChange}
-            />
+      <div className="flex flex-1 bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
+        <div className="flex w-full justify-between">
+          {/* Date Inputs */}
+          <div className="flex gap-x-5 gap-y-1">
+            <div className="flex gap-x-3 justify-end items-center">
+              <label htmlFor="from">From</label>
+              <input
+                type="date"
+                name="from_date"
+                id="from_date"
+                className="bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-sm"
+                value={localFilters.from_date}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex gap-x-3 justify-end items-center">
+              <label htmlFor="to">To</label>
+              <input
+                type="date"
+                name="to_date"
+                id="to_date"
+                className="bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-sm"
+                value={localFilters.to_date}
+                onChange={handleChange}
+              />
+            </div>
           </div>
-          <div className="flex gap-x-3 justify-end items-center">
-            <label htmlFor="to">To</label>
-            <input
-              type="date"
-              name="to_date"
-              id="to_date"
-              className="bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-sm"
-              value={localFilters.to_date}
-              onChange={handleChange}
-            />
+          {/* Select All checkbox */}
+          <div className="flex items-center">
+            <label className="flex items-center gap-2 text-gray-100">
+              <input
+                type="checkbox"
+                name="select_all"
+                checked={allSelected}
+                onChange={handleChange}
+                className="accent-purple-500"
+              />
+              Toggle Activities
+            </label>
           </div>
         </div>
-
-        {/* Select All checkbox */}
-        <div className="flex items-center">
-          <label className="flex items-center gap-2 text-gray-100">
-            <input
-              type="checkbox"
-              name="select_all"
-              checked={allSelected}
-              onChange={handleChange}
-              className="accent-purple-500"
-            />
-            Toggle Activities
-          </label>
-        </div>
-
         {/* Activities checkboxes */}
-        <div className="flex gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap">
-          {[...activities]
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map(({ id, name }) => (
-              <label key={id} className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="accent-purple-500"
-                  name="church_activities"
-                  value={id.toString()} // use ID as string value for checkbox
-                  checked={localFilters.church_activities.includes(
-                    id.toString()
-                  )} // check based on ID string
-                  onChange={handleChange}
-                />
-                {name}
-              </label>
-            ))}
-        </div>
+        <FadeLoader
+          loading={activitiesLoading}
+          error={activitiesError}
+        >
+          <div className="flex w-full gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap min-h-8">
+            {[...activities]
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(({ id, name }) => (
+                <label key={id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="accent-purple-500"
+                    name="church_activities"
+                    value={id.toString()} // use ID as string value for checkbox
+                    checked={localFilters.church_activities.includes(
+                      id.toString()
+                    )} // check based on ID string
+                    onChange={handleChange}
+                  />
+                  {name}
+                </label>
+              ))}
+          </div>
+        </FadeLoader>
       </div>
       <button
         type="submit"
