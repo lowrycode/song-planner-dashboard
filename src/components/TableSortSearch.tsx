@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import {
   flexRender,
   getCoreRowModel,
@@ -8,10 +7,16 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import {
+  stringDisplaySort,
+  numericDisplaySort,
+} from "../utils/table-data-helpers.ts";
+import { renderCell } from "../utils/table-cell-renderers.tsx";
 
 type TableSortSearchProps = {
   data: any[];
   headerMap: Record<string, string>;
+  textHeaders?: string[];
   searchKeys?: string[];
   searchPlaceholder?: string;
   title?: string;
@@ -20,29 +25,38 @@ type TableSortSearchProps = {
 export default function TableSortSearch({
   data,
   headerMap,
+  textHeaders = [],
   searchKeys = [],
   searchPlaceholder = "Search...",
   title = "Song List",
 }: TableSortSearchProps) {
   // Global search value
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   // Build columns dynamically
-  const columns = React.useMemo<ColumnDef<any>[]>(
-    () =>
-      Object.entries(headerMap).map(([key, header]) => ({
-        accessorKey: key,
-        header,
-        enableGlobalFilter: searchKeys.includes(key),
-        filterFn: (row, columnId, filterValue) => {
-          const value = String(row.getValue(columnId) ?? "").toLowerCase();
-          return value.includes(String(filterValue).toLowerCase());
-        },
-      })),
-    [headerMap, searchKeys]
-  );
+  const columns = React.useMemo<ColumnDef<any>[]>(() => {
+    const textHeaderSet = new Set(textHeaders);
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+    return Object.entries(headerMap).map(([key, header]) => ({
+      accessorKey: key,
+      header,
+      enableGlobalFilter: searchKeys.includes(key),
+      filterFn: (row, columnId, filterValue) => {
+        const raw = row.getValue(columnId);
+
+        const value =
+          typeof raw === "object" && raw !== null && "display" in raw
+            ? String(raw.display ?? "")
+            : String(raw ?? "");
+
+        return value.toLowerCase().includes(String(filterValue).toLowerCase());
+      },
+      sortingFn: textHeaderSet.has(key)
+        ? stringDisplaySort
+        : numericDisplaySort,
+    }));
+  }, [headerMap, searchKeys, textHeaders]);
 
   const table = useReactTable({
     data,
@@ -107,14 +121,33 @@ export default function TableSortSearch({
           <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="even:bg-violet-100">
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className="border border-purple-900 px-3 py-1"
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  const value = cell.getValue();
+
+                  const hasHover =
+                    value &&
+                    typeof value === "object" &&
+                    value !== null &&
+                    "hover" in value &&
+                    typeof value.hover === "string" &&
+                    Boolean(value.hover);
+
+                  return (
+                    <td
+                      key={cell.id}
+                      className={`border border-purple-900 px-3 py-1 ${
+                        hasHover ? "cursor-help" : ""
+                      }`}
+                      title={
+                        hasHover
+                          ? (value as { hover?: string }).hover
+                          : undefined
+                      }
+                    >
+                      {renderCell(value)}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

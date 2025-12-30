@@ -174,7 +174,11 @@ export default function OverviewPage() {
 
       return {
         id: song.id,
-        first_line: song.first_line,
+        first_line: {
+          display: song.first_line,
+          to: `/songs/${song.id}`,
+          hover: "View song details",
+        },
         ...activityCounts,
         total: song.overall.usage_count,
       };
@@ -242,6 +246,7 @@ export default function OverviewPage() {
               headerMap={headerMap}
               data={songs_processed}
               searchKeys={searchKeys}
+              textHeaders={["first_line"]}
               searchPlaceholder="Filter by song"
               title="Song Usages"
             />
