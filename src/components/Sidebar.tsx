@@ -1,40 +1,30 @@
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { TbContrastFilled } from "react-icons/tb";
-import { FaUser } from "react-icons/fa";
+// import { BsCircleHalf } from "react-icons/bs";
+import { FaUnlock } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
+import SidebarSection from "./SidebarSection";
 
-function Sidebar() {
+export default function Sidebar() {
+  const dashboardLinks = [
+    { to: "/overview", icon: <MdSpaceDashboard />, label: "Overview" },
+    { to: "/search", icon: <FaMagnifyingGlass />, label: "Search" },
+    // { to: "/compare", icon: <BsCircleHalf />, label: "Compare" },
+  ];
+
+  const accountLinks = [
+    { to: "/change-password", icon: <FaUnlock />, label: "Change Password" },
+    { to: "/logout", icon: <FiLogOut />, label: "Logout" },
+  ];
+
   return (
-    <aside className="w-48 bg-gray-900 text-gray-200 p-4">
-      <img src="/images/ccnetwork_logo.png" alt="CCN logo" />
-      <div className="mt-10">
-        <h2 className="text-sm mb-2">DASHBOARD</h2>
-        <ul className="space-y-2">
-          <li className="flex items-center gap-x-3">
-            <MdSpaceDashboard />
-            Overview
-          </li>
-          <li className="flex items-center gap-x-3">
-            <FaMagnifyingGlass />
-            Drilldown
-          </li>
-          <li className="flex items-center gap-x-3">
-            <TbContrastFilled />
-            Compare
-          </li>
-        </ul>
-      </div>
-      <div className="mt-10">
-        <h2 className="text-sm mb-2">SETTINGS</h2>
-        <ul className="space-y-2">
-          <li className="flex items-center gap-x-3">
-            <FaUser />
-            Profile
-          </li>
-        </ul>
-      </div>
-    </aside>
+    <nav className="w-48 bg-gray-900 text-gray-200 p-4" aria-label="Main navigation">
+      <header className="flex items-center justify-center">
+        <img src="/images/ccnetwork_logo.png" alt="CCN logo" />
+      </header>
+
+      <SidebarSection title="DASHBOARD" links={dashboardLinks} />
+      <SidebarSection title="ACCOUNT" links={accountLinks} />
+    </nav>
   );
 }
-
-export default Sidebar;
