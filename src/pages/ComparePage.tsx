@@ -229,10 +229,10 @@ export default function ComparePage() {
 
         <FadeLoader loading={!targetActivity}>
           {/* Comparison Tables section */}
-          <div className="flex flex-wrap max-w-full gap-5">
-            <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
-              {tableError && <p className="text-red-500">{tableError}</p>}
-              <FadeLoader loading={tableLoading} error={tableError}>
+          <FadeLoader loading={tableLoading} error={tableError}>
+          {tableError && <p className="text-red-500">{tableError}</p>}
+            <div className="flex flex-wrap max-w-full gap-5">
+              <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMapTargetOnly}
                   data={songsDoneOnlyAtTarget}
@@ -241,11 +241,8 @@ export default function ComparePage() {
                   searchPlaceholder="Filter by song"
                   title={`Only used at ${targetActivity?.name || "Target"}`}
                 />
-              </FadeLoader>
-            </DashboardPanel>
-            <DashboardPanel className="flex flex-col flex-1 xl:max-w-1/2 min-h-[450px]">
-              {tableError && <p className="text-red-500">{tableError}</p>}
-              <FadeLoader loading={tableLoading} error={tableError}>
+              </DashboardPanel>
+              <DashboardPanel className="flex flex-col flex-1 xl:max-w-1/2 min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMapOthersOnly}
                   data={songsDoneInOthersOnly}
@@ -254,11 +251,8 @@ export default function ComparePage() {
                   searchPlaceholder="Filter by song"
                   title="Only used elsewhere"
                 />
-              </FadeLoader>
-            </DashboardPanel>
-            <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
-              {tableError && <p className="text-red-500">{tableError}</p>}
-              <FadeLoader loading={tableLoading} error={tableError}>
+              </DashboardPanel>
+              <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMap}
                   data={songsDoneAtTargetAndOthers}
@@ -269,9 +263,9 @@ export default function ComparePage() {
                     targetActivity?.name || "Target"
                   } and elsewhere`}
                 />
-              </FadeLoader>
-            </DashboardPanel>
-          </div>
+              </DashboardPanel>
+            </div>
+          </FadeLoader>
         </FadeLoader>
       </div>
     </FadeLoader>
