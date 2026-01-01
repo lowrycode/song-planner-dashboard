@@ -77,8 +77,8 @@ export default function SongForm({
             Hymn / Song
           </label>
           <select
+            id="song-type"
             name="songType"
-            id="songType"
             className="py-1 px-2 border border-purple-950"
             value={localFilters.songType}
             onChange={handleSelectChange}
@@ -97,8 +97,8 @@ export default function SongForm({
             Key
           </label>
           <select
+            id="song-key"
             name="songKey"
-            id="songKey"
             className="py-1 px-2 border border-purple-950"
             value={localFilters.songKey}
             onChange={handleSelectChange}
