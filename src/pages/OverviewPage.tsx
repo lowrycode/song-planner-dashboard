@@ -157,11 +157,15 @@ export default function OverviewPage() {
   };
 
   // Get headers and data for table component
-  const headerMap = {
-    first_line: "Song (First Line)",
-    ...Object.fromEntries(selectedActivities.map((a) => [a.slug, a.name])),
-    total: "Total",
-  };
+  const headerMap: Record<string, string> = useMemo(
+    () => ({
+      first_line: "Song (First Line)",
+      ...Object.fromEntries(selectedActivities.map((a) => [a.slug, a.name])),
+      total: "Total",
+    }),
+    [selectedActivities]
+  );
+
   const songs_processed = useMemo(() => {
     return songs.map((song: Song) => {
       const activityCounts = Object.fromEntries(
