@@ -1,6 +1,6 @@
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-// import { BsCircleHalf } from "react-icons/bs";
+import { BsCircleHalf } from "react-icons/bs";
 import { FaUnlock } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import SidebarSection from "./SidebarSection";
@@ -9,7 +9,7 @@ export default function Sidebar() {
   const dashboardLinks = [
     { to: "/overview", icon: <MdSpaceDashboard />, label: "Overview" },
     { to: "/search", icon: <FaMagnifyingGlass />, label: "Search" },
-    // { to: "/compare", icon: <BsCircleHalf />, label: "Compare" },
+    { to: "/compare", icon: <BsCircleHalf />, label: "Compare" },
   ];
 
   const accountLinks = [

@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 import ChangePasswordPage from "./pages/ChangePasswordPage.tsx";
 import LogoutPage from "./pages/LogoutPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
+import ComparePage from "./pages/ComparePage.tsx";
 import SongSearchPage from "./pages/SongSearchPage.tsx";
 import SongDetailsPage from "./pages/SongDetailsPage.tsx";
 
@@ -25,6 +26,7 @@ function App() {
               <Route path="/overview" element={<OverviewPage />} />
               <Route path="/songs/:song_id" element={<SongDetailsPage />} />
               <Route path="/search" element={<SongSearchPage />} />
+              <Route path="/compare" element={<ComparePage />} />
               {/* Add more protected pages here */}
             </Route>
           <Route path="/change-password" element={<ChangePasswordPage />} />
