@@ -26,3 +26,22 @@ export const numericDisplaySort: SortingFn<any> = (rowA, rowB, columnId) => {
 
   return getNumeric(rowA) - getNumeric(rowB);
 };
+
+// Global filter using `display` when present
+export const displayStringGlobalFilter = (
+  row: any,
+  columnIds: string[],
+  filterValue: unknown
+) => {
+  const search = String(filterValue).toLowerCase();
+
+  return columnIds.some((columnId) => {
+    const raw = row.getValue(columnId);
+    const value =
+      typeof raw === "object" && raw !== null && "display" in raw
+        ? String(raw.display ?? "")
+        : String(raw ?? "");
+
+    return value.toLowerCase().includes(search);
+  });
+};

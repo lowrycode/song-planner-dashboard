@@ -10,6 +10,7 @@ import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
   stringDisplaySort,
   numericDisplaySort,
+  displayStringGlobalFilter,
 } from "../utils/table-data-helpers.ts";
 import { renderCell } from "../utils/table-cell-renderers.tsx";
 
@@ -41,17 +42,6 @@ export default function TableSortSearch({
     return Object.entries(headerMap).map(([key, header]) => ({
       accessorKey: key,
       header,
-      enableGlobalFilter: searchKeys.includes(key),
-      filterFn: (row, columnId, filterValue) => {
-        const raw = row.getValue(columnId);
-
-        const value =
-          typeof raw === "object" && raw !== null && "display" in raw
-            ? String(raw.display ?? "")
-            : String(raw ?? "");
-
-        return value.toLowerCase().includes(String(filterValue).toLowerCase());
-      },
       sortingFn: textHeaderSet.has(key)
         ? stringDisplaySort
         : numericDisplaySort,
@@ -67,6 +57,8 @@ export default function TableSortSearch({
     },
     onGlobalFilterChange: setGlobalFilter, // handler
     onSortingChange: setSorting,
+    globalFilterFn: (row, _columnId, filterValue) =>
+      displayStringGlobalFilter(row, searchKeys, filterValue),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
