@@ -227,8 +227,8 @@ export default function ComparePage() {
           />
         </DashboardPanel>
 
-        <FadeLoader loading={!targetActivity}>
-          {/* Comparison Tables section */}
+        {/* Comparison Tables section */}
+        {targetActivity && (
           <FadeLoader loading={tableLoading} error={tableError}>
           {tableError && <p className="text-red-500">{tableError}</p>}
             <div className="flex flex-wrap max-w-full gap-5">
@@ -266,7 +266,7 @@ export default function ComparePage() {
               </DashboardPanel>
             </div>
           </FadeLoader>
-        </FadeLoader>
+        )}
       </div>
     </FadeLoader>
   );
