@@ -34,6 +34,7 @@ export const displayStringGlobalFilter = (
   filterValue: unknown
 ) => {
   const search = String(filterValue).toLowerCase();
+  if (!search) return true;
 
   return columnIds.some((columnId) => {
     const raw = row.getValue(columnId);
