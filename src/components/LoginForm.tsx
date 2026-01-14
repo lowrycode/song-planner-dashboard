@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -95,9 +95,9 @@ function LoginForm() {
         </button>
         <p className="mt-3 text-end">
           Don't have an account?{" "}
-          <a href="#" className="font-semibold text-purple-950">
+          <Link to="/register" className="font-semibold text-purple-950">
             Sign up now
-          </a>
+          </Link>
         </p>
       </form>
     </>
