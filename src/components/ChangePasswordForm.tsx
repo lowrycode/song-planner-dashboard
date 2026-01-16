@@ -71,14 +71,9 @@ export default function ChangePasswordForm() {
         return;
       }
 
-      setSuccess("Password changed successfully. Logging you out everywhere..");
+      setSuccess("✔ Password changed successfully. Logging you out everywhere..");
 
-      // Call logout endpoint to revoke tokens & clear cookies
-      await authFetch("/auth/logout", {
-        method: "POST",
-      });
-
-      // Logout
+      // Redirect to login
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 3000);
