@@ -11,7 +11,7 @@ function oneYearAgoISO(): string {
   return d.toISOString().split("T")[0];
 }
 
-export default function DashboardLayout() {
+export default function SongLayout() {
   // States
   const [activities, setActivities] = useState<Activity[]>([]);
   const [activitiesLoading, setActivitiesLoading] = useState(true);
