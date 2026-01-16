@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
+import { unauthFetch } from "../utils/unauth-fetch";
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Read redirect param from query string:
+  const auth = useContext(AuthContext);
+
+  if (!auth) {
+    throw new Error("AuthContext must be used within an AuthProvider");
+  }
+
+  const { setUser } = auth;
   const redirectTo = location.state?.from?.pathname || "/overview";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -21,24 +29,36 @@ function LoginForm() {
     body.append("password", password);
 
     try {
-      const response = await fetch("http://localhost:8000/auth/login", {
+      const response = await unauthFetch("/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: body.toString(),
+        credentials: "include", // allows cookies from backend
       });
 
       if (!response.ok) {
         const errData = await response.json();
-        setError(errData.detail || "An error occured.");
+        setError(errData.detail || "An error occurred.");
         return;
       }
 
-      const data = await response.json();
+      // After login, fetch current user info
+      const meResponse = await unauthFetch("/auth/me", {
+        credentials: "include",
+      });
 
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
+      console.log("meResponse status", meResponse.status);
+
+      if (meResponse.ok) {
+        const userData = await meResponse.json();
+        console.log("User data:", userData);
+        setUser(userData);
+      } else {
+        console.log("Not authenticated after login");
+        setUser(null);
+      }
 
       // Redirect
       navigate(redirectTo, { replace: true });

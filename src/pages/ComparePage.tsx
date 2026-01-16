@@ -64,7 +64,7 @@ export default function ComparePage() {
       try {
         const params = buildParams(headerFilters);
         const res = await authFetch(
-          `http://127.0.0.1:8000/songs/usages/summary?${params}`
+          `/songs/usages/summary?${params}`
         );
         if (!res.ok) throw new Error("Failed to fetch songs");
 

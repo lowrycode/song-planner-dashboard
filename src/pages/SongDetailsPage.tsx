@@ -91,8 +91,8 @@ export default function SongDetailsPage() {
         const params = buildParams(headerFilters).toString();
 
         const [detailsRes, usageRes] = await Promise.all([
-          authFetch(`http://127.0.0.1:8000/songs/${song_id}`),
-          authFetch(`http://127.0.0.1:8000/songs/${song_id}/usages?${params}`),
+          authFetch(`/songs/${song_id}`),
+          authFetch(`/songs/${song_id}/usages?${params}`),
         ]);
 
         if (!detailsRes.ok) throw new Error("Failed to fetch song details");

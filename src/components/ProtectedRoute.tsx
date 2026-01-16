@@ -1,18 +1,26 @@
+import { useContext } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
 
-function ProtectedRoute() {
+export default function ProtectedRoute() {
   const location = useLocation();
+  const auth = useContext(AuthContext);
 
-  // Check if token exists in localStorage (or use context/state)
-  const isAuthenticated = Boolean(localStorage.getItem("access_token"));
+  if (!auth) {
+    throw new Error("AuthContext must be used within an AuthProvider");
+  }
 
-  if (!isAuthenticated) {
-    // Redirect to login page and save the page user wanted to visit
+  const { user, userLoading } = auth;
+
+  if (userLoading) {
+    // Show placeholder until auth state is resolved
+    return <div>Getting auth state...</div>;
+  }
+  
+  if (!user) {
+    // Not logged in, redirect to login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // User is authenticated, render child routes
   return <Outlet />;
 }
-
-export default ProtectedRoute;

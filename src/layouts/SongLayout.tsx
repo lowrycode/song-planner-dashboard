@@ -30,7 +30,7 @@ export default function DashboardLayout() {
       setActivitiesError(null);
 
       try {
-        const response = await authFetch("http://127.0.0.1:8000/activities");
+        const response = await authFetch("/activities");
         if (!response.ok) {
           throw new Error("Failed to fetch activities");
         }

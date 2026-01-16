@@ -63,7 +63,7 @@ export default function OverviewPage() {
       try {
         const params = buildParams(headerFilters);
         const res = await authFetch(
-          `http://127.0.0.1:8000/songs/usages/summary?${params}`
+          `/songs/usages/summary?${params}`
         );
         if (!res.ok) throw new Error("Failed to fetch songs");
 
@@ -90,7 +90,7 @@ export default function OverviewPage() {
       try {
         const params = buildParams(headerFilters);
         const res = await authFetch(
-          `http://127.0.0.1:8000/songs/usages/activity/summary?${params}`
+          `/songs/usages/activity/summary?${params}`
         );
         if (!res.ok) throw new Error("Failed to fetch songs");
 
@@ -119,8 +119,8 @@ export default function OverviewPage() {
         if (pieWeightByUsage === false) params.append("unique", "true");
 
         const [keysRes, typesRes] = await Promise.all([
-          authFetch(`http://127.0.0.1:8000/songs/keys/summary?${params}`),
-          authFetch(`http://127.0.0.1:8000/songs/types/summary?${params}`),
+          authFetch(`/songs/keys/summary?${params}`),
+          authFetch(`/songs/types/summary?${params}`),
         ]);
 
         if (!keysRes.ok) throw new Error("Failed to fetch key summary");

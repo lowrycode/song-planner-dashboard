@@ -23,7 +23,7 @@ export default function ChangePasswordForm() {
 
     try {
       const response = await authFetch(
-        "http://localhost:8000/auth/change-password",
+        "/auth/change-password",
         {
           method: "POST",
           headers: {
@@ -71,15 +71,17 @@ export default function ChangePasswordForm() {
         return;
       }
 
-      setSuccess("Password changed successfully");
+      setSuccess("Password changed successfully. Logging you out everywhere..");
 
-      // Optional but recommended: log user out after password change
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      // Call logout endpoint to revoke tokens & clear cookies
+      await authFetch("/auth/logout", {
+        method: "POST",
+      });
 
+      // Logout
       setTimeout(() => {
         navigate("/login", { replace: true });
-      }, 2000);
+      }, 3000);
     } catch (err) {
       console.error("Change password failed", err);
       setError("Change password failed. Please try again.");

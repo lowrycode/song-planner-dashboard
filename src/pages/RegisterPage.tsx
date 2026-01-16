@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import RegisterForm from "../components/RegisterForm";
+import { unauthFetch } from "../utils/unauth-fetch";
 
 export interface Network {
   id: number;
@@ -29,7 +30,7 @@ export default function RegisterPage() {
     async function fetchNetworks() {
       setNetworksLoading(true);
       try {
-        const response = await fetch("http://localhost:8000/networks");
+        const response = await unauthFetch("/networks");
         if (!response.ok) throw new Error("Failed to fetch networks");
         const data = await response.json();
         setNetworks(data);
@@ -60,8 +61,8 @@ export default function RegisterPage() {
     async function fetchChurches() {
       setChurchesLoading(true);
       try {
-        const res = await fetch(
-          `http://localhost:8000/networks/${selectedNetworkId}/churches`,
+        const res = await unauthFetch(
+          `/networks/${selectedNetworkId}/churches`,
           { signal: controller.signal }
         );
         if (!res.ok) throw new Error();

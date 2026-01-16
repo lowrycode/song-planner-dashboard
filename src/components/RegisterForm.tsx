@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { Network, Church } from "../pages/RegisterPage";
+import { unauthFetch } from "../utils/unauth-fetch";
 
 interface RegisterFormProps {
   networks: Network[];
@@ -82,7 +83,7 @@ export default function RegisterForm({
     };
 
     try {
-      const response = await fetch("http://localhost:8000/auth/register", {
+      const response = await unauthFetch("/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
