@@ -92,7 +92,7 @@ export default function OverviewPage() {
       try {
         const params = buildParams(headerFilters);
         const res = await authFetch(
-          `/songs/usages/activity/summary?${params}`
+          `/activities/songs/usages/summary?${params}`
         );
         if (!res.ok) throw new Error("Failed to fetch songs");
 
