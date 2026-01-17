@@ -104,7 +104,7 @@ export default function HeaderOverview({
           {/* Date Inputs */}
           <div className="flex gap-x-5 gap-y-1">
             <div className="flex gap-x-3 justify-end items-center">
-              <label htmlFor="from">From</label>
+              <label htmlFor="from_date">From</label>
               <input
                 type="date"
                 name="from_date"
@@ -115,7 +115,7 @@ export default function HeaderOverview({
               />
             </div>
             <div className="flex gap-x-3 justify-end items-center">
-              <label htmlFor="to">To</label>
+              <label htmlFor="to_date">To</label>
               <input
                 type="date"
                 name="to_date"
