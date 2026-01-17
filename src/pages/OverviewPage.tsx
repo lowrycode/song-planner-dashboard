@@ -121,8 +121,8 @@ export default function OverviewPage() {
         if (pieWeightByUsage === false) params.append("unique", "true");
 
         const [keysRes, typesRes] = await Promise.all([
-          authFetch(`/songs/keys/summary?${params}`),
-          authFetch(`/songs/types/summary?${params}`),
+          authFetch(`/songs/usages/keys?${params}`),
+          authFetch(`/songs/usages/types?${params}`),
         ]);
 
         if (!keysRes.ok) throw new Error("Failed to fetch key summary");
