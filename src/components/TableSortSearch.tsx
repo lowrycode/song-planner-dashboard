@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -31,6 +31,7 @@ export default function TableSortSearch({
   searchPlaceholder = "Search...",
   title = "Song List",
 }: TableSortSearchProps) {
+  const inputId = useId();
   // Global search value
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -76,7 +77,11 @@ export default function TableSortSearch({
           </span>
         </h2>
         {/* GLOBAL SEARCH INPUT */}
+        <label htmlFor={inputId} className="sr-only">
+          Search
+        </label>
         <input
+          id={inputId}
           type="text"
           placeholder={searchPlaceholder}
           value={globalFilter ?? ""}
@@ -98,7 +103,7 @@ export default function TableSortSearch({
                   >
                     {flexRender(
                       header.column.columnDef.header,
-                      header.getContext()
+                      header.getContext(),
                     )}
                     {{
                       asc: " ▲",
