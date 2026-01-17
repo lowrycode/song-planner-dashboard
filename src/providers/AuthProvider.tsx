@@ -1,15 +1,13 @@
-import React, { createContext, useState, useEffect, type ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  type ReactNode,
+} from "react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Define the shape of the context value
-interface AuthContextType {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  userLoading: boolean;
-}
-
-// Placeholder User type — adapt to your actual User shape
 interface User {
   id: number;
   username: string;
@@ -18,7 +16,12 @@ interface User {
   role: string;
 }
 
-// Create the context with an initial null value
+interface AuthContextType {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  userLoading: boolean;
+}
+
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
@@ -35,16 +38,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     async function fetchCurrentUser() {
       try {
         const response = await fetch(`${API_BASE_URL}/auth/me`, {
-          credentials: "include", // send cookies
+          credentials: "include",
         });
-        console.log("AuthProvider /auth/me status:", response.status);
 
         if (!response.ok) {
           // Not authenticated or error, reset user to null
           setUser(null);
         } else {
           const data = await response.json();
-          console.log("AuthProvider user data:", data);
           setUser(data);
         }
       } catch (error) {
@@ -58,9 +59,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     fetchCurrentUser();
   }, []);
 
-  return (
-    <AuthContext value={{ user, setUser, userLoading }}>
-      {children}
-    </AuthContext>
+  const contextValue = useMemo(
+    () => ({
+      user,
+      setUser,
+      userLoading,
+    }),
+    [user, userLoading]
   );
+
+  return <AuthContext value={contextValue}>
+    {children}
+  </AuthContext>;
 }

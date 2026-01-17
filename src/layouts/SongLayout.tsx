@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import type { Activity, HeaderFilter } from "../types/dashboard";
 import HeaderOverview from "../components/HeaderOverview";
-import { authFetch } from "../utils/auth-fetch";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 
 // Helper functions
 function oneYearAgoISO(): string {
@@ -22,6 +22,8 @@ export default function SongLayout() {
     to_date: "",
     church_activities: [] as string[],
   });
+
+  const authFetch = useAuthFetch();
 
   // Fetch activities once on pageload (based on user permission)
   useEffect(() => {

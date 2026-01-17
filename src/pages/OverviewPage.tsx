@@ -8,7 +8,7 @@ import TableSortSearch from "../components/TableSortSearch.tsx";
 import PieChart from "../components/PieChart.tsx";
 import PieChartController from "../components/PieChartController.tsx";
 import FadeLoader from "../components/FadeLoader.tsx";
-import { authFetch } from "../utils/auth-fetch.ts";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 
 interface ActivitySummaryCount {
   church_activity_id: number;
@@ -38,6 +38,8 @@ export default function OverviewPage() {
   const [activitySongCountTableError, setActivitySongCountTableError] =
     useState<string | null>(null);
   const [pieError, setPieError] = useState<string | null>(null);
+
+  const authFetch = useAuthFetch();
 
   // Helper function
   const buildParams = useCallback((headerFilters: HeaderFilter) => {

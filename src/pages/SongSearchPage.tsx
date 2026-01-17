@@ -5,7 +5,7 @@ import DashboardPanel from "../components/DashboardPanel.tsx";
 import SongForm from "../components/SongForm.tsx";
 import TableSelectMetric from "../components/TableSelectMetric.tsx";
 import type { Activity, DashboardContext } from "../types/dashboard.ts";
-import { authFetch } from "../utils/auth-fetch.ts";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 import FadeLoader from "../components/FadeLoader.tsx";
 
 // Types
@@ -154,6 +154,8 @@ export default function SongSearchPage() {
     filterFirstUsedInRange: false,
     filterLastUsedInRange: false,
   });
+
+  const authFetch = useAuthFetch();
 
   // Fetch song data when filters updated
   useEffect(() => {

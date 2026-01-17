@@ -6,7 +6,7 @@ import DashboardPanel from "../components/DashboardPanel.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import FadeLoader from "../components/FadeLoader.tsx";
 import TargetActivitySelector from "../components/TargetActivitySelector.tsx";
-import { authFetch } from "../utils/auth-fetch.ts";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 import type { Activity } from "../types/dashboard.ts";
 
 // Types
@@ -37,6 +37,8 @@ export default function ComparePage() {
   const [tableError, setTableError] = useState<string | null>(null);
   const [targetActivity, setTargetActivity] = useState<Activity | null>(null);
 
+  const authFetch = useAuthFetch();
+  
   // Helper function
   const buildParams = useCallback((headerFilters: HeaderFilter) => {
     const params = new URLSearchParams();
