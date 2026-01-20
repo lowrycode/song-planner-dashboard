@@ -5,16 +5,9 @@ import React, {
   useMemo,
   type ReactNode,
 } from "react";
+import type { User } from "../types/users";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-interface User {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-}
 
 interface AuthContextType {
   user: User | null;
