@@ -1,17 +1,10 @@
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../utils/auth-fetch";
-import { AuthContext } from "../providers/AuthProvider";
+import { useAuth } from "./useAuth";
 
 export function useAuthFetch() {
   const navigate = useNavigate();
-
-  const auth = useContext(AuthContext);
-  if (!auth) {
-    throw new Error("AuthContext must be used within an AuthProvider");
-  }
-
-  const { setUser } = auth;
+  const { setUser } = useAuth();
 
   return async function authFetchWithLogout(
     url: string,

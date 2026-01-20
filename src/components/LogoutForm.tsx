@@ -1,18 +1,11 @@
-import { useContext } from "react"
 import { useNavigate } from "react-router-dom";
 import { useAuthFetch } from "../hooks/useAuthFetch";
-import { AuthContext } from "../providers/AuthProvider";
+import { useAuth } from "../hooks/useAuth";
 
 export default function LogoutForm() {
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
+  const { setUser } = useAuth();
   const authFetch = useAuthFetch();
-
-  if (!auth) {
-    throw new Error("AuthContext must be used within an AuthProvider");
-  }
-
-  const { setUser } = auth;
 
   async function handleLogout() {
     try {

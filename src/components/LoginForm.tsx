@@ -1,6 +1,6 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { AuthContext } from "../providers/AuthProvider";
+import { useAuth } from "../hooks/useAuth";
 import { unauthFetch } from "../utils/unauth-fetch";
 
 function LoginForm() {
@@ -8,13 +8,8 @@ function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const auth = useContext(AuthContext);
+  const { setUser } = useAuth();
 
-  if (!auth) {
-    throw new Error("AuthContext must be used within an AuthProvider");
-  }
-
-  const { setUser } = auth;
   const redirectTo = location.state?.from?.pathname || "/overview";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -44,23 +39,21 @@ function LoginForm() {
         return;
       }
 
-      // After login, fetch current user info
       const meResponse = await unauthFetch("/auth/me", {
         credentials: "include",
       });
 
-      console.log("meResponse status", meResponse.status);
-
-      if (meResponse.ok) {
-        const userData = await meResponse.json();
-        console.log("User data:", userData);
-        setUser(userData);
-      } else {
-        console.log("Not authenticated after login");
+      if (!meResponse.ok) {
+        setError(
+          "Login succeeded but authentication failed. Please try again."
+        );
         setUser(null);
+        return;
       }
 
-      // Redirect
+      const userData = await meResponse.json();
+      setUser(userData);
+
       navigate(redirectTo, { replace: true });
     } catch (err) {
       console.error("Login failed", err);
