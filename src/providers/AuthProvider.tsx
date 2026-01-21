@@ -5,13 +5,13 @@ import React, {
   useMemo,
   type ReactNode,
 } from "react";
-import type { User } from "../types/users";
+import type { AuthUser } from "../types/users";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface AuthContextType {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: AuthUser | null;
+  setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
   userLoading: boolean;
 }
 
@@ -24,7 +24,7 @@ interface AuthProviderProps {
 }
 
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {

@@ -33,7 +33,7 @@ export interface ChurchActivityAccess {
   church_activity_slug: string;
 }
 
-export interface UserFromApi {
+export interface User {
   id: number;
   first_name: string;
   last_name: string;
@@ -42,20 +42,25 @@ export interface UserFromApi {
   created_at: string;
   network: Network;
   church: Church;
-  accesses: {
-    networks: NetworkAccess[];
-    churches: ChurchAccess[];
-    church_activities: ChurchActivityAccess[];
-  };
+}
+
+export interface UserAccesses {
+  networks: NetworkAccess[];
+  churches: ChurchAccess[];
+  church_activities: ChurchActivityAccess[];
+}
+
+export interface UserWithAccesses extends User {
+  accesses: UserAccesses;
 }
 
 // Used for authentication context
-export interface User {
+export interface AuthUser {
   id: number;
   username: string;
   first_name: string;
   last_name: string;
   role: UserRole;
   network: Network;
-  church: Church
+  church: Church;
 }

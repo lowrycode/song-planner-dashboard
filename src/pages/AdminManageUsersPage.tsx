@@ -5,7 +5,7 @@ import TableSortSearch from "../components/TableSortSearch.tsx";
 import { authFetch } from "../utils/auth-fetch.ts";
 import timeAgo from "../utils/time-ago.ts";
 import { UserRoleLabels } from "../constants/user-role-labels.ts";
-import type { UserFromApi } from "../types/users.ts";
+import type { UserWithAccesses } from "../types/users.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 
 
@@ -32,7 +32,7 @@ interface UnapprovedUser {
   time_ago: string;
 }
 
-function processUsers(data: UserFromApi[]): [ApprovedUser[], UnapprovedUser[]] {
+function processUsers(data: UserWithAccesses[]): [ApprovedUser[], UnapprovedUser[]] {
   const approved: ApprovedUser[] = [];
   const unapproved: UnapprovedUser[] = [];
   data.forEach((user) => {
