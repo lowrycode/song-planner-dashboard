@@ -12,6 +12,10 @@ export default function Sidebar() {
     { to: "/compare", icon: <BsCircleHalf />, label: "Compare" },
   ];
 
+  const adminLinks = [
+    { to: "/admin/users", icon: <MdSpaceDashboard />, label: "Manage Users" },
+  ];
+
   const accountLinks = [
     { to: "/change-password", icon: <FaUnlock />, label: "Change Password" },
     { to: "/logout", icon: <FiLogOut />, label: "Logout" },
@@ -24,6 +28,7 @@ export default function Sidebar() {
       </header>
 
       <SidebarSection title="DASHBOARD" links={dashboardLinks} />
+      <SidebarSection title="ADMIN" links={adminLinks} />
       <SidebarSection title="ACCOUNT" links={accountLinks} />
     </nav>
   );

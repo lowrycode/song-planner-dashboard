@@ -13,8 +13,8 @@ import OverviewPage from "./pages/OverviewPage.tsx";
 import ComparePage from "./pages/ComparePage.tsx";
 import SongSearchPage from "./pages/SongSearchPage.tsx";
 import SongDetailsPage from "./pages/SongDetailsPage.tsx";
-// import AdminPage from "./pages/AdminPage.tsx";
-// import UserPermissionsPage from "./pages/UserPermissionsPage.tsx";
+import AdminManageUsersPage from "./pages/AdminManageUsersPage.tsx";
+import AdminManageUserPage from "./pages/AdminManageUserPage.tsx";
 
 function App() {
   return (
@@ -37,11 +37,11 @@ function App() {
                 <Route path="/compare" element={<ComparePage />} />
                 {/* Add more protected pages here */}
               </Route>
-              {/* <Route path="/admin/users" element={<AdminPage />} /> */}
-              {/* <Route
+              <Route path="/admin/users" element={<AdminManageUsersPage />} />
+              <Route
                 path="/admin/users/:user_id"
-                element={<UserPermissionsPage />}
-              /> */}
+                element={<AdminManageUserPage />}
+              />
               <Route path="/change-password" element={<ChangePasswordPage />} />
               <Route path="/logout" element={<LogoutPage />} />
             </Route>
