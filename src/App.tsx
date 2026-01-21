@@ -32,14 +32,14 @@ function App() {
             <Route element={<DashboardLayout />}>
               <Route element={<SongLayout />}>
                 <Route path="/overview" element={<OverviewPage />} />
-                <Route path="/songs/:song_id" element={<SongDetailsPage />} />
+                <Route path="/songs/:songId" element={<SongDetailsPage />} />
                 <Route path="/search" element={<SongSearchPage />} />
                 <Route path="/compare" element={<ComparePage />} />
                 {/* Add more protected pages here */}
               </Route>
               <Route path="/admin/users" element={<AdminManageUsersPage />} />
               <Route
-                path="/admin/users/:user_id"
+                path="/admin/users/:userId"
                 element={<AdminManageUserPage />}
               />
               <Route path="/change-password" element={<ChangePasswordPage />} />

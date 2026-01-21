@@ -71,11 +71,11 @@ export default function SongDetailsPage() {
   const [songUsages, setSongUsages] = useState<SongUsagesType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { song_id } = useParams<{ song_id: string }>();
-  const songId = Number(song_id);
+  const { songId } = useParams<{ songId: string }>();
+  const songIdNum = Number(songId);
 
   // Guard against invalid song IDs
-  if (!song_id || Number.isNaN(songId)) {
+  if (!songIdNum || Number.isNaN(songIdNum)) {
     return <p>Invalid song ID</p>;
   }
 
@@ -91,8 +91,8 @@ export default function SongDetailsPage() {
         const params = buildParams(headerFilters).toString();
 
         const [detailsRes, usageRes] = await Promise.all([
-          authFetch(`/songs/${song_id}`),
-          authFetch(`/songs/${song_id}/usages?${params}`),
+          authFetch(`/songs/${songIdNum}`),
+          authFetch(`/songs/${songIdNum}/usages?${params}`),
         ]);
 
         if (!detailsRes.ok) throw new Error("Failed to fetch song details");
@@ -113,7 +113,7 @@ export default function SongDetailsPage() {
     }
 
     fetchSongData();
-  }, [filtersReady, headerFilters, song_id]);
+  }, [filtersReady, headerFilters, songIdNum]);
 
   const { labels, datasets } = prepareUsageData(
     songUsages,
