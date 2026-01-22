@@ -87,15 +87,15 @@ export default function AdminManageUsersPage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const { user } = useAuth();
-  const network_id = user?.network.id;
+  const networkId = user?.network.id;
 
   // Fetch users within admin scope (same network)
   useEffect(() => {
     setLoading(true);
     setError(null);
-    async function getNetworkUsers(network_id: number) {
+    async function getNetworkUsers(networkId: number) {
       try {
-        const res = await authFetch(`/networks/${network_id}/users`);
+        const res = await authFetch(`/networks/${networkId}/users`);
         if (!res.ok) throw new Error("Failed to fetch network users");
         const data = await res.json();
         const [approved, unapproved] = processUsers(data);
@@ -107,10 +107,10 @@ export default function AdminManageUsersPage() {
         setLoading(false);
       }
     }
-    if (network_id) {
-      getNetworkUsers(network_id);
+    if (networkId) {
+      getNetworkUsers(networkId);
     }
-  }, [network_id]);
+  }, [networkId]);
 
   // Build approvedUsers and unapprovedUsers
 
