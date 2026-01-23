@@ -101,9 +101,12 @@ export default function AdminManageUserPage() {
   /* --------------- COMBINED STATE --------------- */
   const accountLoading = userDetailsLoading || networkChurchesLoading;
   const accountError = userDetailsError || networkChurchesError;
-  const accessMutationLoading = updateAccessesLoading || deleteAccessLoading
-  const accessPanelError = updateAccessesError || deleteAccessError || networkChurchesError || churchActivitiesError
-
+  const accessMutationLoading = updateAccessesLoading || deleteAccessLoading;
+  const accessPanelError =
+    updateAccessesError ||
+    deleteAccessError ||
+    networkChurchesError ||
+    churchActivitiesError;
 
   /* --------------- EFFECTS --------------- */
   // Get User Details
@@ -210,7 +213,13 @@ export default function AdminManageUserPage() {
     return url;
   }
 
+  function clearAccessErrors() {
+    setUpdateAccessesError(null);
+    setDeleteAccessError(null);
+  }
+
   function handleSelectChange(group: AccessGroup, value: number | "") {
+    clearAccessErrors();
     setNewSelections((prev) => ({
       ...prev,
       [group]: value,
@@ -218,6 +227,7 @@ export default function AdminManageUserPage() {
   }
 
   async function handleUpdateUser(data: UpdateUserPayload) {
+    clearAccessErrors();
     setUpdateDetailsLoading(true);
     setUpdateDetailsError(null);
     try {
@@ -248,7 +258,7 @@ export default function AdminManageUserPage() {
 
   async function handleDeleteAccess(group: AccessGroup, id: number | "") {
     if (id === "") return;
-
+    clearAccessErrors();
     setDeleteAccessLoading(true);
     setDeleteAccessError(null);
 
@@ -284,7 +294,7 @@ export default function AdminManageUserPage() {
 
   async function handleAddAccess(group: AccessGroup, id: number | "") {
     if (id === "") return;
-
+    clearAccessErrors();
     setUpdateAccessesLoading(true);
     setUpdateAccessesError(null);
 
