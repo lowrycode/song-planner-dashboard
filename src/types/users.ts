@@ -12,25 +12,31 @@ export interface Church {
   slug: string;
 }
 
-export interface NetworkAccess {
+export interface ChurchActivity {
   id: number;
+  name: string;
+  slug: string;
+}
+
+export interface NetworkAccess {
+  access_id: number;
   network_id: number;
-  network_name: string;
-  network_slug: string;
+  name: string;
+  slug: string;
 }
 
 export interface ChurchAccess {
-  id: number;
+  access_id: number;
   church_id: number;
-  church_name: string;
-  church_slug: string;
+  name: string;
+  slug: string;
 }
 
 export interface ChurchActivityAccess {
-  id: number;
+  access_id: number;
   church_activity_id: number;
-  church_activity_name: string;
-  church_activity_slug: string;
+  name: string;
+  slug: string;
 }
 
 export interface User {
@@ -49,6 +55,10 @@ export interface UserAccesses {
   churches: ChurchAccess[];
   church_activities: ChurchActivityAccess[];
 }
+
+export type AccessGroup = "networks" | "churches" | "church_activities";
+
+export type AccessItem = NetworkAccess | ChurchAccess | ChurchActivityAccess;
 
 export interface UserWithAccesses extends User {
   accesses: UserAccesses;
