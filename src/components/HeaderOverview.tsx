@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
+import type { ChurchActivity } from "../types/users";
 import FadeLoader from "../components/FadeLoader";
 
-interface ChurchActivity {
-  id: number;
-  name: string;
-  slug: string;
-}
 
 interface HeaderFilters {
   from_date: string; // ISO date string or empty
