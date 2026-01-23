@@ -98,7 +98,7 @@ export default function AccountDetailsForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col w-full gap-5">
       {/* Header */}
-      <div className="flex w-full">
+      <div className="flex w-full flex-wrap">
         <h2 className="whitespace-nowrap flex-1 text-lg font-bold text-gray-500 h-8">
           Account Details
         </h2>
