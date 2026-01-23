@@ -44,7 +44,7 @@ function InfoItem({ label, value }: InfoItemProps) {
     <>
       <div className="flex flex-col items-center">
         <div className="text-gray-500 text-sm mb-1">{label}</div>
-        <span className="border border-gray-200 rounded px-2 py-1 min-w-32 text-center">{value}</span>
+        <span className="border border-gray-100 rounded px-2 py-1 min-w-32 text-center">{value}</span>
       </div>
     </>
   );
