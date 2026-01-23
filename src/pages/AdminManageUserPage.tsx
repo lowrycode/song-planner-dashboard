@@ -101,6 +101,9 @@ export default function AdminManageUserPage() {
   /* --------------- COMBINED STATE --------------- */
   const accountLoading = userDetailsLoading || networkChurchesLoading;
   const accountError = userDetailsError || networkChurchesError;
+  const accessMutationLoading = updateAccessesLoading || deleteAccessLoading
+  const accessPanelError = updateAccessesError || deleteAccessError || networkChurchesError || churchActivitiesError
+
 
   /* --------------- EFFECTS --------------- */
   // Get User Details
@@ -374,17 +377,25 @@ export default function AdminManageUserPage() {
       {/* -- ACCESS PERMISSIONS -- */}
       <DashboardPanel className="flex flex-wrap items-start gap-x-15 gap-y-5">
         {accesses ? (
-          <UserAccessPermissions
-            accesses={accesses}
-            network={network}
-            networkChurches={networkChurches}
-            churchActivities={churchActivities}
-            newSelections={newSelections}
-            editMode={editMode}
-            handleAddAccess={handleAddAccess}
-            handleDeleteAccess={handleDeleteAccess}
-            handleSelectChange={handleSelectChange}
-          />
+          <FadeLoader loading={accessesLoading} error={accessesError}>
+            <UserAccessPermissions
+              accesses={accesses}
+              network={network}
+              networkChurches={networkChurches}
+              networkChurchesLoading={networkChurchesLoading}
+              networkChurchesError={networkChurchesError}
+              churchActivities={churchActivities}
+              churchActivitiesLoading={churchActivitiesLoading}
+              churchActivitiesError={churchActivitiesError}
+              newSelections={newSelections}
+              editMode={editMode}
+              accessPanelError={accessPanelError}
+              accessMutationLoading={accessMutationLoading}
+              handleAddAccess={handleAddAccess}
+              handleDeleteAccess={handleDeleteAccess}
+              handleSelectChange={handleSelectChange}
+            />
+          </FadeLoader>
         ) : (
           <p>Loading user access details...</p>
         )}
