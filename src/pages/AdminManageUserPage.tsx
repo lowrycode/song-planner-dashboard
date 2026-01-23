@@ -2,12 +2,19 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
 import { authFetch } from "../utils/auth-fetch";
-import type { User, Church } from "../types/users";
+import type {
+  User,
+  Church,
+  UserAccesses,
+  ChurchActivity,
+  AccessGroup,
+} from "../types/users";
 import DashboardPanel from "../components/DashboardPanel";
 import SliderSwitch from "../components/SliderSwitch";
 import AccountDetailsForm from "../components/AccountDetailsForm";
 import AccountDetailsInfo from "../components/AccountDetailsInfo";
 import FadeLoader from "../components/FadeLoader";
+import UserAccessPermissions from "../components/UserAccessPermissions.tsx";
 
 type UpdateUserPayload = {
   username: string;
@@ -19,27 +26,12 @@ type UpdateUserPayload = {
 };
 
 export default function AdminManageUserPage() {
-  const [userDetails, setUserDetails] = useState<User | null>(null);
-  const [userDetailsError, setUserDetailsError] = useState<string | null>(null);
-  const [userDetailsLoading, setUserDetailsLoading] = useState<boolean>(true);
-  const [networkChurches, setNetworkChurches] = useState<Church[] | null>(null);
-  const [networkChurchesError, setNetworkChurchesError] = useState<
-    string | null
-  >(null);
-  const [networkChurchesLoading, setNetworkChurchesLoading] =
-    useState<boolean>(true);
-  const [userAccessDetails, setUserAccessDetails] = useState<User | null>(null);
-  const [userAccessesError, setUserAccessesError] = useState<string | null>(
-    null,
-  );
-  const [userAccessesLoading, setUserAccessesLoading] = useState<boolean>(true);
-  const [updateLoading, setUpdateLoading] = useState(false);
-  const [updateError, setUpdateError] = useState<string | null>(null);
-  const [editMode, setEditMode] = useState(false);
-
+  /* --------------- Users --------------- */
+  // User
   const { userId } = useParams<{ userId: string }>();
   const userIdNum = Number(userId);
 
+  // Current authenticated user
   const { user } = useAuth();
   const network = user?.network;
 
@@ -48,7 +40,70 @@ export default function AdminManageUserPage() {
     return <p>Invalid user ID</p>;
   }
 
-  // User Details
+  /* --------------- STATE --------------- */
+  // Get user details state
+  const [userDetails, setUserDetails] = useState<User | null>(null);
+  const [userDetailsError, setUserDetailsError] = useState<string | null>(null);
+  const [userDetailsLoading, setUserDetailsLoading] = useState<boolean>(true);
+
+  // Get network churches state
+  const [networkChurches, setNetworkChurches] = useState<Church[] | null>(null);
+  const [networkChurchesError, setNetworkChurchesError] = useState<
+    string | null
+  >(null);
+  const [networkChurchesLoading, setNetworkChurchesLoading] =
+    useState<boolean>(true);
+
+  // Get church activities state
+  const [churchActivities, setChurchActivities] = useState<ChurchActivity[]>(
+    [],
+  );
+  const [churchActivitiesLoading, setChurchActivitiesLoading] = useState(true);
+  const [churchActivitiesError, setChurchActivitiesError] = useState<
+    string | null
+  >(null);
+
+  // Get user accesses state
+  const [accesses, setAccesses] = useState<UserAccesses | null>(null);
+  const [accessesError, setAccessesError] = useState<string | null>(null);
+  const [accessesLoading, setAccessesLoading] = useState<boolean>(true);
+
+  // Update user details
+  const [updateDetailsLoading, setUpdateDetailsLoading] = useState(false);
+  const [updateDetailsError, setUpdateDetailsError] = useState<string | null>(
+    null,
+  );
+
+  // Add access
+  const [updateAccessesLoading, setUpdateAccessesLoading] = useState(false);
+  const [updateAccessesError, setUpdateAccessesError] = useState<string | null>(
+    null,
+  );
+
+  // Delete access
+  const [deleteAccessLoading, setDeleteAccessLoading] = useState(false);
+  const [deleteAccessError, setDeleteAccessError] = useState<string | null>(
+    null,
+  );
+
+  // Edit mode
+  const [editMode, setEditMode] = useState(false);
+
+  // Access select box values
+  const [newSelections, setNewSelections] = useState<
+    Record<AccessGroup, number | "">
+  >({
+    networks: network ? network.id : "",
+    churches: "",
+    church_activities: "",
+  });
+
+  /* --------------- COMBINED STATE --------------- */
+  const accountLoading = userDetailsLoading || networkChurchesLoading;
+  const accountError = userDetailsError || networkChurchesError;
+
+  /* --------------- EFFECTS --------------- */
+  // Get User Details
   useEffect(() => {
     setUserDetailsLoading(true);
     setUserDetailsError(null);
@@ -58,7 +113,6 @@ export default function AdminManageUserPage() {
         const res = await authFetch(`/users/${userIdNum}`);
         if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
-        console.log(data);
         setUserDetails(data);
       } catch (err: any) {
         setUserDetailsError(err.message);
@@ -70,28 +124,28 @@ export default function AdminManageUserPage() {
     getUserDetails(userIdNum);
   }, [userId]);
 
-  // User Access Details
+  // Get User Access Details
   useEffect(() => {
-    setUserAccessesLoading(true);
-    setUserAccessesError(null);
+    setAccessesLoading(true);
+    setAccessesError(null);
 
     async function getUserAccesses(userIdNum: number) {
       try {
         const res = await authFetch(`/users/${userIdNum}/access`);
         if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
-        setUserAccessDetails(data);
+        setAccesses(data);
       } catch (err: any) {
-        setUserAccessesError(err.message);
+        setAccessesError(err.message);
       } finally {
-        setUserAccessesLoading(false);
+        setAccessesLoading(false);
       }
     }
 
     getUserAccesses(userIdNum);
   }, [userId]);
 
-  // Admin Network Churches
+  // Get Admin Network Churches
   useEffect(() => {
     setNetworkChurchesLoading(true);
     setNetworkChurchesError(null);
@@ -101,7 +155,6 @@ export default function AdminManageUserPage() {
         const res = await authFetch(`/networks/${networkId}/churches`);
         if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
-        console.log(data);
         setNetworkChurches(data);
       } catch (err: any) {
         setNetworkChurchesError(err.message);
@@ -115,9 +168,55 @@ export default function AdminManageUserPage() {
     }
   }, [network]);
 
+  // Get Admin Network Church Activities
+  useEffect(() => {
+    async function fetchChurchActivities(networkId: number) {
+      setChurchActivitiesLoading(true);
+      setChurchActivitiesError(null);
+      try {
+        const res = await authFetch(`/networks/${networkId}/activities`);
+        if (!res.ok) throw new Error("Failed to fetch church activities");
+        const data = await res.json();
+        setChurchActivities(data);
+      } catch (err: any) {
+        setChurchActivitiesError(err.message);
+      } finally {
+        setChurchActivitiesLoading(false);
+      }
+    }
+
+    if (network) {
+      fetchChurchActivities(network.id);
+    }
+  }, [network]);
+
+  /* --------------- HELPER FUNCTIONS --------------- */
+  function getAccessUrl(group: AccessGroup, id: number | "") {
+    let url = null;
+    switch (group) {
+      case "networks":
+        url = `/users/${userIdNum}/access/networks/${id}`;
+        break;
+      case "churches":
+        url = `/users/${userIdNum}/access/churches/${id}`;
+        break;
+      case "church_activities":
+        url = `/users/${userIdNum}/access/activities/${id}`;
+        break;
+    }
+    return url;
+  }
+
+  function handleSelectChange(group: AccessGroup, value: number | "") {
+    setNewSelections((prev) => ({
+      ...prev,
+      [group]: value,
+    }));
+  }
+
   async function handleUpdateUser(data: UpdateUserPayload) {
-    setUpdateLoading(true);
-    setUpdateError(null);
+    setUpdateDetailsLoading(true);
+    setUpdateDetailsError(null);
     try {
       const res = await authFetch(`/users/${userIdNum}`, {
         method: "PUT",
@@ -138,14 +237,83 @@ export default function AdminManageUserPage() {
       setUserDetails(updatedUser);
     } catch (err: any) {
       console.error(err);
-      setUpdateError(err.message);
+      setUpdateDetailsError(err.message);
     } finally {
-      setUpdateLoading(false);
+      setUpdateDetailsLoading(false);
     }
   }
 
-  const accountLoading = userDetailsLoading || networkChurchesLoading;
-  const accountError = userDetailsError || networkChurchesError;
+  async function handleDeleteAccess(group: AccessGroup, id: number | "") {
+    if (id === "") return;
+
+    setDeleteAccessLoading(true);
+    setDeleteAccessError(null);
+
+    let url = getAccessUrl(group, id);
+    if (url === null) {
+      setDeleteAccessError("Invalid access group");
+      setDeleteAccessLoading(false);
+      return;
+    }
+
+    try {
+      const res = await authFetch(url, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Failed to delete access");
+      }
+
+      // Refetch user accesses after success
+      const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);
+      if (!updatedAccessesRes.ok)
+        throw new Error("Failed to fetch updated accesses");
+      const updatedAccesses = await updatedAccessesRes.json();
+      setAccesses(updatedAccesses);
+
+      // Reset the selection for this group
+      setNewSelections((prev) => ({ ...prev, [group]: "" }));
+    } catch (error: any) {
+      setDeleteAccessError(error.message);
+    } finally {
+      setDeleteAccessLoading(false);
+    }
+  }
+
+  async function handleAddAccess(group: AccessGroup, id: number | "") {
+    if (id === "") return;
+
+    setUpdateAccessesLoading(true);
+    setUpdateAccessesError(null);
+
+    let url = getAccessUrl(group, id);
+    if (url === null) {
+      setUpdateAccessesError("Invalid access group");
+      setUpdateAccessesLoading(false);
+      return;
+    }
+
+    try {
+      const res = await authFetch(url, { method: "POST" });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Failed to add access");
+      }
+
+      // Refetch user accesses after success
+      const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);
+      if (!updatedAccessesRes.ok)
+        throw new Error("Failed to fetch updated accesses");
+      const updatedAccesses = await updatedAccessesRes.json();
+      setAccesses(updatedAccesses);
+
+      // Reset the selection for this group
+      setNewSelections((prev) => ({ ...prev, [group]: "" }));
+    } catch (error: any) {
+      setUpdateAccessesError(error.message);
+    } finally {
+      setUpdateAccessesLoading(false);
+    }
+  }
 
   return (
     <div className="flex flex-wrap gap-5 m-5">
@@ -153,25 +321,27 @@ export default function AdminManageUserPage() {
       <DashboardPanel className="flex w-full justify-between items-center gap-5">
         {userDetails ? (
           <FadeLoader loading={accountLoading} error={accountError}>
-            <div className="flex items-center gap-5">
-              <h2 className="whitespace-nowrap text-2xl font-extrabold text-purple-900">
-                {userDetails.first_name} {userDetails.last_name}
-              </h2>
-              <div className="text-sm text-gray-500 italic">
-                Registered on{" "}
-                {new Date(userDetails.created_at).toLocaleDateString()}
+            <div className="flex flex-wrap items-center justify-center gap-5">
+              <div className="flex flex-col sm:me-auto">
+                <h2 className="whitespace-nowrap text-2xl font-extrabold text-purple-900">
+                  {userDetails.first_name} {userDetails.last_name}
+                </h2>
+                <div className="flex-1 whitespace-nowrap text-sm text-gray-500 italic">
+                  Registered on{" "}
+                  {new Date(userDetails.created_at).toLocaleDateString()}
+                </div>
               </div>
+              <SliderSwitch
+                ariaLabel="Toggle Edit Mode"
+                label="Edit"
+                checked={editMode}
+                setChecked={setEditMode}
+              />
             </div>
           </FadeLoader>
         ) : (
           <p>Loading user details...</p>
         )}
-        <SliderSwitch
-          ariaLabel="Toggle Edit Mode"
-          label="Edit"
-          checked={editMode}
-          setChecked={setEditMode}
-        />
       </DashboardPanel>
       {/* -- ACCOUNT DETAILS -- */}
       <DashboardPanel className="flex w-full flex-wrap gap-5">
@@ -189,8 +359,8 @@ export default function AdminManageUserPage() {
                   adminNetworks={[network]}
                   networkChurches={networkChurches}
                   onSubmit={handleUpdateUser}
-                  submitting={updateLoading}
-                  error={updateError}
+                  submitting={updateDetailsLoading}
+                  error={updateDetailsError}
                 />
               ) : (
                 <AccountDetailsInfo data={userDetails} />
@@ -203,43 +373,21 @@ export default function AdminManageUserPage() {
       </DashboardPanel>
       {/* -- ACCESS PERMISSIONS -- */}
       <DashboardPanel className="flex flex-wrap items-start gap-x-15 gap-y-5">
-        <h2 className="whitespace-nowrap w-full lg:w-auto text-lg font-bold text-gray-500">
-          Access Permissions
-        </h2>
-        <div className="flex flex-1 justify-around">
-          <p>Permissions here</p>
-          {/* {Object.entries(userAccessDetails).map(([group, items]) => (
-            <div key={group} className="mb-4">
-              <div className="text-sm capitalize text-gray-500 mb-1">
-                {group}
-              </div>
-
-              {items.length === 0 ? (
-                <div className="text-sm italic text-gray-400">None</div>
-              ) : (
-                <ul className="space-y-1">
-                  {items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex justify-between items-center gap-3"
-                    >
-                      <span>{item.name}</span>
-
-                      {editMode && (
-                        <button
-                          onClick={() => handleDelete(group, item.id)}
-                          className="text-red-600 hover:text-red-800 hover:cursor-pointer"
-                        >
-                          <FaTrash />
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))} */}
-        </div>
+        {accesses ? (
+          <UserAccessPermissions
+            accesses={accesses}
+            network={network}
+            networkChurches={networkChurches}
+            churchActivities={churchActivities}
+            newSelections={newSelections}
+            editMode={editMode}
+            handleAddAccess={handleAddAccess}
+            handleDeleteAccess={handleDeleteAccess}
+            handleSelectChange={handleSelectChange}
+          />
+        ) : (
+          <p>Loading user access details...</p>
+        )}
       </DashboardPanel>
     </div>
   );
