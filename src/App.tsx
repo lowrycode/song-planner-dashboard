@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./providers/AuthProvider.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
+import AdminRoute from "./components/AdminRoute.tsx";
 import DashboardLayout from "./layouts/DashboardLayout";
 import SongLayout from "./layouts/SongLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -37,11 +38,11 @@ function App() {
                 <Route path="/compare" element={<ComparePage />} />
                 {/* Add more protected pages here */}
               </Route>
-              <Route path="/admin/users" element={<AdminManageUsersPage />} />
-              <Route
-                path="/admin/users/:userId"
-                element={<AdminManageUserPage />}
-              />
+              <Route element={<AdminRoute />}>
+                <Route path="/admin/users" element={<AdminManageUsersPage />} />
+                <Route path="/admin/users/:userId" element={<AdminManageUserPage />} />
+                {/* Add more admin pages here */}
+              </Route>
               <Route path="/change-password" element={<ChangePasswordPage />} />
               <Route path="/logout" element={<LogoutPage />} />
             </Route>
