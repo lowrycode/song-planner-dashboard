@@ -142,7 +142,7 @@ export default function SongSearchPage() {
   // States
   const { headerFilters, selectedActivities, filtersReady } =
     useOutletContext<DashboardContext>();
-  const [metric, setMetric] = useState<SongMetric>("usage_count");
+  const [metric, setMetric] = useState<SongMetric>("last_used");
   const [songs, setSongs] = useState<Song[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
