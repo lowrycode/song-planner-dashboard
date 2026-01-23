@@ -1,22 +1,14 @@
 export type UserRole = 0 | 1 | 2 | 3;
 
-export interface Network {
+export interface Scope {
   id: number;
   name: string;
   slug: string;
 }
 
-export interface Church {
-  id: number;
-  name: string;
-  slug: string;
-}
-
-export interface ChurchActivity {
-  id: number;
-  name: string;
-  slug: string;
-}
+export interface Network extends Scope {}
+export interface Church extends Scope {}
+export interface ChurchActivity extends Scope {}
 
 export interface NetworkAccess {
   access_id: number;
