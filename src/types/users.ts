@@ -62,7 +62,7 @@ export interface AuthUser {
   username: string;
   first_name: string;
   last_name: string;
-  role: UserRole;
+  role: string;
   network: Network;
   church: Church;
 }
