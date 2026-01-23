@@ -4,12 +4,11 @@ import type {
   Network,
   Church,
   ChurchActivity,
+  Scope,
   AccessGroup,
 } from "../types/users";
-import { FaTrash } from "react-icons/fa";
-import { FaPlus } from "react-icons/fa";
-import AccessSelect from "./AccessSelect";
-import FadeLoader from "./FadeLoader";
+
+import AccessGroupPanel from "./AccessGroupPanel";
 
 interface UserAccessPermissionsProps {
   accesses: UserAccesses;
@@ -61,110 +60,50 @@ export default function UserAccessPermissions({
       <div className="flex flex-1 flex-wrap justify-around gap-5">
         {(Object.entries(accesses) as [AccessGroup, AccessItem[]][]).map(
           ([group, items]) => {
-            const isLoadingGroup =
-              (group === "churches" && networkChurchesLoading) ||
-              (group === "church_activities" && churchActivitiesLoading);
+            let options: Scope[] = [];
+            let optionsLoading = false;
+            let optionsError: string | null = null;
+            let placeholder: string = "-- Select an option --";
+
+            switch (group) {
+              case "networks":
+                options = network ? [network] : [];
+                placeholder = "-- Select a network --";
+                break;
+
+              case "churches":
+                options = networkChurches ?? [];
+                optionsLoading = networkChurchesLoading;
+                optionsError = networkChurchesError;
+                placeholder = "-- Select a church --";
+                break;
+
+              case "church_activities":
+                options = churchActivities;
+                optionsLoading = churchActivitiesLoading;
+                optionsError = churchActivitiesError;
+                placeholder = "-- Select a church activity --"
+                break;
+            }
+
+            const isLoadingGroup = optionsLoading || accessMutationLoading;
 
             return (
-              <div
+              <AccessGroupPanel
                 key={group}
-                className="flex flex-col flex-1 border rounded border-gray-300 px-5 py-3"
-              >
-                {/* List access */}
-                <div className="flex-1">
-                  <div className="text-sm capitalize text-gray-500 mb-1">
-                    {group}
-                  </div>
-
-                  <div className="flex flex-col flex-1 justify-between">
-                    {items.length === 0 ? (
-                      <div className="text-sm italic text-gray-400">None</div>
-                    ) : (
-                      <ul className="space-y-1">
-                        {items.map((item) => (
-                          <li
-                            key={item.access_id}
-                            className={`flex justify-between items-center gap-3 border
-                                    px-3 py-1 min-w-48
-                                    ${editMode ? "bg-white border-gray-200 " : "bg-gray-100 border-gray-100 "}`}
-                          >
-                            <span className="">{item.name}</span>
-
-                            {editMode && (
-                              <button
-                                onClick={() =>
-                                  handleDeleteAccess(group, item.access_id)
-                                }
-                                disabled={
-                                  isLoadingGroup || accessMutationLoading
-                                }
-                                className="text-gray-400 hover:text-red-600 hover:cursor-pointer
-                                            disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <FaTrash />
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-
-                {/* Add access */}
-                {editMode && (
-                  <div className="flex flex-wrap gap-2 text-sm mt-5">
-                    {group === "networks" && network && (
-                      <AccessSelect
-                        value={newSelections[group] ?? ""}
-                        placeholder="-- Select a network --"
-                        options={[network]}
-                        onChange={(value) => handleSelectChange(group, value)}
-                      />
-                    )}
-                    {group === "churches" && networkChurches && (
-                      <FadeLoader
-                        loading={networkChurchesLoading}
-                        error={networkChurchesError}
-                      >
-                        <AccessSelect
-                          value={newSelections[group] ?? ""}
-                          placeholder="-- Select a church --"
-                          options={networkChurches}
-                          onChange={(value) => handleSelectChange(group, value)}
-                        />
-                      </FadeLoader>
-                    )}
-                    {group === "church_activities" && (
-                      <FadeLoader
-                        loading={churchActivitiesLoading}
-                        error={churchActivitiesError}
-                      >
-                        <AccessSelect
-                          value={newSelections[group] ?? ""}
-                          placeholder="-- Select a church activity --"
-                          options={churchActivities}
-                          onChange={(value) => handleSelectChange(group, value)}
-                        />
-                      </FadeLoader>
-                    )}
-
-                    {/* Button */}
-                    <button
-                      onClick={() =>
-                        handleAddAccess(group, newSelections[group])
-                      }
-                      disabled={newSelections[group] === "" || isLoadingGroup}
-                      className="flex items-center gap-2 rounded-lg text-gray-100 px-4 py-1 
-                                shadow-md bg-purple-900 hover:bg-purple-700 hover:cursor-pointer
-                                disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <FaPlus />
-                      Add
-                    </button>
-                  </div>
-                )}
-              </div>
+                group={group}
+                items={items}
+                editMode={editMode}
+                isLoadingGroup={isLoadingGroup}
+                newSelection={newSelections[group]}
+                options={options}
+                optionsLoading={optionsLoading}
+                optionsError={optionsError}
+                placeholder={placeholder}
+                handleSelectChange={handleSelectChange}
+                handleAddAccess={handleAddAccess}
+                handleDeleteAccess={handleDeleteAccess}
+              />
             );
           },
         )}
