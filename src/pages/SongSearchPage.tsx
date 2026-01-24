@@ -60,7 +60,8 @@ function normalizeMetric(value: any, metric: SongMetric): number | null {
     // Convert milliseconds to weeks
     const weeksAgo = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 7));
 
-    return weeksAgo;
+    // Offset by 1 to make easier to compare with next week
+    return weeksAgo + 1;
   }
   return value ?? 0;
 }
