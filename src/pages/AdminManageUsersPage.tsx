@@ -51,13 +51,13 @@ function processUsers(data: UserWithAccesses[]): [ApprovedUser[], UnapprovedUser
     } else {
       const accesses = user.accesses;
       const netStrings = accesses.networks.map(
-        (net) => `net:${net.network_slug}`,
+        (net) => `net:${net.slug}`,
       );
       const churchStrings = accesses.churches.map(
-        (ch) => `ch:${ch.church_slug}`,
+        (ch) => `ch:${ch.slug}`,
       );
       const activityStrings = accesses.church_activities.map(
-        (act) => `act:${act.church_activity_slug}`,
+        (act) => `act:${act.slug}`,
       );
 
       const combined = [...netStrings, ...churchStrings, ...activityStrings];
