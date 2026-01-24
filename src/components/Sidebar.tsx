@@ -11,8 +11,6 @@ export default function Sidebar() {
   const { user } = useAuth();
   const isAdmin = (user?.role === "admin");
 
-  console.log(user);
-
   const dashboardLinks = [
     { to: "/overview", icon: <MdSpaceDashboard />, label: "Overview" },
     { to: "/search", icon: <FaMagnifyingGlass />, label: "Search" },
