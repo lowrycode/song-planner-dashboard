@@ -1,25 +1,42 @@
 import { NavLink } from "react-router-dom";
 
-export default function SidebarSection({ title, links }: {
-  title: string;
-  links: { to: string; icon: React.ReactNode; label: string }[];
-}) {
+interface SidebarSectionProps {
+  title?: string;
+  links: {
+    to: string;
+    icon: React.ReactNode;
+    label: string;
+  }[];
+  collapsed: boolean;
+}
+
+export default function SidebarSection({
+  title,
+  links,
+  collapsed,
+}: SidebarSectionProps) {
   return (
     <section className="mt-10">
-      <h2 className="text-sm mb-2 text-gray-400">{title}</h2>
-      <ul className="space-y-2">
+      <h2 className="text-sm mb-2 text-gray-500 h-5">
+        {!collapsed ? title : null}
+      </h2>
+      <ul>
         {links.map(({ to, icon, label }) => (
-          <li key={to}>
+          <li
+            key={to}
+            title={collapsed ? label : undefined}
+            className={collapsed ? "flex justify-center" : ""}
+          >
             <NavLink
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-x-3 hover:text-white ${
+                `flex items-center gap-x-3 border-t border-gray-700 py-2 text-gray-300 hover:text-white ${
                   isActive ? "text-white font-semibold" : ""
                 }`
               }
             >
-              {icon}
-              {label}
+              <span className={collapsed ? "text-xl" : "text-lg"}>{icon}</span>
+              {!collapsed && <span className="whitespace-nowrap">{label}</span>}
             </NavLink>
           </li>
         ))}
