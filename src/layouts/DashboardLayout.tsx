@@ -7,14 +7,27 @@ export default function DashboardLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  function handleSetMobileOpen(value: React.SetStateAction<boolean>) {
+    if (typeof value === "boolean") {
+      setMobileOpen(value);
+      if (value) setCollapsed(false);
+    } else if (typeof value === "function") {
+      setMobileOpen((prev) => {
+        const newValue = value(prev);
+        if (newValue) setCollapsed(false);
+        return newValue;
+      });
+    }
+  }
+
   return (
     <div className="flex flex-col h-screen">
       {/* Mobile Top Bar */}
-      <MobileTopBar setMobileOpen={setMobileOpen} />
+      <MobileTopBar setMobileOpen={handleSetMobileOpen} />
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={() => setMobileOpen(false)}
+          onClick={() => handleSetMobileOpen(false)}
         />
       )}
 
@@ -23,7 +36,7 @@ export default function DashboardLayout() {
           collapsed={collapsed}
           mobileOpen={mobileOpen}
           onToggle={() => setCollapsed((prev) => !prev)}
-          onCloseMobile={() => setMobileOpen(false)}
+          onCloseMobile={() => handleSetMobileOpen(false)}
         />
         <div className="bg-slate-200 w-screen overflow-y-auto">
           {/* Dashboard content */}
