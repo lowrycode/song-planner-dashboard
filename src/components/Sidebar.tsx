@@ -12,10 +12,17 @@ import { useAuth } from "../hooks/useAuth";
 
 interface SidebarProps {
   collapsed: boolean;
+  mobileOpen: boolean;
   onToggle: () => void;
+  onCloseMobile: () => void;
 }
 
-export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
+export default function Sidebar({
+  collapsed,
+  mobileOpen,
+  onToggle,
+  onCloseMobile,
+}: SidebarProps) {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
 
@@ -37,9 +44,12 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <nav
       className={`
-        flex flex-col bg-gray-900 text-gray-200 p-4
-        transition-all duration-300
+        fixed md:static inset-y-0 left-0 z-40
+        bg-gray-900 text-gray-200 p-4
+        transition-transform duration-300
+        flex flex-col
         ${collapsed ? "w-16" : "w-56"}
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
       `}
       aria-label="Main navigation"
     >
@@ -53,17 +63,19 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             />
           )}
 
-          <button
-            onClick={onToggle}
-            className="text-gray-400 hover:text-white text-2xl"
-            aria-label="Toggle sidebar"
-          >
-            {collapsed ? (
-              <TbLayoutSidebarLeftExpandFilled />
-            ) : (
-              <TbLayoutSidebarRightExpandFilled />
-            )}
-          </button>
+          
+            <button
+              onClick={onToggle}
+              className="text-gray-400 hover:text-white text-2xl hidden md:block"
+              aria-label="Toggle sidebar"
+            >
+              {collapsed ? (
+                <TbLayoutSidebarLeftExpandFilled />
+              ) : (
+                <TbLayoutSidebarRightExpandFilled />
+              )}
+            </button>
+          
         </div>
       </header>
 
@@ -71,6 +83,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         title="DASHBOARD"
         links={dashboardLinks}
         collapsed={collapsed}
+        onCloseMobile={onCloseMobile}
       />
 
       {isAdmin && (

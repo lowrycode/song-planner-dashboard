@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import type { ChurchActivity } from "../types/users";
 import FadeLoader from "../components/FadeLoader";
 
-
 interface HeaderFilters {
   from_date: string; // ISO date string or empty
   to_date: string;
@@ -34,7 +33,7 @@ export default function HeaderOverview({
   const allSelected =
     activities.length > 0 &&
     activities.every((activity) =>
-      localFilters.church_activities.includes(activity.id.toString())
+      localFilters.church_activities.includes(activity.id.toString()),
     );
 
   // Helper: Check if filters are equal (simple shallow comparison)
@@ -93,12 +92,12 @@ export default function HeaderOverview({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col md:flex-row justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 "
+      className="flex flex-row flex-wrap justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 "
     >
       <div className="flex flex-1 bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
-        <div className="flex w-full justify-between">
+        <div className="flex w-full flex-wrap gap-3 justify-between">
           {/* Date Inputs */}
-          <div className="flex gap-x-5 gap-y-1">
+          <div className="flex flex-wrap gap-x-5 gap-y-3">
             <div className="flex gap-x-3 justify-end items-center">
               <label htmlFor="from_date">From</label>
               <input
@@ -137,10 +136,7 @@ export default function HeaderOverview({
           </div>
         </div>
         {/* Activities checkboxes */}
-        <FadeLoader
-          loading={activitiesLoading}
-          error={activitiesError}
-        >
+        <FadeLoader loading={activitiesLoading} error={activitiesError}>
           <div className="flex w-full gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap min-h-8">
             {[...activities]
               .sort((a, b) => a.name.localeCompare(b.name))
@@ -152,7 +148,7 @@ export default function HeaderOverview({
                     name="church_activities"
                     value={id.toString()} // use ID as string value for checkbox
                     checked={localFilters.church_activities.includes(
-                      id.toString()
+                      id.toString(),
                     )} // check based on ID string
                     onChange={handleChange}
                   />
@@ -162,6 +158,7 @@ export default function HeaderOverview({
           </div>
         </FadeLoader>
       </div>
+      
       <button
         type="submit"
         disabled={noChanges}

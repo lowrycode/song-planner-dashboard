@@ -8,12 +8,14 @@ interface SidebarSectionProps {
     label: string;
   }[];
   collapsed: boolean;
+  onCloseMobile: () => void;
 }
 
 export default function SidebarSection({
   title,
   links,
   collapsed,
+  onCloseMobile,
 }: SidebarSectionProps) {
   return (
     <section className="mt-10">
@@ -34,6 +36,7 @@ export default function SidebarSection({
                   isActive ? "text-white font-semibold" : ""
                 }`
               }
+              onClick={onCloseMobile}
             >
               <span className={collapsed ? "text-xl" : "text-lg"}>{icon}</span>
               {!collapsed && <span className="whitespace-nowrap">{label}</span>}
