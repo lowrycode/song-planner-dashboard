@@ -91,6 +91,7 @@ export default function Sidebar({
           title="ADMIN"
           links={adminLinks}
           collapsed={collapsed}
+          onCloseMobile={onCloseMobile}
         />
       )}
 
@@ -99,6 +100,7 @@ export default function Sidebar({
           title="ACCOUNT"
           links={accountLinks}
           collapsed={collapsed}
+          onCloseMobile={onCloseMobile}
         />
       </div>
     </nav>
