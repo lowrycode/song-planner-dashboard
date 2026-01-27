@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import RegisterForm from "../components/RegisterForm";
-import { unauthFetch } from "../utils/unauth-fetch";
+import { useUnauthFetch } from "../hooks/useUnauthFetch";
 
 export interface Network {
   id: number;
@@ -24,6 +24,8 @@ export default function RegisterPage() {
   const [churchesLoading, setChurchesLoading] = useState(false);
   const [networkError, setNetworkError] = useState<string | null>(null);
   const [churchError, setChurchError] = useState<string | null>(null);
+
+  const unauthFetch = useUnauthFetch();
 
   // Fetch networks
   useEffect(() => {

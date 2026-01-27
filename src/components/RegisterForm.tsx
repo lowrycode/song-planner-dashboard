@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { Network, Church } from "../pages/RegisterPage";
-import { unauthFetch } from "../utils/unauth-fetch";
+import { useUnauthFetch } from "../hooks/useUnauthFetch";
 
 interface RegisterFormProps {
   networks: Network[];
@@ -32,6 +32,8 @@ export default function RegisterForm({
   const errorRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const unauthFetch = useUnauthFetch();
+
   // Scroll to top whenever error is set
   useEffect(() => {
     if (error && errorRef.current) {
@@ -53,13 +55,7 @@ export default function RegisterForm({
     const network = formData.get("network") as string | null;
     const church = formData.get("church") as string | null;
 
-    // Confirm password check
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    // Basic validation for required fields (optional)
+    // Validation rules
     if (
       !firstName ||
       !lastName ||
@@ -69,6 +65,29 @@ export default function RegisterForm({
       !church
     ) {
       setError("Please fill in all required fields");
+      return;
+    }
+
+    if (username.length < 5) {
+      setError("Username must be at least 5 characters long.");
+      return;
+    }
+    if (username.length > 20) {
+      setError("Username cannot exceed 20 characters.");
+      return;
+    }
+
+    if (password.length < 5) {
+      setError("Password must be at least 5 characters long.");
+      return;
+    }
+    if (password.length > 20) {
+      setError("Password cannot exceed 20 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
 
@@ -98,9 +117,12 @@ export default function RegisterForm({
       }
 
       navigate("/register-success");
-    } catch (err) {
-      console.error("Register failed", err);
-      setError("Register failed. Please try again.");
+    } catch (error: any) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   }
 

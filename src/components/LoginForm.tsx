@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { unauthFetch } from "../utils/unauth-fetch";
+import { useUnauthFetch } from "../hooks/useUnauthFetch";
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const unauthFetch = useUnauthFetch();
 
   const { setUser } = useAuth();
 
