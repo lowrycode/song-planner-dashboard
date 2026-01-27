@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth.ts";
 import ExpandablePanel from "../components/ExpandablePanel.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
-import { authFetch } from "../utils/auth-fetch.ts";
+import { useAuthFetch } from "../hooks/useAuthFetch.ts";
 import timeAgo from "../utils/time-ago.ts";
 import { UserRoleLabels } from "../constants/user-role-labels.ts";
 import type { UserWithAccesses } from "../types/users.ts";
@@ -88,6 +88,8 @@ export default function AdminManageUsersPage() {
 
   const { user } = useAuth();
   const networkId = user?.network.id;
+
+  const authFetch = useAuthFetch();
 
   // Fetch users within admin scope (same network)
   useEffect(() => {

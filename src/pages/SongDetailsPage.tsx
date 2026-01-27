@@ -8,7 +8,7 @@ import SongResources from "../components/SongResources.tsx";
 import SongExtraInfo from "../components/SongExtraInfo.tsx";
 import SongUsageChart from "../components/SongUsageChart.tsx";
 import { prepareUsageData } from "../utils/process-usage-data.ts";
-import { authFetch } from "../utils/auth-fetch.ts";
+import { useAuthFetch } from "../hooks/useAuthFetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 
 function buildParams(headerFilters: HeaderFilter) {
@@ -73,6 +73,8 @@ export default function SongDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const { songId } = useParams<{ songId: string }>();
   const songIdNum = Number(songId);
+
+  const authFetch = useAuthFetch();
 
   // Guard against invalid song IDs
   if (!songIdNum || Number.isNaN(songIdNum)) {

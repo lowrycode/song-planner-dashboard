@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
-import { authFetch } from "../utils/auth-fetch";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 import type {
   User,
   Church,
@@ -107,6 +107,8 @@ export default function AdminManageUserPage() {
     deleteAccessError ||
     networkChurchesError ||
     churchActivitiesError;
+
+  const authFetch = useAuthFetch();
 
   /* --------------- EFFECTS --------------- */
   // Get User Details
