@@ -1,7 +1,7 @@
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { BsCircleHalf } from "react-icons/bs";
-import { FaUnlock } from "react-icons/fa";
+import { FaUnlock, FaUserShield } from "react-icons/fa";
 import {
   TbLayoutSidebarLeftExpandFilled,
   TbLayoutSidebarRightExpandFilled,
@@ -33,7 +33,7 @@ export default function Sidebar({
   ];
 
   const adminLinks = [
-    { to: "/admin/users", icon: <MdSpaceDashboard />, label: "Manage Users" },
+    { to: "/admin/users", icon: <FaUserShield />, label: "Manage Users" },
   ];
 
   const accountLinks = [
