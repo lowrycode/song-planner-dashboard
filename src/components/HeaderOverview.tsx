@@ -92,7 +92,7 @@ export default function HeaderOverview({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-row flex-wrap justify-between items-center gap-x-5 gap-y-2 my-2 mx-4 "
+      className="flex flex-row flex-wrap justify-between gap-x-5 gap-y-2 my-2 mx-4 "
     >
       <div className="flex flex-1 bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
         <div className="flex w-full flex-wrap gap-3 justify-between">
@@ -163,7 +163,7 @@ export default function HeaderOverview({
         type="submit"
         disabled={noChanges}
         aria-disabled={noChanges}
-        className={`rounded-lg text-gray-100 px-4 py-2 shadow-md ${
+        className={`rounded-lg text-gray-100 px-7 py-2 shadow-md ${
           noChanges
             ? "bg-gray-400 text-gray-200 cursor-not-allowed"
             : "bg-purple-900 hover:bg-purple-700 hover:cursor-pointer"
