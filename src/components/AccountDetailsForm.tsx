@@ -57,6 +57,9 @@ export default function AccountDetailsForm({
     church_id: initialData.church.id,
   };
   const [form, setForm] = useState<AccountDetailsFormState>(initialFormState);
+  const [validationErrors, setValidationErrors] = useState<
+    Partial<Record<keyof AccountDetailsFormState, string>>
+  >({});
 
   /* Reset form if initialData changes */
   useEffect(() => {
@@ -70,9 +73,39 @@ export default function AccountDetailsForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  function validate(form: AccountDetailsFormState) {
+    const errors: Partial<Record<keyof AccountDetailsFormState, string>> = {};
+
+    if (!form.first_name.trim()) errors.first_name = "First name is required.";
+    if (!form.last_name.trim()) errors.last_name = "Last name is required.";
+
+    if (!form.username.trim()) {
+      errors.username = "Username is required.";
+    } else if (form.username.length < 5) {
+      errors.username = "Username must be at least 5 characters.";
+    } else if (form.username.length > 20) {
+      errors.username = "Username cannot exceed 20 characters.";
+    }
+
+    if (!form.network_id) errors.network_id = "Network selection is required.";
+    if (!form.church_id) errors.church_id = "Church selection is required.";
+    if (!(form.role in UserRoleLabels)) errors.role = "Invalid user role.";
+
+    return errors;
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isDirty) return;
+
+    const errors = validate(form);
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      // Don't submit if there are validation errors
+      return;
+    }
+
     onSubmit(form);
   }
 
@@ -121,9 +154,11 @@ export default function AccountDetailsForm({
             type="button"
             disabled={!isDirty || submitting}
             className={`px-3 py-1 rounded-md transition
-              ${isDirty
-                ? "bg-gray-700 text-white hover:bg-gray-600"
-                : "bg-gray-400 text-white cursor-not-allowed"}
+              ${
+                isDirty
+                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  : "bg-gray-400 text-white cursor-not-allowed"
+              }
             `}
             onClick={handleReset}
           >
@@ -131,10 +166,20 @@ export default function AccountDetailsForm({
           </button>
         </div>
       </div>
-      
+
       {error && (
         <div className="rounded-md bg-red-50 border border-red-200 text-red-700 px-3 py-2 text-sm">
           {error}
+        </div>
+      )}
+
+      {validationErrors && Object.keys(validationErrors).length > 0 && (
+        <div className="rounded-md bg-red-50 border border-red-200 text-red-700 px-3 py-2 text-sm mb-4">
+          <ul className="list-disc list-inside">
+            {Object.entries(validationErrors).map(([field, message]) => (
+              <li key={field}>{message}</li>
+            ))}
+          </ul>
         </div>
       )}
 
