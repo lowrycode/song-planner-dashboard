@@ -1,20 +1,21 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import Spinner from "./Spinner";
+import AuthLoadingPage from "../pages/AuthLoadingPage";
 
 export default function ProtectedRoute() {
   const location = useLocation();
-  const { user, userLoading } = useAuth();
+  const { user, userLoading, slowBackend } = useAuth();
 
+  let title = "Checking Your Session";
+  let subTitle = "This should only take a moment";
+
+  if (slowBackend) {
+    title = "Loading the Dashboard";
+    subTitle = "This should only take a few seconds";
+  }
   // Show placeholder until auth state is resolved
   if (userLoading) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-3">
-        <div className="relative">
-          <Spinner message="Checking your session..." />
-        </div>
-      </div>
-    );
+    return <AuthLoadingPage title={title} subTitle={subTitle} />;
   }
 
   // Not logged in, redirect to login

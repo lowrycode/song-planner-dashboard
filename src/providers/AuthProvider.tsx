@@ -13,6 +13,7 @@ interface AuthContextType {
   user: AuthUser | null;
   setUser: React.Dispatch<React.SetStateAction<AuthUser | null>>;
   userLoading: boolean;
+  slowBackend: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -26,8 +27,15 @@ interface AuthProviderProps {
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [userLoading, setUserLoading] = useState(true);
+  const [slowBackend, setSlowBackend] = useState(false);
+
 
   useEffect(() => {
+    // Assume cold start if no response after 3s
+    const timeout = setTimeout(() => {
+      setSlowBackend(true);
+    }, 3000);
+    
     async function fetchCurrentUser() {
       try {
         const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -45,11 +53,13 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         console.error("Failed to fetch current user:", error);
         setUser(null);
       } finally {
+        setSlowBackend(false); // reset just in case of re-fetch or retry
         setUserLoading(false);
       }
     }
 
     fetchCurrentUser();
+    return () => clearTimeout(timeout); // cleanup if component unmounts
   }, []);
 
   const contextValue = useMemo(
@@ -57,8 +67,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       user,
       setUser,
       userLoading,
+      slowBackend,
     }),
-    [user, userLoading]
+    [user, userLoading, slowBackend]
   );
 
   return <AuthContext value={contextValue}>
