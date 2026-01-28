@@ -25,7 +25,7 @@ function LoginPage() {
           alt="Corporate worship"
           className="h-1/2 w-full absolute -bottom-10 z-10 object-cover object-top"
         />
-        <div className="max-w-96 mx-auto px-6 mt-20">
+        <div className="relative z-10 max-w-96 mx-auto px-6 mt-20">
             <LoginForm />
         </div>
       </div>
