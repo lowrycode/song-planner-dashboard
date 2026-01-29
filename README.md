@@ -1,6 +1,6 @@
 # Song Planner Dashboard — Frontend
 
-A modern, responsive dashboard for analysing song usage data across a network of churches. The application simplifies complex data analysis workflows and enables easy comparison between churches, activities, and time periods.
+A modern, responsive dashboard for analysing song usage data across a network of churches. Before this project, analysing song usage data required ad-hoc scripts and spreadsheets, making comparisons slow and inaccessible to non-technical users. This application simplifies those workflows and enables easy comparison between churches, activities, and time periods.
 
 <a href="https://youtu.be/UsUPkk5hFJ0">
   <img src="https://github.com/user-attachments/assets/3d370984-5016-493d-863a-2774217da09a" width="600" alt="RAG Demo">
@@ -15,6 +15,11 @@ A modern, responsive dashboard for analysing song usage data across a network of
 **Demo login:**
 - **Username:** `user1`
 - **Password:** `password1`
+
+## Related Repositories
+
+- **Backend API (FastAPI + SQLAlchemy):**  
+  https://github.com/lowrycode/song-planner-api
 
 ## Overview
 
@@ -77,7 +82,7 @@ This change:
 - Aligns better with browser security best practices
 - Uses rotating refresh tokens for session longevity
 
-To support this setup on Vercel and avoid third-party cookie issues (particularly on mobile and tablet browsers), vercel.json **rewrites** were introduced to ensure requests are treated as same-site.
+To support this setup on Vercel and avoid third-party cookie restrictions (especially on mobile and tablet browsers), vercel.json **rewrites** were introduced to ensure requests are treated as same-site.
 
 ### Component-Driven Design
 
@@ -139,5 +144,6 @@ The application will start in development mode with hot module reloading enabled
 
 ## Planned Improvements
 
+- Improve accessibility and keyboard navigation
 - Add automated tests
 - Add semantic/thematic song searches (using LLM integration on the backend)
