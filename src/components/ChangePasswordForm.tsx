@@ -23,64 +23,29 @@ export default function ChangePasswordForm() {
     ).trim();
 
     try {
-      const response = await authFetch(
-        "/auth/change-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            current_password,
-            new_password,
-            confirm_new_password,
-          }),
-        }
+      await authFetch("/auth/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          current_password,
+          new_password,
+          confirm_new_password,
+        }),
+      });
+
+      setSuccess(
+        "✔ Password changed successfully. Logging you out everywhere..",
       );
-
-      if (!response.ok) {
-        const errorData = await response.json(); // parse the response body
-        switch (response.status) {
-          case 400:
-            if (errorData.detail === "Current password is incorrect") {
-              setError("Current password is incorrect.");
-            } else if (errorData.detail === "Passwords do not match") {
-              setError("Passwords do not match.");
-            } else {
-              setError("Bad request. Please check your input.");
-            }
-            break;
-
-          case 401:
-            setError("Your session has expired. Please log in again.");
-            break;
-
-          case 409:
-            setError(
-              "New password must be different from your current password."
-            );
-            break;
-
-          case 422:
-            setError("Password does not meet the required format.");
-            break;
-
-          default:
-            setError("Something went wrong. Please try again.");
-        }
-
-        return;
-      }
-
-      setSuccess("✔ Password changed successfully. Logging you out everywhere..");
 
       // Redirect to login
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 3000);
-    } catch (err) {
-      console.error("Change password failed", err);
-      setError("Change password failed. Please try again.");
+    } catch (err: any) {
+      console.error("ERROR (password change):", err);
+      setError(err?.message || "Change password failed. Please try again.");
     }
   }
 
