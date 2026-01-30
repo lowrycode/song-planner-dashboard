@@ -38,7 +38,7 @@ export default function ComparePage() {
   const [targetActivity, setTargetActivity] = useState<Activity | null>(null);
 
   const authFetch = useAuthFetch();
-  
+
   // Helper function
   const buildParams = useCallback((headerFilters: HeaderFilter) => {
     const params = new URLSearchParams();
@@ -47,7 +47,7 @@ export default function ComparePage() {
       params.append("from_date", headerFilters.from_date);
     if (headerFilters.to_date) params.append("to_date", headerFilters.to_date);
     headerFilters.church_activities.forEach((id) =>
-      params.append("church_activity_id", id)
+      params.append("church_activity_id", id),
     );
     return params;
   }, []);
@@ -65,11 +65,7 @@ export default function ComparePage() {
 
       try {
         const params = buildParams(headerFilters);
-        const res = await authFetch(
-          `/songs/usages/summary?${params}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch songs");
-
+        const res = await authFetch(`/songs/usages/summary?${params}`);
         const data = await res.json();
         setSongs(data);
       } catch (err: any) {
@@ -89,7 +85,7 @@ export default function ComparePage() {
       ...Object.fromEntries(selectedActivities.map((a) => [a.slug, a.name])),
       total: "Total",
     }),
-    [selectedActivities]
+    [selectedActivities],
   );
 
   const headerMapTargetOnly = {
@@ -110,7 +106,7 @@ export default function ComparePage() {
       const activityCounts = Object.fromEntries(
         Object.entries(song.activities)
           .filter(([slug]) => selectedActivities.some((a) => a.slug === slug))
-          .map(([slug, data]) => [slug, data.usage_count])
+          .map(([slug, data]) => [slug, data.usage_count]),
       );
 
       return {
@@ -232,7 +228,7 @@ export default function ComparePage() {
         {/* Comparison Tables section */}
         {targetActivity && (
           <FadeLoader loading={tableLoading} error={tableError}>
-          {tableError && <p className="text-red-500">{tableError}</p>}
+            {tableError && <p className="text-red-500">{tableError}</p>}
             <div className="flex flex-wrap max-w-full gap-5">
               <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
                 <TableSortSearch

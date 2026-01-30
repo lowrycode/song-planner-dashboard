@@ -33,9 +33,6 @@ export default function SongLayout() {
 
       try {
         const response = await authFetch("/activities");
-        if (!response.ok) {
-          throw new Error("Failed to fetch activities");
-        }
         const data: Activity[] = await response.json();
         setActivities(data);
       } catch (err: any) {

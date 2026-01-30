@@ -26,7 +26,7 @@ function LoginForm() {
     body.append("password", password);
 
     try {
-      const response = await unauthFetch("/auth/login", {
+      await unauthFetch("/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -35,24 +35,9 @@ function LoginForm() {
         credentials: "include", // allows cookies from backend
       });
 
-      if (!response.ok) {
-        const errData = await response.json();
-        setError(errData.detail || "An error occurred.");
-        return;
-      }
-
       const meResponse = await unauthFetch("/auth/me", {
         credentials: "include",
       });
-
-      if (!meResponse.ok) {
-        setError(
-          "Login succeeded but authentication failed. Please try again."
-        );
-        setUser(null);
-        return;
-      }
-
       const userData = await meResponse.json();
       setUser(userData);
 

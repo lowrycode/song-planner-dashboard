@@ -9,13 +9,7 @@ export default function LogoutForm() {
 
   async function handleLogout() {
     try {
-      const response = await authFetch("/auth/logout", {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        console.error("Logout failed");
-      }
+      await authFetch("/auth/logout", { method: "POST" });
     } catch (error) {
       console.error("Logout error", error);
     } finally {

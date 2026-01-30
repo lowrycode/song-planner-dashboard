@@ -192,11 +192,6 @@ export default function SongSearchPage() {
         const response = await authFetch(
           `/songs/usages/summary?${params.toString()}`
         );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data: Song[] = await response.json();
         setSongs(data);
       } catch (err: any) {

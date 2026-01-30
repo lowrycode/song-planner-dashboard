@@ -119,7 +119,6 @@ export default function AdminManageUserPage() {
     async function getUserDetails(userIdNum: number) {
       try {
         const res = await authFetch(`/users/${userIdNum}`);
-        if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
         setUserDetails(data);
       } catch (err: any) {
@@ -140,7 +139,6 @@ export default function AdminManageUserPage() {
     async function getUserAccesses(userIdNum: number) {
       try {
         const res = await authFetch(`/users/${userIdNum}/access`);
-        if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
         setAccesses(data);
       } catch (err: any) {
@@ -161,7 +159,6 @@ export default function AdminManageUserPage() {
     async function getNetworkChurches(networkId: number) {
       try {
         const res = await authFetch(`/networks/${networkId}/churches`);
-        if (!res.ok) throw new Error("Failed to fetch user details");
         const data = await res.json();
         setNetworkChurches(data);
       } catch (err: any) {
@@ -183,7 +180,6 @@ export default function AdminManageUserPage() {
       setChurchActivitiesError(null);
       try {
         const res = await authFetch(`/networks/${networkId}/activities`);
-        if (!res.ok) throw new Error("Failed to fetch church activities");
         const data = await res.json();
         setChurchActivities(data);
       } catch (err: any) {
@@ -241,11 +237,6 @@ export default function AdminManageUserPage() {
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail ?? "Failed to update user");
-      }
-
       const updatedUser = await res.json();
 
       // Update UI with fresh data
@@ -280,8 +271,6 @@ export default function AdminManageUserPage() {
 
       // Refetch user accesses after success
       const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);
-      if (!updatedAccessesRes.ok)
-        throw new Error("Failed to fetch updated accesses");
       const updatedAccesses = await updatedAccessesRes.json();
       setAccesses(updatedAccesses);
 
@@ -316,8 +305,6 @@ export default function AdminManageUserPage() {
 
       // Refetch user accesses after success
       const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);
-      if (!updatedAccessesRes.ok)
-        throw new Error("Failed to fetch updated accesses");
       const updatedAccesses = await updatedAccessesRes.json();
       setAccesses(updatedAccesses);
 

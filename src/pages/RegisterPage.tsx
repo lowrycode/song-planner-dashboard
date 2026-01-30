@@ -33,7 +33,6 @@ export default function RegisterPage() {
       setNetworksLoading(true);
       try {
         const response = await unauthFetch("/networks");
-        if (!response.ok) throw new Error("Failed to fetch networks");
         const data = await response.json();
         setNetworks(data);
         setNetworkError(null);
@@ -67,7 +66,6 @@ export default function RegisterPage() {
           `/networks/${selectedNetworkId}/churches`,
           { signal: controller.signal }
         );
-        if (!res.ok) throw new Error();
         setChurches(await res.json());
         setChurchError(null);
       } catch (err) {

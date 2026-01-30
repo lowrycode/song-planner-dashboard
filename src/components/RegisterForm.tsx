@@ -102,19 +102,13 @@ export default function RegisterForm({
     };
 
     try {
-      const response = await unauthFetch("/auth/register", {
+      await unauthFetch("/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
       });
-
-      if (!response.ok) {
-        const errData = await response.json();
-        setError(errData.detail || "An error occurred.");
-        return;
-      }
 
       navigate("/register-success");
     } catch (error: any) {

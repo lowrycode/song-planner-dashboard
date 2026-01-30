@@ -98,7 +98,6 @@ export default function AdminManageUsersPage() {
     async function getNetworkUsers(networkId: number) {
       try {
         const res = await authFetch(`/networks/${networkId}/users`);
-        if (!res.ok) throw new Error("Failed to fetch network users");
         const data = await res.json();
         const [approved, unapproved] = processUsers(data);
         setApprovedUsers(approved);

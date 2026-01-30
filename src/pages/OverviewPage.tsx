@@ -49,7 +49,7 @@ export default function OverviewPage() {
       params.append("from_date", headerFilters.from_date);
     if (headerFilters.to_date) params.append("to_date", headerFilters.to_date);
     headerFilters.church_activities.forEach((id) =>
-      params.append("church_activity_id", id)
+      params.append("church_activity_id", id),
     );
     return params;
   }, []);
@@ -64,11 +64,7 @@ export default function OverviewPage() {
 
       try {
         const params = buildParams(headerFilters);
-        const res = await authFetch(
-          `/songs/usages/summary?${params}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch songs");
-
+        const res = await authFetch(`/songs/usages/summary?${params}`);
         const data = await res.json();
         setSongs(data);
       } catch (err: any) {
@@ -92,10 +88,8 @@ export default function OverviewPage() {
       try {
         const params = buildParams(headerFilters);
         const res = await authFetch(
-          `/activities/songs/usages/summary?${params}`
+          `/activities/songs/usages/summary?${params}`,
         );
-        if (!res.ok) throw new Error("Failed to fetch songs");
-
         const data = await res.json();
         setActivitySongCounts(data);
       } catch (err: any) {
@@ -165,7 +159,7 @@ export default function OverviewPage() {
       ...Object.fromEntries(selectedActivities.map((a) => [a.slug, a.name])),
       total: "Total",
     }),
-    [selectedActivities]
+    [selectedActivities],
   );
 
   const songs_processed = useMemo(() => {
@@ -173,9 +167,9 @@ export default function OverviewPage() {
       const activityCounts = Object.fromEntries(
         Object.entries(song.activities)
           .filter(([activity]) =>
-            selectedActivities.some((a) => a.slug === activity)
+            selectedActivities.some((a) => a.slug === activity),
           )
-          .map(([activity, data]) => [activity, data.usage_count])
+          .map(([activity, data]) => [activity, data.usage_count]),
       );
 
       return {
