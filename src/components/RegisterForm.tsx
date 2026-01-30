@@ -182,7 +182,7 @@ export default function RegisterForm({
         <select
           id="network"
           name="network"
-          className="py-1 px-2 border border-purple-950"
+          className="py-1 px-2 border border-purple-950 disabled:cursor-not-allowed hover:cursor-pointer"
           value={selectedNetworkId ?? ""}
           onChange={(e) =>
             setSelectedNetworkId(e.target.value ? Number(e.target.value) : null)
@@ -221,12 +221,13 @@ export default function RegisterForm({
         <select
           id="church"
           name="church"
-          className="py-1 px-2 border border-purple-950"
+          className="py-1 px-2 border border-purple-950 disabled:cursor-not-allowed hover:cursor-pointer"
           value={selectedChurchId ?? ""}
           onChange={(e) =>
             setSelectedChurchId(e.target.value ? Number(e.target.value) : null)
           }
           disabled={selectedNetworkId === null || churchesLoading}
+          title={selectedNetworkId === null ? "First choose a network" : ""}
         >
           {selectedNetworkId === null ? (
             <option>-- Select a network first --</option>
