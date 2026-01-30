@@ -79,7 +79,7 @@ export default function SongForm({
           <select
             id="song-type"
             name="songType"
-            className="py-1 px-2 border border-purple-950"
+            className="py-1 px-2 border border-purple-950 hover:cursor-pointer"
             value={localFilters.songType}
             onChange={handleSelectChange}
           >
@@ -99,7 +99,7 @@ export default function SongForm({
           <select
             id="song-key"
             name="songKey"
-            className="py-1 px-2 border border-purple-950"
+            className="py-1 px-2 border border-purple-950 hover:cursor-pointer"
             value={localFilters.songKey}
             onChange={handleSelectChange}
           >
@@ -124,13 +124,13 @@ export default function SongForm({
                 id="filter-used-in-range"
                 name="filterUsedInRange"
                 type="checkbox"
-                className="w-4 h-4 accent-purple-700 border border-purple-950"
+                className="w-4 h-4 accent-purple-700 border border-purple-950 hover:cursor-pointer"
                 checked={localFilters.filterUsedInRange}
                 onChange={handleInputChange}
               />
               <label
                 htmlFor="filter-used-in-range"
-                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap hover:cursor-pointer"
               >
                 Filter used in range
               </label>
@@ -140,13 +140,13 @@ export default function SongForm({
                 id="filter-first-used-in-range"
                 name="filterFirstUsedInRange"
                 type="checkbox"
-                className="w-4 h-4 accent-purple-700 border border-purple-950"
+                className="w-4 h-4 accent-purple-700 border border-purple-950 hover:cursor-pointer"
                 checked={localFilters.filterFirstUsedInRange}
                 onChange={handleInputChange}
               />
               <label
                 htmlFor="filter-first-used-in-range"
-                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap hover:cursor-pointer"
               >
                 Filter first used in range
               </label>
@@ -156,13 +156,13 @@ export default function SongForm({
                 id="filter-last-used-in-range"
                 name="filterLastUsedInRange"
                 type="checkbox"
-                className="w-4 h-4 accent-purple-700 border border-purple-950"
+                className="w-4 h-4 accent-purple-700 border border-purple-950 hover:cursor-pointer"
                 checked={localFilters.filterLastUsedInRange}
                 onChange={handleInputChange}
               />
               <label
                 htmlFor="filter-last-used-in-range"
-                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap hover:cursor-pointer"
               >
                 Filter last used in range
               </label>
@@ -170,7 +170,7 @@ export default function SongForm({
           </div>
           <button
             type="submit"
-            className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700"
+            className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
           >
             Search
           </button>

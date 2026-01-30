@@ -66,7 +66,7 @@ export default function Sidebar({
           
             <button
               onClick={onToggle}
-              className="text-gray-400 hover:text-white text-2xl hidden md:block"
+              className="text-gray-400 hover:text-white hover:cursor-pointer text-2xl hidden md:block"
               aria-label="Toggle sidebar"
             >
               {collapsed ? (

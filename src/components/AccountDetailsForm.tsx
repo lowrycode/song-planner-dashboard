@@ -143,7 +143,7 @@ export default function AccountDetailsForm({
             className={`px-3 py-1 rounded-md text-gray-50 transition
               ${
                 isDirty
-                  ? "bg-purple-900 hover:bg-purple-700"
+                  ? "bg-purple-900 hover:bg-purple-700 hover:cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               }
             `}
@@ -156,7 +156,7 @@ export default function AccountDetailsForm({
             className={`px-3 py-1 rounded-md transition
               ${
                 isDirty
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
+                  ? "bg-gray-700 text-white hover:bg-gray-600 hover:cursor-pointer"
                   : "bg-gray-400 text-white cursor-not-allowed"
               }
             `}
@@ -224,7 +224,7 @@ export default function AccountDetailsForm({
             value={form.network_id}
             disabled={submitting}
             onChange={(e) => update("network_id", Number(e.target.value))}
-            className="border border-gray-300 bg-white rounded px-2 py-1 text-center"
+            className="border border-gray-300 bg-white rounded px-2 py-1 text-center hover:cursor-pointer"
           >
             {adminNetworks.map((network) => (
               <option key={network.id} value={network.id}>
@@ -240,7 +240,7 @@ export default function AccountDetailsForm({
             value={form.church_id}
             disabled={submitting}
             onChange={(e) => update("church_id", Number(e.target.value))}
-            className="border border-gray-300 bg-white rounded px-2 py-1 text-center"
+            className="border border-gray-300 bg-white rounded px-2 py-1 text-center hover:cursor-pointer"
           >
             {networkChurches.map((church) => (
               <option key={church.id} value={church.id}>
@@ -256,7 +256,7 @@ export default function AccountDetailsForm({
             value={form.role}
             disabled={submitting}
             onChange={(e) => update("role", Number(e.target.value) as UserRole)}
-            className="border border-gray-300 bg-white rounded px-2 py-1 text-center"
+            className="border border-gray-300 bg-white rounded px-2 py-1 text-center hover:cursor-pointer"
           >
             {Object.entries(UserRoleLabels).map(([role, label]) => (
               <option key={role} value={role}>

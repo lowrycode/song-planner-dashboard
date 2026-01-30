@@ -19,7 +19,7 @@ export default function PieChartController({
     <div className="flex w-full items-center gap-x-4 bg-purple-900 px-5 py-2 text-gray-50 rounded-lg">
       <label
         htmlFor={inputId}
-        className="flex items-center gap-2 text-sm"
+        className="flex items-center gap-2 text-sm hover:cursor-pointer"
       >
         <input
           id={inputId}

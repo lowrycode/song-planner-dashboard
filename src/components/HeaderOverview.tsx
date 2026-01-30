@@ -123,7 +123,7 @@ export default function HeaderOverview({
           </div>
           {/* Select All checkbox */}
           <div className="flex items-center">
-            <label className="flex items-center gap-2 text-gray-100">
+            <label className="flex items-center gap-2 text-gray-100 hover:cursor-pointer">
               <input
                 type="checkbox"
                 name="select_all"
@@ -141,7 +141,7 @@ export default function HeaderOverview({
             {[...activities]
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(({ id, name }) => (
-                <label key={id} className="flex items-center gap-2">
+                <label key={id} className="flex items-center gap-2 hover:cursor-pointer">
                   <input
                     type="checkbox"
                     className="accent-purple-500"

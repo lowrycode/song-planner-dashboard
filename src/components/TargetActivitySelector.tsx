@@ -27,7 +27,7 @@ export default function TargetActivitySelector({
         <select
           id="select-target-activity"
           name="targetActivity"
-          className="py-1 px-2 border border-purple-950"
+          className="py-1 px-2 border border-purple-950 hover:cursor-pointer"
           value={targetActivity?.id || ""}
           onChange={(e) => {
             const id = parseInt(e.target.value, 10);

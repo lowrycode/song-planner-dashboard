@@ -22,7 +22,7 @@ export default function AccessSelect({
       onChange={(e) =>
         onChange(e.target.value === "" ? "" : Number(e.target.value))
       }
-      className="border border-gray-300 bg-white rounded px-2 py-1 w-60"
+      className="border border-gray-300 bg-white rounded px-2 py-1 w-60 hover:cursor-pointer"
     >
       <option value="" disabled>{placeholder}</option>
       {options.map((opt) => (

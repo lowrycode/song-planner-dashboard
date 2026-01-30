@@ -28,7 +28,7 @@ function MetricSelector({ metric, setMetric }: MetricSelectorProps) {
         id="metric-select"
         value={metric}
         onChange={handleChange}
-        className="border border-purple-950 rounded p-1"
+        className="border border-purple-950 rounded p-1 hover:cursor-pointer"
       >
         {metricOptions.map(({ value, label }) => (
           <option key={value} value={value}>
