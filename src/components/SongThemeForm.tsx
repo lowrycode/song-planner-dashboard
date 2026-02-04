@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ExpandablePanel from "./ExpandablePanel";
 
 interface SongThemeFormProps {
   handleSubmit: (
@@ -62,7 +63,7 @@ export default function SongThemeForm({
       <h2 className="text-xl font-extrabold text-purple-900 mb-2">
         Search Songs by Theme
       </h2>
-      <div className="flex flex-col flex-wrap gap-5 justify-between items-start">
+      <div className="flex flex-col flex-wrap gap-3 justify-between items-start">
         {/* Themes */}
         <div className="flex w-full flex-col gap-1">
           <label
@@ -83,75 +84,77 @@ export default function SongThemeForm({
         </div>
 
         {/* Advanced options */}
-        <div className="flex w-full flex-wrap flex-1 gap-x-5 gap-y-3 justify-end items-start">
-          <div className="flex flex-1 flex-col gap-1">
-            <label
-              htmlFor="searchType"
-              className="text-purple-950 font-semibold text-sm"
-            >
-              Compare with:
-            </label>
-            <select
-              id="searchType"
-              value={searchType}
-              onChange={(e) =>
-                setSearchType(e.target.value as "lyric" | "theme")
-              }
-              className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
-            >
-              <option value="theme">Song Themes</option>
-              <option value="lyric">Song Lyrics</option>
-            </select>
-          </div>
+        <ExpandablePanel caption="Advanced Options">
+          <div className="flex w-full flex-wrap flex-1 gap-x-5 gap-y-3 justify-end items-start mt-3">
+            <div className="flex flex-1 flex-col gap-1">
+              <label
+                htmlFor="searchType"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+              >
+                Compare with:
+              </label>
+              <select
+                id="searchType"
+                value={searchType}
+                onChange={(e) =>
+                  setSearchType(e.target.value as "lyric" | "theme")
+                }
+                className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
+              >
+                <option value="theme">Song Themes</option>
+                <option value="lyric">Song Lyrics</option>
+              </select>
+            </div>
 
-          <div className="flex flex-1 flex-col gap-1">
-            <label
-              htmlFor="minMatch"
-              className="text-purple-950 font-semibold text-sm"
-            >
-              Minimum Match (%):
-            </label>
-            <input
-              type="number"
-              name="minMatch"
-              id="minMatch"
-              min={limitMatchMin}
-              max={limitMatchMax}
-              className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
-              value={minMatch}
-              onChange={handleMinMatchChange}
-            />
-            {!limitMatchValid && (
-              <p className="text-red-600 text-sm">
-                Must be between {limitMatchMin} and {limitMatchMax}
-              </p>
-            )}
-          </div>
+            <div className="flex flex-1 flex-col gap-1">
+              <label
+                htmlFor="minMatch"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+              >
+                Minimum Match (%):
+              </label>
+              <input
+                type="number"
+                name="minMatch"
+                id="minMatch"
+                min={limitMatchMin}
+                max={limitMatchMax}
+                className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
+                value={minMatch}
+                onChange={handleMinMatchChange}
+              />
+              {!limitMatchValid && (
+                <p className="text-red-600 text-sm">
+                  Must be between {limitMatchMin} and {limitMatchMax}
+                </p>
+              )}
+            </div>
 
-          <div className="flex flex-1 flex-col gap-1">
-            <label
-              htmlFor="limit"
-              className="text-purple-950 font-semibold text-sm"
-            >
-              Limit to top:
-            </label>
-            <input
-              type="number"
-              name="limit"
-              id="limit"
-              min={limitCountMin}
-              max={limitCountMax}
-              className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
-              value={limitCount}
-              onChange={handleLimitCountChange}
-            />
-            {!limitCountValid && (
-              <p className="text-red-600 text-sm">
-                Must be between {limitCountMin} and {limitCountMax}
-              </p>
-            )}
+            <div className="flex flex-1 flex-col gap-1">
+              <label
+                htmlFor="limit"
+                className="text-purple-950 font-semibold text-sm whitespace-nowrap"
+              >
+                Limit to top:
+              </label>
+              <input
+                type="number"
+                name="limit"
+                id="limit"
+                min={limitCountMin}
+                max={limitCountMax}
+                className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
+                value={limitCount}
+                onChange={handleLimitCountChange}
+              />
+              {!limitCountValid && (
+                <p className="text-red-600 text-sm">
+                  Must be between {limitCountMin} and {limitCountMax}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        </ExpandablePanel>
 
         <div className="flex w-full justify-end items-end">
           <button
