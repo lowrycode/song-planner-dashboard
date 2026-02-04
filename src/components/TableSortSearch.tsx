@@ -132,7 +132,7 @@ export default function TableSortSearch({
                   return (
                     <td
                       key={cell.id}
-                      className={`border border-purple-900 px-3 py-1 ${
+                      className={`border border-purple-900 px-3 py-1 whitespace-pre-line ${
                         hasHover ? "cursor-help" : ""
                       }`}
                       title={
