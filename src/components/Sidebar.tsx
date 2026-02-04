@@ -1,7 +1,7 @@
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { BsCircleHalf } from "react-icons/bs";
-import { FaUnlock, FaUserShield } from "react-icons/fa";
+import { FaUnlock, FaUserShield, FaRegLightbulb  } from "react-icons/fa";
 import {
   TbLayoutSidebarLeftExpandFilled,
   TbLayoutSidebarRightExpandFilled,
@@ -29,6 +29,7 @@ export default function Sidebar({
   const dashboardLinks = [
     { to: "/overview", icon: <MdSpaceDashboard />, label: "Overview" },
     { to: "/search", icon: <FaMagnifyingGlass />, label: "Search" },
+    { to: "/theme", icon: <FaRegLightbulb   />, label: "Themes" },
     { to: "/compare", icon: <BsCircleHalf />, label: "Compare" },
   ];
 

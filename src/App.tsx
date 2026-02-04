@@ -13,6 +13,7 @@ import LogoutPage from "./pages/LogoutPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import ComparePage from "./pages/ComparePage.tsx";
 import SongSearchPage from "./pages/SongSearchPage.tsx";
+import SongThemePage from "./pages/SongThemePage.tsx";
 import SongDetailsPage from "./pages/SongDetailsPage.tsx";
 import AdminManageUsersPage from "./pages/AdminManageUsersPage.tsx";
 import AdminManageUserPage from "./pages/AdminManageUserPage.tsx";
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/overview" element={<OverviewPage />} />
                 <Route path="/songs/:songId" element={<SongDetailsPage />} />
                 <Route path="/search" element={<SongSearchPage />} />
+                <Route path="/theme" element={<SongThemePage />} />
                 <Route path="/compare" element={<ComparePage />} />
                 {/* Add more protected pages here */}
               </Route>
