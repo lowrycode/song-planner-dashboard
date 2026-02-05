@@ -21,6 +21,7 @@ type TableSortSearchProps = {
   searchKeys?: string[];
   searchPlaceholder?: string;
   title?: string;
+  maxHeight?: string | number;
 };
 
 export default function TableSortSearch({
@@ -30,6 +31,7 @@ export default function TableSortSearch({
   searchKeys = [],
   searchPlaceholder = "Search...",
   title = "Song List",
+  maxHeight = "450px",
 }: TableSortSearchProps) {
   const inputId = useId();
   // Global search value
@@ -90,7 +92,13 @@ export default function TableSortSearch({
         />
       </div>
 
-      <div className="overflow-auto max-w-full max-h-[450px] mt-3">
+      <div
+        className="overflow-auto max-w-full mt-3"
+        style={{
+          maxHeight:
+            typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight,
+        }}
+      >
         <table className="min-w-full border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (

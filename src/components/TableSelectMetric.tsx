@@ -8,25 +8,28 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import { stringDisplaySort, numericDisplaySort } from "../utils/table-data-helpers.ts";
+import {
+  stringDisplaySort,
+  numericDisplaySort,
+} from "../utils/table-data-helpers.ts";
 import { renderCell } from "../utils/table-cell-renderers.tsx";
-
 
 type TableSelectMetricProps = {
   data: any[];
   headerMap: Record<string, string>;
   textHeaders?: string[];
   title?: string;
+  maxHeight?: number | string;
   metric: SongMetric;
   setMetric: React.Dispatch<React.SetStateAction<SongMetric>>;
 };
-
 
 export default function TableSelectMetric({
   data,
   headerMap,
   textHeaders = [],
   title = "Song List",
+  maxHeight = "450px",
   metric,
   setMetric,
 }: TableSelectMetricProps) {
@@ -41,7 +44,9 @@ export default function TableSelectMetric({
       id: key,
       header,
       accessorFn: (row) => row[key],
-      sortingFn: textHeaderSet.has(key) ? stringDisplaySort : numericDisplaySort,
+      sortingFn: textHeaderSet.has(key)
+        ? stringDisplaySort
+        : numericDisplaySort,
     }));
   }, [headerMap, textHeaders]);
 
@@ -73,7 +78,13 @@ export default function TableSelectMetric({
         <MetricSelector metric={metric} setMetric={setMetric} />
       </div>
       {/* Table */}
-      <div className="overflow-y-auto max-h-[450px] mt-3">
+      <div
+        className="overflow-y-auto mt-3"
+        style={{
+          maxHeight:
+            typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight,
+        }}
+      >
         <table className="min-w-full border border-gray-300">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -86,7 +97,7 @@ export default function TableSelectMetric({
                   >
                     {flexRender(
                       header.column.columnDef.header,
-                      header.getContext()
+                      header.getContext(),
                     )}
                     {{
                       asc: " ▲",
