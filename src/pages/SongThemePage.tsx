@@ -96,12 +96,13 @@ export default function SongThemePage() {
       </DashboardPanel>
       {songs.length > 0 && (
         <DashboardPanel className="w-full">
-          <FadeLoader loading={loading} error={error} minHeight="min-h-[450px]">
+          <FadeLoader loading={loading} error={error} minHeight="min-h-[550px]">
             <TableSortSearch
               headerMap={headerMap}
               data={songsProcessed}
-              title="Results"
               searchKeys={searchKeys}
+              title="Results"
+              maxHeight="550px"
             />
           </FadeLoader>
         </DashboardPanel>
