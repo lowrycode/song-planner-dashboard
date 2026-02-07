@@ -1,13 +1,17 @@
 import { useState } from "react";
 import ExpandablePanel from "./ExpandablePanel";
+import UsageRangeCheckboxes from "./UsageRangeCheckboxes";
+import type { UsageRangeFilters } from "../types/filters";
+
+export interface SongThemeFilter extends UsageRangeFilters {
+  themes: string;
+  minMatch: number;
+  limitCount: number;
+  searchType: "lyric" | "theme";
+}
 
 interface SongThemeFormProps {
-  handleSubmit: (
-    themes: string,
-    limitCount: number,
-    minMatch: number,
-    searchType: "lyric" | "theme",
-  ) => void;
+  handleSubmit: (filters: SongThemeFilter) => void;
   loading: boolean;
 }
 
@@ -19,6 +23,11 @@ export default function SongThemeForm({
   const [limitCount, setLimitCount] = useState<number | "">(20);
   const [minMatch, setMinMatch] = useState<number | "">(75);
   const [searchType, setSearchType] = useState<"lyric" | "theme">("theme");
+  const [usageFilters, setUsageFilters] = useState<UsageRangeFilters>({
+    filterUsedInRange: true,
+    filterFirstUsedInRange: false,
+    filterLastUsedInRange: false,
+  });
 
   // Define limits
   const limitCountMin = 5;
@@ -36,8 +45,15 @@ export default function SongThemeForm({
   // Submit form handler
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (limitCount === "" || minMatch === "") return;
-    handleSubmit(themes, Number(limitCount), Number(minMatch), searchType);
+    if (minMatch === "" || limitCount === "") return;
+    const filters = {
+      themes: themes,
+      searchType: searchType,
+      minMatch: Number(minMatch),
+      limitCount: Number(limitCount),
+      ...usageFilters,
+    }
+    handleSubmit(filters);
   }
 
   function handleLimitCountChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -58,6 +74,13 @@ export default function SongThemeForm({
     }
   }
 
+  function handleCheckboxChange(name: string, value: boolean) {
+    setUsageFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
   return (
     <form onSubmit={onSubmit}>
       <h2 className="text-xl font-extrabold text-purple-900 mb-2">
@@ -65,21 +88,30 @@ export default function SongThemeForm({
       </h2>
       <div className="flex flex-col flex-wrap gap-3 justify-between items-start">
         {/* Themes */}
-        <div className="flex w-full flex-col gap-1">
-          <label
-            htmlFor="themes"
-            className="text-purple-950 font-semibold text-sm"
-          >
-            Themes
-          </label>
-          <textarea
-            name="themes"
-            id="themes"
-            className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
-            value={themes}
-            placeholder="Enter themes separated by commas..."
-            onChange={(e) => setThemes(e.target.value)}
-            rows={4}
+        <div className="flex w-full flex-wrap gap-5 items-center">
+          <div className="flex flex-1 flex-col gap-1">
+            <label
+              htmlFor="themes"
+              className="text-purple-950 font-semibold text-sm"
+            >
+              Themes
+            </label>
+            <textarea
+              name="themes"
+              id="themes"
+              className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
+              value={themes}
+              placeholder="Enter themes separated by commas..."
+              onChange={(e) => setThemes(e.target.value)}
+              rows={4}
+            />
+          </div>
+          {/* UsageRangeCheckboxes */}
+          <UsageRangeCheckboxes
+            filterUsedInRange={usageFilters.filterUsedInRange}
+            filterFirstUsedInRange={usageFilters.filterFirstUsedInRange}
+            filterLastUsedInRange={usageFilters.filterLastUsedInRange}
+            onChange={handleCheckboxChange}
           />
         </div>
 

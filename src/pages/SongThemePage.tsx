@@ -4,6 +4,10 @@ import { useAuthFetch } from "../hooks/useAuthFetch";
 import SongThemeForm from "../components/SongThemeForm.tsx";
 import FadeLoader from "../components/FadeLoader.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
+import type { SongThemeFilter } from "../components/SongThemeForm.tsx";
+import type { DashboardContext } from "../types/dashboard.ts";
+import { useOutletContext } from "react-router-dom";
+
 
 // Types
 type CellValue = {
@@ -41,6 +45,8 @@ function processSongsForTable(songs: Song[]): TableRow[] {
 }
 
 export default function SongThemePage() {
+  const { headerFilters } =
+    useOutletContext<DashboardContext>();
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,12 +54,7 @@ export default function SongThemePage() {
   const authFetch = useAuthFetch();
 
   // Fetch songs using similarity search
-  async function handleSubmit(
-    themes: string,
-    limit: number,
-    minMatch: number,
-    searchType: "lyric" | "theme",
-  ) {
+  async function handleSubmit(filters: SongThemeFilter) {
     setLoading(true);
     setError(null);
     setSongs([]);
@@ -63,14 +64,19 @@ export default function SongThemePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          themes,
-          top_k: limit,
-          search_type: searchType,
-          min_match_score: minMatch,
+          themes: filters.themes,
+          search_type: filters.searchType,
+          top_k: filters.limitCount,
+          min_match_score: filters.minMatch,
+          used_in_range: filters.filterUsedInRange,
+          first_used_in_range: filters.filterFirstUsedInRange,
+          last_used_in_range: filters.filterLastUsedInRange,
+          from_date: headerFilters.from_date,
+          to_date: headerFilters.to_date,
+          church_activity_id: headerFilters.church_activities,
         }),
       });
       const data = await res.json();
-      console.log(data);
       setSongs(data);
     } catch (err: any) {
       console.error("ERROR (theme search):", err);
@@ -80,6 +86,7 @@ export default function SongThemePage() {
     }
   }
 
+  // Define table props
   const headerMap = {
     first_line: "Song (First Line)",
     themes: "Themes",
