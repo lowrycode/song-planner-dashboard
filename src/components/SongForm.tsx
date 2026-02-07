@@ -1,12 +1,12 @@
 import { useState } from "react";
+import UsageRangeCheckboxes from "./UsageRangeCheckboxes";
+import type { UsageRangeFilters } from "../types/filters";
 
-interface SongFilter {
+
+interface SongFilter extends UsageRangeFilters {
   lyric: string;
   songType: string;
   songKey: string;
-  filterUsedInRange: boolean;
-  filterFirstUsedInRange: boolean;
-  filterLastUsedInRange: boolean;
 }
 
 export default function SongForm({
@@ -20,12 +20,24 @@ export default function SongForm({
   const [localFilters, setLocalFilters] = useState(filters);
 
   // Update local state on input changes
+  // Handles direct input events from native form elements within this component.
+  // Child components should NOT use this — they should call handleCheckboxChange instead.
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, type, checked, value } = e.currentTarget;
 
     setLocalFilters((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  // Update local state on checkbox changes
+  // Handles checkbox updates from reusable child components.
+  // Avoids passing raw DOM events between components.
+  function handleCheckboxChange(name: string, value: boolean) {
+    setLocalFilters((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   }
 
@@ -118,56 +130,12 @@ export default function SongForm({
         </div>
         {/* DIV - checkbox + submit */}
         <div className="flex flex-1 gap-x-5 gap-y-3 justify-end items-end">
-          <div>
-            <div className="flex items-center gap-2">
-              <input
-                id="filter-used-in-range"
-                name="filterUsedInRange"
-                type="checkbox"
-                className="w-4 h-4 accent-purple-700 border border-purple-950 hover:cursor-pointer"
-                checked={localFilters.filterUsedInRange}
-                onChange={handleInputChange}
-              />
-              <label
-                htmlFor="filter-used-in-range"
-                className="text-purple-950 font-semibold text-sm whitespace-nowrap hover:cursor-pointer"
-              >
-                Filter used in range
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                id="filter-first-used-in-range"
-                name="filterFirstUsedInRange"
-                type="checkbox"
-                className="w-4 h-4 accent-purple-700 border border-purple-950 hover:cursor-pointer"
-                checked={localFilters.filterFirstUsedInRange}
-                onChange={handleInputChange}
-              />
-              <label
-                htmlFor="filter-first-used-in-range"
-                className="text-purple-950 font-semibold text-sm whitespace-nowrap hover:cursor-pointer"
-              >
-                Filter first used in range
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                id="filter-last-used-in-range"
-                name="filterLastUsedInRange"
-                type="checkbox"
-                className="w-4 h-4 accent-purple-700 border border-purple-950 hover:cursor-pointer"
-                checked={localFilters.filterLastUsedInRange}
-                onChange={handleInputChange}
-              />
-              <label
-                htmlFor="filter-last-used-in-range"
-                className="text-purple-950 font-semibold text-sm whitespace-nowrap hover:cursor-pointer"
-              >
-                Filter last used in range
-              </label>
-            </div>
-          </div>
+          <UsageRangeCheckboxes
+            filterUsedInRange={localFilters.filterUsedInRange}
+            filterFirstUsedInRange={localFilters.filterFirstUsedInRange}
+            filterLastUsedInRange={localFilters.filterLastUsedInRange}
+            onChange={handleCheckboxChange}
+          />
           <button
             type="submit"
             className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
