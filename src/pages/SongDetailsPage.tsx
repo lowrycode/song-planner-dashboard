@@ -10,6 +10,8 @@ import SongUsageChart from "../components/SongUsageChart.tsx";
 import { prepareUsageData } from "../utils/process-usage-data.ts";
 import { useAuthFetch } from "../hooks/useAuthFetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
+import SongThemes from "../components/SongThemes.tsx";
+
 
 function buildParams(headerFilters: HeaderFilter) {
   const params = new URLSearchParams();
@@ -17,7 +19,7 @@ function buildParams(headerFilters: HeaderFilter) {
     params.append("from_date", headerFilters.from_date);
   if (headerFilters.to_date) params.append("to_date", headerFilters.to_date);
   headerFilters.church_activities.forEach((id) =>
-    params.append("church_activity_id", id)
+    params.append("church_activity_id", id),
   );
   return params;
 }
@@ -30,6 +32,7 @@ interface SongDetailsType {
   copyright: string;
   author: string;
   duration: number;
+  themes: string;
   lyrics: {
     content: string;
   };
@@ -58,6 +61,7 @@ export default function SongDetailsPage() {
     copyright: "",
     author: "",
     duration: 0,
+    themes: "",
     lyrics: {
       content: "",
     },
@@ -120,46 +124,56 @@ export default function SongDetailsPage() {
   const { labels, datasets } = prepareUsageData(
     songUsages,
     selectedActivities,
-    headerFilters
+    headerFilters,
   );
 
   return (
     <FadeLoader loading={isLoading} error={error}>
-    <div className="flex flex-row flex-wrap justify-between gap-5 m-5">
-      {error && <p className="text-red-500">{error}</p>}
-      {/* Left */}
-      <div className="flex flex-1 flex-wrap gap-5 lg:w-2/3">
-        <DashboardPanel className="flex-1 shrink-0">
-          {/* Song Headlines */}
-          <SongDetails
-            title={songDetails.first_line || "No title available"}
-            author={songDetails.author || "Unknown author"}
-            copyright={songDetails.copyright || "No copyright info"}
-          />
-        </DashboardPanel>
+      <div className="flex flex-row flex-wrap justify-between gap-5 m-5">
+        {error && <p className="text-red-500">{error}</p>}
+        {/* Left */}
+        <div className="flex flex-1 flex-wrap gap-5 lg:w-2/3">
+          <DashboardPanel className="flex-1 shrink-0">
+            {/* Song Headlines */}
+            <SongDetails
+              title={songDetails.first_line || "No title available"}
+              author={songDetails.author || "Unknown author"}
+              copyright={songDetails.copyright || "No copyright info"}
+            />
+          </DashboardPanel>
 
-        <DashboardPanel className="overflow-y-auto overflow-x-hidden">
-          {/* Song Key and Type */}
-          <SongExtraInfo
-            song_key={songDetails.song_key}
-            is_hymn={songDetails.is_hymn}
-          />
-        </DashboardPanel>
-        {/* Song Resources */}
-        <DashboardPanel className="flex-1">
-          <SongResources resources={songDetails.resources} />
-        </DashboardPanel>
+          <DashboardPanel className="overflow-y-auto overflow-x-hidden">
+            {/* Song Themes */}
+            <SongThemes
+              themes={songDetails.themes || "No theme info"}
+            />
+          </DashboardPanel>
 
-        {/* Usage Chart */}
-        <DashboardPanel className="w-full">
-          <SongUsageChart labels={labels} datasets={datasets} />
+          <DashboardPanel className="overflow-y-auto overflow-x-hidden">
+            {/* Song Key and Type */}
+            <SongExtraInfo
+              song_key={songDetails.song_key}
+              is_hymn={songDetails.is_hymn}
+            />
+          </DashboardPanel>
+
+          {/* Song Resources */}
+          <DashboardPanel className="flex-1">
+            <SongResources resources={songDetails.resources} />
+          </DashboardPanel>
+
+          {/* Usage Chart */}
+          <DashboardPanel className="w-full">
+            <SongUsageChart labels={labels} datasets={datasets} />
+          </DashboardPanel>
+        </div>
+        {/* Right */}
+        <DashboardPanel className="w-full lg:w-auto overflow-y-auto">
+          <Lyrics
+            content={songDetails.lyrics.content || "No lyrics available"}
+          />
         </DashboardPanel>
       </div>
-      {/* Right */}
-      <DashboardPanel className="w-full lg:w-auto overflow-y-auto">
-        <Lyrics content={songDetails.lyrics.content || "No lyrics available"} />
-      </DashboardPanel>
-    </div>
     </FadeLoader>
   );
 }
