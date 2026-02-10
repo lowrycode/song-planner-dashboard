@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuthFetch } from "../hooks/useAuthFetch";
+import FadeLoader from "./FadeLoader";
 
 const bibleBooks = [
   "Genesis",
@@ -72,20 +73,36 @@ const bibleBooks = [
 
 interface BibleFormProps {
   setThemes: React.Dispatch<React.SetStateAction<string>>;
+  loadingBibleText: boolean;
+  setLoadingBibleText: React.Dispatch<React.SetStateAction<boolean>>;
+  loadingBibleThemes: boolean;
+  setLoadingBibleThemes: React.Dispatch<React.SetStateAction<boolean>>;
+  errorBibleText: string;
+  setErrorBibleText: React.Dispatch<React.SetStateAction<string>>;
+  errorBibleThemes: string;
+  setErrorBibleThemes: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function BibleForm({ setThemes }: BibleFormProps) {
+export default function BibleForm({
+  setThemes,
+  loadingBibleText,
+  setLoadingBibleText,
+  loadingBibleThemes,
+  setLoadingBibleThemes,
+  errorBibleText,
+  setErrorBibleText,
+  errorBibleThemes,
+  setErrorBibleThemes,
+}: BibleFormProps) {
   const [bibleBook, setBibleBook] = useState<string>("");
   const [bibleText, setBibleText] = useState<string>("");
-  const [loadingBibleText, setLoadingBibleText] = useState<boolean>(false);
-  const [errorBibleText, setErrorBibleText] = useState<string>("");
   const [bibleReference, setBibleReference] = useState("");
 
   const authFetch = useAuthFetch();
 
   async function getBibleText() {
     if (!bibleBook || !bibleReference.trim()) return;
-    if (loadingBibleText) return;
+    if (loadingBibleText || loadingBibleThemes) return;
 
     setLoadingBibleText(true);
     setErrorBibleText("");
@@ -107,13 +124,35 @@ export default function BibleForm({ setThemes }: BibleFormProps) {
     }
   }
 
+  async function getBibleThemes() {
+    if (!bibleText.trim()) return;
+    if (loadingBibleText || loadingBibleThemes) return;
+
+    setLoadingBibleThemes(true);
+    setErrorBibleThemes("");
+
+    try {
+      const res = await authFetch("/bible/themes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: bibleText }),
+      });
+      const data = await res.json();
+      setThemes(data.themes || "");
+    } catch (error) {
+      console.error("Error generating themes:", error);
+      setThemes("");
+      setErrorBibleThemes("Error generating themes");
+    } finally {
+      setLoadingBibleThemes(false);
+    }
+  }
+
   function copyBibleTextToThemes() {
     if (!bibleText.trim()) return;
     setThemes(bibleText);
-  }
-
-  function getBibleThemes() {
-    console.log("GET BIBLE THEMES");
   }
 
   return (
@@ -171,7 +210,12 @@ export default function BibleForm({ setThemes }: BibleFormProps) {
           type="button"
           id="getBibleText"
           onClick={getBibleText}
-          disabled={!bibleReference || !bibleBook}
+          disabled={
+            !bibleReference ||
+            !bibleBook ||
+            loadingBibleText ||
+            loadingBibleThemes
+          }
           className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer mt-1 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Get Text
@@ -186,46 +230,63 @@ export default function BibleForm({ setThemes }: BibleFormProps) {
       </div>
 
       {/* Bible passage text */}
-      <div className="flex flex-col flex-1 gap-3 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-5 py-3">
-        <div className="flex justify-between items-center">
-          <label
-            htmlFor="themes"
-            className="text-purple-950 font-semibold text-sm"
-          >
-            Bible Text
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              id="get-bible-themes"
-              onClick={copyBibleTextToThemes}
-              disabled={!bibleText.trim()}
-              className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+      <FadeLoader
+        loading={loadingBibleText}
+        minHeight="150px"
+        className="w-full"
+      >
+        <div className="flex flex-col flex-1 gap-3 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-5 py-3">
+          <div className="flex justify-between items-center">
+            <label
+              htmlFor="themes"
+              className="text-purple-950 font-semibold text-sm"
             >
-              Use Raw Text
-            </button>
+              Bible Text
+            </label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                id="get-bible-themes"
+                onClick={copyBibleTextToThemes}
+                disabled={
+                  !bibleText.trim() || loadingBibleText || loadingBibleThemes
+                }
+                className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Use Raw Text
+              </button>
 
-            <button
-              type="button"
-              id="get-bible-themes"
-              onClick={getBibleThemes}
-              disabled={!bibleText.trim()}
-              className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Generate Themes
-            </button>
+              <button
+                type="button"
+                id="get-bible-themes"
+                onClick={getBibleThemes}
+                disabled={
+                  !bibleText.trim() || loadingBibleText || loadingBibleThemes
+                }
+                className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Generate Themes
+              </button>
+            </div>
           </div>
+
+          {errorBibleThemes && (
+            <p className="text-red-600 font-medium text-sm">
+              {errorBibleThemes}
+            </p>
+          )}
+
+          <textarea
+            name="themes"
+            id="themes"
+            className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
+            value={bibleText}
+            placeholder="Copy text here or get from reference..."
+            onChange={(e) => setBibleText(e.target.value)}
+            rows={12}
+          />
         </div>
-        <textarea
-          name="themes"
-          id="themes"
-          className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
-          value={bibleText}
-          placeholder="Copy text here or get from reference..."
-          onChange={(e) => setBibleText(e.target.value)}
-          rows={12}
-        />
-      </div>
+      </FadeLoader>
     </div>
   );
 }

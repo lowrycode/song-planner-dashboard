@@ -3,6 +3,7 @@ import ExpandablePanel from "./ExpandablePanel";
 import UsageRangeCheckboxes from "./UsageRangeCheckboxes";
 import type { UsageRangeFilters } from "../types/filters";
 import BibleForm from "./BibleForm";
+import FadeLoader from "./FadeLoader";
 
 export interface SongThemeFilter extends UsageRangeFilters {
   themes: string;
@@ -29,6 +30,10 @@ export default function SongThemeForm({
     filterFirstUsedInRange: false,
     filterLastUsedInRange: false,
   });
+  const [loadingBibleText, setLoadingBibleText] = useState(false);
+  const [loadingBibleThemes, setLoadingBibleThemes] = useState(false);
+  const [errorBibleText, setErrorBibleText] = useState<string>("");
+  const [errorBibleThemes, setErrorBibleThemes] = useState<string>("");
 
   // Define limits
   const limitCountMin = 5;
@@ -53,7 +58,7 @@ export default function SongThemeForm({
       minMatch: Number(minMatch),
       limitCount: Number(limitCount),
       ...usageFilters,
-    }
+    };
     handleSubmit(filters);
   }
 
@@ -89,40 +94,58 @@ export default function SongThemeForm({
       </h2>
       <div className="flex flex-col flex-wrap gap-3 justify-between items-start">
         {/* Themes */}
-        <div className="flex w-full flex-wrap gap-5 items-center">
-          <div className="flex flex-1 flex-col gap-1">
-            <label
-              htmlFor="themes"
-              className="text-purple-950 font-semibold text-sm"
-            >
-              Themes
-            </label>
-            <textarea
-              name="themes"
-              id="themes"
-              className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
-              value={themes}
-              placeholder="Enter themes separated by commas..."
-              onChange={(e) => setThemes(e.target.value)}
-              rows={4}
+        <FadeLoader loading={loadingBibleThemes} minHeight="150px">
+          <div className="flex w-full flex-wrap gap-5 items-center">
+            <div className="flex flex-1 flex-col gap-1">
+              <label
+                htmlFor="themes"
+                className="text-purple-950 font-semibold text-sm"
+              >
+                Themes
+              </label>
+              <textarea
+                name="themes"
+                id="themes"
+                className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
+                value={themes}
+                placeholder="Enter themes separated by commas..."
+                onChange={(e) => setThemes(e.target.value)}
+                rows={4}
+              />
+            </div>
+            {/* UsageRangeCheckboxes */}
+            <UsageRangeCheckboxes
+              filterUsedInRange={usageFilters.filterUsedInRange}
+              filterFirstUsedInRange={usageFilters.filterFirstUsedInRange}
+              filterLastUsedInRange={usageFilters.filterLastUsedInRange}
+              onChange={handleCheckboxChange}
             />
           </div>
-          {/* UsageRangeCheckboxes */}
-          <UsageRangeCheckboxes
-            filterUsedInRange={usageFilters.filterUsedInRange}
-            filterFirstUsedInRange={usageFilters.filterFirstUsedInRange}
-            filterLastUsedInRange={usageFilters.filterLastUsedInRange}
-            onChange={handleCheckboxChange}
-          />
-        </div>
+        </FadeLoader>
 
         {/* Bible section */}
-        <ExpandablePanel caption="Bible Passage" className="border border-gray-500">
-          <BibleForm setThemes={setThemes}/>
+        <ExpandablePanel
+          caption="Bible Passage"
+          className="border border-gray-500"
+        >
+          <BibleForm
+            setThemes={setThemes}
+            loadingBibleText={loadingBibleText}
+            setLoadingBibleText={setLoadingBibleText}
+            loadingBibleThemes={loadingBibleThemes}
+            setLoadingBibleThemes={setLoadingBibleThemes}
+            errorBibleText={errorBibleText}
+            setErrorBibleText={setErrorBibleText}
+            errorBibleThemes={errorBibleThemes}
+            setErrorBibleThemes={setErrorBibleThemes}
+          />
         </ExpandablePanel>
 
         {/* Advanced options */}
-        <ExpandablePanel caption="Advanced Options" className="border border-gray-500">
+        <ExpandablePanel
+          caption="Advanced Options"
+          className="border border-gray-500"
+        >
           <div className="flex w-full flex-wrap flex-1 gap-x-5 gap-y-3 justify-end items-start mt-3">
             <div className="flex flex-1 flex-col gap-1">
               <label
