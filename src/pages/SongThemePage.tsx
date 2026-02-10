@@ -8,7 +8,6 @@ import type { SongThemeFilter } from "../components/SongThemeForm.tsx";
 import type { DashboardContext } from "../types/dashboard.ts";
 import { useOutletContext } from "react-router-dom";
 
-
 // Types
 type CellValue = {
   display: React.ReactNode;
@@ -45,8 +44,8 @@ function processSongsForTable(songs: Song[]): TableRow[] {
 }
 
 export default function SongThemePage() {
-  const { headerFilters } =
-    useOutletContext<DashboardContext>();
+  const { headerFilters } = useOutletContext<DashboardContext>();
+  const [hasSearched, setHasSearched] = useState(false);
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +57,7 @@ export default function SongThemePage() {
     setLoading(true);
     setError(null);
     setSongs([]);
+    setHasSearched(true);
 
     try {
       const res = await authFetch("/songs/by-theme", {
@@ -101,7 +101,7 @@ export default function SongThemePage() {
         <SongThemeForm handleSubmit={handleSubmit} loading={loading} />
         {error && <p className="text-red-500">Error: {error}</p>}
       </DashboardPanel>
-      {songs.length > 0 && (
+      {hasSearched && !loading && (
         <DashboardPanel className="w-full">
           <FadeLoader loading={loading} error={error} minHeight="min-h-[550px]">
             <TableSortSearch
