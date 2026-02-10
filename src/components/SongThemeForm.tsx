@@ -2,6 +2,7 @@ import { useState } from "react";
 import ExpandablePanel from "./ExpandablePanel";
 import UsageRangeCheckboxes from "./UsageRangeCheckboxes";
 import type { UsageRangeFilters } from "../types/filters";
+import BibleForm from "./BibleForm";
 
 export interface SongThemeFilter extends UsageRangeFilters {
   themes: string;
@@ -21,7 +22,7 @@ export default function SongThemeForm({
 }: SongThemeFormProps) {
   const [themes, setThemes] = useState<string>("");
   const [limitCount, setLimitCount] = useState<number | "">(20);
-  const [minMatch, setMinMatch] = useState<number | "">(75);
+  const [minMatch, setMinMatch] = useState<number | "">(50);
   const [searchType, setSearchType] = useState<"lyric" | "theme">("theme");
   const [usageFilters, setUsageFilters] = useState<UsageRangeFilters>({
     filterUsedInRange: true,
@@ -115,8 +116,13 @@ export default function SongThemeForm({
           />
         </div>
 
+        {/* Bible section */}
+        <ExpandablePanel caption="Bible Passage" className="border border-gray-500">
+          <BibleForm setThemes={setThemes}/>
+        </ExpandablePanel>
+
         {/* Advanced options */}
-        <ExpandablePanel caption="Advanced Options">
+        <ExpandablePanel caption="Advanced Options" className="border border-gray-500">
           <div className="flex w-full flex-wrap flex-1 gap-x-5 gap-y-3 justify-end items-start mt-3">
             <div className="flex flex-1 flex-col gap-1">
               <label
