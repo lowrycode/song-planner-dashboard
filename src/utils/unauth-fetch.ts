@@ -1,10 +1,33 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+import retryFetch from "./retry-fetch";
+import { ServerError, ClientError, NetworkError } from "../types/errors";
 
-export async function unauthFetch(url: string, options: RequestInit = {}) {
-  const fullUrl = url.startsWith('/') ? `${API_BASE_URL}${url}` : `${API_BASE_URL}/${url}`;
-  const res = await fetch(fullUrl, {
-    ...options,
-  });
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
-  return res;
+export async function unauthFetch(
+  url: string,
+  options: RequestInit = {},
+  retries = 3,
+): Promise<Response> {
+  const fullUrl = url.startsWith("/")
+    ? `${API_BASE_URL}${url}`
+    : `${API_BASE_URL}/${url}`;
+
+  return retryFetch(
+    async () => {
+      try {
+        const res = await fetch(fullUrl, options);
+        if (!res.ok) {
+          if (res.status >= 500) throw new ServerError(res.status);
+          if (res.status >= 400) throw new ClientError(res.status);
+        }
+        return res;
+      } catch (err: any) {
+        throw new NetworkError(err.message);
+      }
+    },
+    retries,
+    500, // base delay
+    5000, // max delay
+  );
 }
