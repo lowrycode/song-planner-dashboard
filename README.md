@@ -1,6 +1,6 @@
 # Song Planner Dashboard — Frontend
 
-A modern, responsive dashboard for analysing song usage data across a network of churches. Before this project, analysing song usage data required ad-hoc scripts and spreadsheets, making comparisons slow and inaccessible to non-technical users. This application simplifies those workflows and enables easy comparison between churches, activities, and time periods.
+A modern, responsive dashboard for analysing song usage data across a network of churches and assisting future song selection through AI tools.
 
 <a href="https://youtu.be/UsUPkk5hFJ0">
   <img src="https://github.com/user-attachments/assets/3d370984-5016-493d-863a-2774217da09a" width="600" alt="RAG Demo">
@@ -16,24 +16,36 @@ A modern, responsive dashboard for analysing song usage data across a network of
 - **Username:** `user1`
 - **Password:** `password1`
 
-## Related Repositories
 
-- **Backend API (FastAPI + SQLAlchemy):**  
-  https://github.com/lowrycode/song-planner-api
+## The Problems This Project Solves
 
-## Overview
+### Data Analysis
 
-Before this project, song usage data could only be analysed through traditional data analysis methods, which made comparisons and exploratory analysis time-consuming and inaccessible to non-technical users.
+Before this project, analysing song usage data required ad-hoc scripts and spreadsheets, making comparisons slow and inaccessible to non-technical users. This application simplifies those workflows and enables easy comparison between churches, activities, and time periods.
 
-This frontend provides an intuitive dashboard that allows users to:
+The dashboard allows users to:
 - Compare song usage across churches in a network
 - Analyse which songs were introduced or last used within a specific time range
 - Filter and explore data visually through charts and tables
 - Access data according to fine-grained permission rules
 
-The focus of the frontend is **clarity**, **usability**, and **performance**, turning raw usage data into actionable insights.
+### AI-Powered Semantic Search
 
-## Tech Stack
+Previously, song searches were limited to basic filtering such as lyrics, musical keys, or song categories. This application expands those capabilities with AI-powered search, enabling users to find songs based on **lyrical meaning** rather than exact keyword matches.
+
+The dashboard allows users to:
+- Retrieve Bible passages
+- Auto-generate a summary of themes in the Bible passage
+- Perform semantic song searches based on song themes or raw lyrics
+
+*These AI capabilities are powered by a Retrieval-Augmented Generation (RAG) pipeline implemented in the backend API.*
+
+## Related Repositories
+
+- **Backend API (FastAPI + SQLAlchemy):**  
+  https://github.com/lowrycode/song-planner-api
+
+## Tech Stack (for frontend)
 
 - **React 19** – Component-based UI and reusable abstractions
 - **TypeScript** – Static typing to catch bugs before runtime
@@ -65,58 +77,33 @@ The focus of the frontend is **clarity**, **usability**, and **performance**, tu
   - Dynamic tables with sorting and filtering
   - Shared layout and visual components
 
-- **Responsive design**
-  - Optimised for desktop, tablet, and mobile devices
-
-- **Graceful loading and error states**
-  - Spinners and user-friendly feedback during async operations
+- **UX Design**
+  - Responsive on desktop, tablet, and mobile devices
+  - Loading spinners and user-friendly feedback on errors
 
 ## Architecture & Design Decisions
 
 ### Authentication via HTTP-only Cookies
 
-Midway through development, authentication was refactored from using authorization headers to **HTTP-only cookies** for improved security.
+Authentication was refactored from authorization headers to **HTTP-only cookies** to improve security and align with modern browser best practices. The implementation uses **rotating refresh tokens** for session longevity.
 
-This change:
-- Reduces exposure to XSS attacks
-- Aligns better with browser security best practices
-- Uses rotating refresh tokens for session longevity
-
-To support this setup on Vercel and avoid third-party cookie restrictions (especially on mobile and tablet browsers), vercel.json **rewrites** were introduced to ensure requests are treated as same-site.
+To avoid third-party cookie restrictions (particularly on mobile and tablet browsers), **vercel.json rewrites** ensure requests are treated as same-site.
 
 ### Component-Driven Design
 
-React was chosen to encourage:
-- Strong separation of concerns
-- Reusable UI patterns (e.g. tables, charts, layout components)
-- Easier long-term maintenance as the application grows
-
-Dynamic tables are implemented once and reused across multiple views, with configurable columns, filters, and sorting.
+React enables clear **separation of concerns** and **reusable** UI patterns. Core components such as dynamic tables are implemented once and reused across multiple views with configurable columns, filters, and sorting.
 
 ### Type Safety with TypeScript
 
-TypeScript is used throughout the project to:
-- Catch integration issues early when working with API responses
-- Improve developer confidence during refactors
-- Make component contracts explicit and self-documenting
+TypeScript improves reliability when integrating with API responses and makes component contracts explicit, reducing runtime errors and simplifying refactoring.
 
 ### Styling with Tailwind CSS
 
-Tailwind was selected over frameworks like Bootstrap to:
-- Maintain full control over the design system
-- Avoid heavy opinionated styles
-- Create a consistent, custom look and feel
-
-Utility-first styling also enables rapid iteration and easy visual adjustments.
+Tailwind was chosen over Bootstrap because it provides **full control** over the design system while still enabling **rapid development** and consistent styling across the application.
 
 ### Data Visualisation
 
-Chart.js is used for bar and pie charts to provide:
-- Smooth animations
-- Clear data representation
-- A polished, professional user experience
-
-Charts are tightly integrated with filters and time-based queries to support exploratory analysis.
+Chart.js is used for interactive bar and pie charts that integrate directly with filtering and time-based queries to support exploratory analysis.
 
 ## Environment & Configuration
 
@@ -146,4 +133,3 @@ The application will start in development mode with hot module reloading enabled
 
 - Improve accessibility and keyboard navigation
 - Add automated tests
-- Add semantic/thematic song searches (using LLM integration on the backend)
