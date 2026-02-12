@@ -24,7 +24,7 @@ export default function PieChartController({
         <input
           id={inputId}
           type="checkbox"
-          className="accent-purple-500"
+          className="accent-purple-500 hover:cursor-pointer"
           disabled={pieLoading}
           checked={pieWeightByUsage}
           onChange={(e) => setPieWeightByUsage(e.target.checked)}

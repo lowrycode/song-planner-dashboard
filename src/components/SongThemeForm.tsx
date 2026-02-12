@@ -160,7 +160,7 @@ export default function SongThemeForm({
                 onChange={(e) =>
                   setSearchType(e.target.value as "lyric" | "theme")
                 }
-                className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white"
+                className="w-full min-w-[100px] py-1 px-2 border border-purple-950 bg-white hover:cursor-pointer"
               >
                 <option value="theme">Song Themes</option>
                 <option value="lyric">Song Lyrics</option>

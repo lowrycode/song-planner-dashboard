@@ -129,7 +129,7 @@ export default function HeaderOverview({
                 name="select_all"
                 checked={allSelected}
                 onChange={handleChange}
-                className="accent-purple-500"
+                className="accent-purple-500 hover:cursor-pointer"
               />
               Toggle Activities
             </label>
@@ -144,7 +144,7 @@ export default function HeaderOverview({
                 <label key={id} className="flex items-center gap-2 hover:cursor-pointer">
                   <input
                     type="checkbox"
-                    className="accent-purple-500"
+                    className="accent-purple-500 hover:cursor-pointer"
                     name="church_activities"
                     value={id.toString()} // use ID as string value for checkbox
                     checked={localFilters.church_activities.includes(
