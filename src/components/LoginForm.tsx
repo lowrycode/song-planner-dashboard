@@ -5,6 +5,8 @@ import { useUnauthFetch } from "../hooks/useUnauthFetch";
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,6 +18,10 @@ function LoginForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     setError(null);
 
     const formData = new FormData(e.currentTarget);
@@ -44,7 +50,11 @@ function LoginForm() {
       navigate(redirectTo, { replace: true });
     } catch (err) {
       console.error("Login failed", err);
-      setError("Login failed. Please try again.");
+      setError(
+        err instanceof Error ? err.message : "Login failed. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -89,9 +99,10 @@ function LoginForm() {
         />
         <button
           type="submit"
-          className="bg-purple-900 mt-5 px-3 py-1.5 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
+          disabled={isSubmitting}
+          className="bg-purple-900 mt-5 px-3 py-1.5 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Log In
+          {isSubmitting ? "Logging in..." : "Log In"}
         </button>
         <p className="mt-3 text-end">
           Don't have an account?{" "}
