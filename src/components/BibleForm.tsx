@@ -99,19 +99,23 @@ export default function BibleForm({
   const [bibleBook, setBibleBook] = useState<string>("");
   const [bibleText, setBibleText] = useState<string>("");
   const [lastFetchedBibleText, setLastFetchedBibleText] = useState("");
+  const [lastFetchedPassageRef, setLastFetchedPassageRef] = useState("");
   const [bibleReference, setBibleReference] = useState("");
 
+  const currentPassage = `${bibleBook} ${bibleReference}`.trim();
 
   const authFetch = useAuthFetch();
 
   async function getBibleText() {
     if (!bibleBook || !bibleReference.trim()) return;
     if (loadingBibleText || loadingBibleThemes) return;
+  
+    const passage = currentPassage;
+    if (lastFetchedPassageRef === passage) return
 
     setLoadingBibleText(true);
     setErrorBibleText("");
 
-    const passage = `${bibleBook} ${bibleReference}`;
     const params = { ref: passage };
     const query = new URLSearchParams(params).toString();
 
@@ -120,6 +124,7 @@ export default function BibleForm({
       const data = await res.json();
       setBibleText(data.text || "");
       setLastFetchedBibleText(data.text || "")
+      setLastFetchedPassageRef(passage);
     } catch (error) {
       setBibleText("");
       setErrorBibleText("Unable to fetch Bible passage");
@@ -163,6 +168,7 @@ export default function BibleForm({
   }
 
   const isTextCurrent = (bibleText === lastFetchedBibleText && bibleText.trim() !== "");
+  const isPassageRefCurrent = (currentPassage === lastFetchedPassageRef && lastFetchedPassageRef !== "");
 
   return (
     <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-3">
@@ -224,7 +230,7 @@ export default function BibleForm({
             !bibleBook ||
             loadingBibleText ||
             loadingBibleThemes ||
-            isTextCurrent
+            (isTextCurrent && isPassageRefCurrent)
           }
           className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer mt-1 disabled:cursor-not-allowed disabled:opacity-50"
         >
