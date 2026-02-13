@@ -73,6 +73,7 @@ const bibleBooks = [
 
 interface BibleFormProps {
   setThemes: React.Dispatch<React.SetStateAction<string>>;
+  scrollToThemes: () => void;
   loadingBibleText: boolean;
   setLoadingBibleText: React.Dispatch<React.SetStateAction<boolean>>;
   loadingBibleThemes: boolean;
@@ -85,6 +86,7 @@ interface BibleFormProps {
 
 export default function BibleForm({
   setThemes,
+  scrollToThemes,
   loadingBibleText,
   setLoadingBibleText,
   loadingBibleThemes,
@@ -141,6 +143,7 @@ export default function BibleForm({
       });
       const data = await res.json();
       setThemes(data.themes || "");
+      scrollToThemes();
     } catch (error) {
       console.error("Error generating themes:", error);
       setThemes("");
@@ -153,6 +156,7 @@ export default function BibleForm({
   function copyBibleTextToThemes() {
     if (!bibleText.trim()) return;
     setThemes(bibleText);
+    scrollToThemes();
   }
 
   return (
@@ -238,7 +242,7 @@ export default function BibleForm({
         <div className="flex flex-col flex-1 gap-3 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-5 py-3">
           <div className="flex justify-between items-center">
             <label
-              htmlFor="themes"
+              htmlFor="bibleText"
               className="text-purple-950 font-semibold text-sm"
             >
               Bible Text
@@ -277,8 +281,8 @@ export default function BibleForm({
           )}
 
           <textarea
-            name="themes"
-            id="themes"
+            name="bibleText"
+            id="bibleText"
             className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
             value={bibleText}
             placeholder="Copy text here or get from reference..."

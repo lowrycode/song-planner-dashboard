@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ExpandablePanel from "./ExpandablePanel";
 import UsageRangeCheckboxes from "./UsageRangeCheckboxes";
 import type { UsageRangeFilters } from "../types/filters";
@@ -34,6 +34,8 @@ export default function SongThemeForm({
   const [loadingBibleThemes, setLoadingBibleThemes] = useState(false);
   const [errorBibleText, setErrorBibleText] = useState<string>("");
   const [errorBibleThemes, setErrorBibleThemes] = useState<string>("");
+
+  const themesRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Define limits
   const limitCountMin = 5;
@@ -87,6 +89,18 @@ export default function SongThemeForm({
     }));
   }
 
+  function scrollToThemes() {
+    themesRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    themesRef.current?.classList.add("ring-4", "ring-purple-500");
+    setTimeout(() => {
+      themesRef.current?.classList.remove("ring-4", "ring-purple-500");
+    }, 1000);
+  }
+
   return (
     <form onSubmit={onSubmit}>
       <h2 className="text-xl font-extrabold text-purple-900 mb-2">
@@ -95,7 +109,7 @@ export default function SongThemeForm({
       <div className="flex flex-col flex-wrap gap-3 justify-between items-start">
         {/* Themes */}
         <FadeLoader loading={loadingBibleThemes} minHeight="150px">
-          <div className="flex w-full flex-wrap gap-5 items-center">
+          <div className="flex w-full flex-wrap gap-5 items-end">
             <div className="flex flex-1 flex-col gap-1">
               <label
                 htmlFor="themes"
@@ -104,6 +118,7 @@ export default function SongThemeForm({
                 Themes
               </label>
               <textarea
+                ref={themesRef}
                 name="themes"
                 id="themes"
                 className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
@@ -113,13 +128,31 @@ export default function SongThemeForm({
                 rows={4}
               />
             </div>
-            {/* UsageRangeCheckboxes */}
-            <UsageRangeCheckboxes
-              filterUsedInRange={usageFilters.filterUsedInRange}
-              filterFirstUsedInRange={usageFilters.filterFirstUsedInRange}
-              filterLastUsedInRange={usageFilters.filterLastUsedInRange}
-              onChange={handleCheckboxChange}
-            />
+
+            <div className="flex flex-col gap-4">
+              {/* UsageRangeCheckboxes */}
+              <UsageRangeCheckboxes
+                filterUsedInRange={usageFilters.filterUsedInRange}
+                filterFirstUsedInRange={usageFilters.filterFirstUsedInRange}
+                filterLastUsedInRange={usageFilters.filterLastUsedInRange}
+                onChange={handleCheckboxChange}
+              />
+
+              <div className="flex">
+                <button
+                  type="submit"
+                  disabled={
+                    loading ||
+                    !themes.trim() ||
+                    !limitCountValid ||
+                    !limitMatchValid
+                  }
+                  className="w-full bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
           </div>
         </FadeLoader>
 
@@ -130,6 +163,7 @@ export default function SongThemeForm({
         >
           <BibleForm
             setThemes={setThemes}
+            scrollToThemes={scrollToThemes}
             loadingBibleText={loadingBibleText}
             setLoadingBibleText={setLoadingBibleText}
             loadingBibleThemes={loadingBibleThemes}
@@ -216,18 +250,6 @@ export default function SongThemeForm({
             </div>
           </div>
         </ExpandablePanel>
-
-        <div className="flex w-full justify-end items-end">
-          <button
-            type="submit"
-            disabled={
-              loading || !themes.trim() || !limitCountValid || !limitMatchValid
-            }
-            className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
-          >
-            Search
-          </button>
-        </div>
       </div>
     </form>
   );
