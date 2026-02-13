@@ -110,6 +110,7 @@ export default function SongThemeForm({
         {/* Themes */}
         <FadeLoader loading={loadingBibleThemes} minHeight="150px">
           <div className="flex w-full flex-wrap gap-5 items-end">
+            {/* Textarea */}
             <div className="flex flex-1 flex-col gap-1">
               <label
                 htmlFor="themes"
@@ -129,8 +130,8 @@ export default function SongThemeForm({
               />
             </div>
 
-            <div className="flex flex-col gap-4">
-              {/* UsageRangeCheckboxes */}
+            {/* UsageRangeCheckboxes and Submit */}
+            <div className="flex w-full flex-wrap justify-between sm:flex-0 sm:flex-col gap-4">
               <UsageRangeCheckboxes
                 filterUsedInRange={usageFilters.filterUsedInRange}
                 filterFirstUsedInRange={usageFilters.filterFirstUsedInRange}
@@ -147,7 +148,7 @@ export default function SongThemeForm({
                     !limitCountValid ||
                     !limitMatchValid
                   }
-                  className="w-full bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
+                  className="w-full bg-purple-900 px-8 py-2 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
                 >
                   Search
                 </button>
