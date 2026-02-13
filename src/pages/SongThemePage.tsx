@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import DashboardPanel from "../components/DashboardPanel";
 import { useAuthFetch } from "../hooks/useAuthFetch";
 import SongThemeForm from "../components/SongThemeForm.tsx";
@@ -49,6 +49,7 @@ export default function SongThemePage() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
 
   const authFetch = useAuthFetch();
 
@@ -86,6 +87,19 @@ export default function SongThemePage() {
     }
   }
 
+  useEffect(() => {
+    if (!loading && hasSearched) {
+      scrollToResults();
+    }
+  }, [loading, hasSearched]);
+
+  function scrollToResults() {
+    resultsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
   // Define table props
   const headerMap = {
     first_line: "Song (First Line)",
@@ -104,13 +118,15 @@ export default function SongThemePage() {
       {hasSearched && !loading && (
         <DashboardPanel className="w-full">
           <FadeLoader loading={loading} error={error} minHeight="min-h-[550px]">
-            <TableSortSearch
-              headerMap={headerMap}
-              data={songsProcessed}
-              searchKeys={searchKeys}
-              title="Results"
-              maxHeight="550px"
-            />
+            <div ref={resultsRef}>
+              <TableSortSearch
+                headerMap={headerMap}
+                data={songsProcessed}
+                searchKeys={searchKeys}
+                title="Results"
+                maxHeight="550px"
+              />
+            </div>
           </FadeLoader>
         </DashboardPanel>
       )}
