@@ -1,32 +1,33 @@
+import { unauthFetch } from "../utils/unauth-fetch";
+import { ClientError } from "../types/errors";
+
 export function useUnauthFetch() {
   return async function unauthFetchWithErrors(
     url: string,
     options?: RequestInit
   ) {
-    const API_BASE_URL =
-      import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-    const fullUrl = url.startsWith("/")
-      ? `${API_BASE_URL}${url}`
-      : `${API_BASE_URL}/${url}`;
-    const res = await fetch(fullUrl, { ...options });
+    try {
+      return await unauthFetch(url, options);
+    } catch (err) {
+      if (err instanceof ClientError && err.response) {
+        let data: any;
 
-    if (!res.ok) {
-      let errorMessage = `Request failed with status ${res.status}`;
-
-      try {
-        const data = await res.json();
-        if (Array.isArray(data.detail)) {
-          errorMessage = data.detail.map((e: any) => e.msg).join(", ");
-        } else if (typeof data.detail === "string") {
-          errorMessage = data.detail;
+        try {
+          data = await err.response.json();
+        } catch {
+          throw err; // JSON failed → fallback to original error
         }
-      } catch {
-        // fallback if JSON parse fails
+
+        if (Array.isArray(data?.detail)) {
+          throw new Error(data.detail.map((e: any) => e.msg).join(", "));
+        }
+
+        if (typeof data?.detail === "string") {
+          throw new Error(data.detail);
+        }
       }
 
-      throw new Error(errorMessage);
+      throw err;
     }
-
-    return res;
   };
 }
