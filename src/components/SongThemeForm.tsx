@@ -109,7 +109,7 @@ export default function SongThemeForm({
       <div className="flex flex-col flex-wrap gap-3 justify-between items-start">
         {/* Themes */}
         <FadeLoader loading={loadingBibleThemes} minHeight="150px">
-          <div className="flex w-full flex-wrap gap-5 items-end">
+          <div className="flex w-full flex-wrap gap-3 md:gap-4 items-end">
             {/* Textarea */}
             <div className="flex flex-1 flex-col gap-1">
               <label
@@ -160,7 +160,7 @@ export default function SongThemeForm({
         {/* Bible section */}
         <ExpandablePanel
           caption="Bible Passage"
-          className="border border-gray-500"
+          className="border border-gray-500 mt-2"
         >
           <BibleForm
             setThemes={setThemes}

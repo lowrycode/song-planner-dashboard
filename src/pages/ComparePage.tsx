@@ -229,7 +229,7 @@ export default function ComparePage() {
         {targetActivity && (
           <FadeLoader loading={tableLoading} error={tableError}>
             {tableError && <p className="text-red-500">{tableError}</p>}
-            <div className="flex flex-wrap max-w-full gap-5">
+            <div className="flex flex-wrap max-w-full gap-2 md:gap-4">
               <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMapTargetOnly}
