@@ -92,7 +92,7 @@ export default function HeaderOverview({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-row flex-wrap justify-between gap-x-5 gap-y-2 my-2 mx-4 "
+      className="flex flex-row flex-wrap justify-between gap-x-5 gap-y-2 my-2 mx-2 md:mx-4 "
     >
       <div className="flex flex-1 bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
         <div className="flex w-full flex-wrap gap-3 justify-between">
@@ -137,7 +137,7 @@ export default function HeaderOverview({
         </div>
         {/* Activities checkboxes */}
         <FadeLoader loading={activitiesLoading} error={activitiesError}>
-          <div className="flex w-full gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap min-h-8">
+          <div className="flex w-full gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap min-h-8 max-h-16 overflow-y-auto">
             {[...activities]
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(({ id, name }) => (
@@ -163,7 +163,7 @@ export default function HeaderOverview({
         type="submit"
         disabled={noChanges}
         aria-disabled={noChanges}
-        className={`rounded-lg text-gray-100 px-7 py-2 shadow-md ${
+        className={`w-full sm:w-auto rounded-lg text-gray-100 px-7 py-2 shadow-md ${
           noChanges
             ? "bg-gray-400 text-gray-200 cursor-not-allowed"
             : "bg-purple-900 hover:bg-purple-700 hover:cursor-pointer"
