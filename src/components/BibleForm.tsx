@@ -98,7 +98,9 @@ export default function BibleForm({
 }: BibleFormProps) {
   const [bibleBook, setBibleBook] = useState<string>("");
   const [bibleText, setBibleText] = useState<string>("");
+  const [lastFetchedBibleText, setLastFetchedBibleText] = useState("");
   const [bibleReference, setBibleReference] = useState("");
+
 
   const authFetch = useAuthFetch();
 
@@ -117,6 +119,7 @@ export default function BibleForm({
       const res = await authFetch(`/bible?${query}`);
       const data = await res.json();
       setBibleText(data.text || "");
+      setLastFetchedBibleText(data.text || "")
     } catch (error) {
       setBibleText("");
       setErrorBibleText("Unable to fetch Bible passage");
@@ -158,6 +161,8 @@ export default function BibleForm({
     setThemes(bibleText);
     scrollToThemes();
   }
+
+  const isTextCurrent = (bibleText === lastFetchedBibleText && bibleText.trim() !== "");
 
   return (
     <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-3">
@@ -218,7 +223,8 @@ export default function BibleForm({
             !bibleReference ||
             !bibleBook ||
             loadingBibleText ||
-            loadingBibleThemes
+            loadingBibleThemes ||
+            isTextCurrent
           }
           className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer mt-1 disabled:cursor-not-allowed disabled:opacity-50"
         >
