@@ -18,12 +18,16 @@ export async function unauthFetch(
       try {
         const res = await fetch(fullUrl, options);
         if (!res.ok) {
-          if (res.status >= 500) throw new ServerError(res.status);
-          if (res.status >= 400) throw new ClientError(res.status);
+          if (res.status >= 500) throw new ServerError(res.status, res);
+          if (res.status >= 400) throw new ClientError(res.status, res);
         }
         return res;
       } catch (err: any) {
-        throw new NetworkError(err.message);
+        if (err instanceof ServerError || err instanceof ClientError) {
+          throw err;
+        }
+
+        throw new NetworkError(err?.message || "Network failure");
       }
     },
     retries,
