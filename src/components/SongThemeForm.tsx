@@ -124,7 +124,7 @@ export default function SongThemeForm({
                 id="themes"
                 className="py-1 px-2 border border-purple-950 bg-white block min-w-[150px] min-h-[100px]"
                 value={themes}
-                placeholder="Enter themes separated by commas..."
+                placeholder="Describe themes or use scripture text..."
                 onChange={(e) => setThemes(e.target.value)}
                 rows={5}
               />
