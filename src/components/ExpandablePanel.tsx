@@ -27,7 +27,7 @@ export default function ExpandablePanel({
 
   return (
     <div
-      className={`bg-gray-100 px-5 py-3 rounded-lg shadow-sm w-full ${className}`}
+      className={`bg-gray-100 px-3 py-3 md:px-4 rounded-lg shadow-sm w-full ${className}`}
     >
       <button
         type="button"

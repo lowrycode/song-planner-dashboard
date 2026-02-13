@@ -37,7 +37,7 @@ export default function AccessGroupPanel({
   handleDeleteAccess,
 }: AccessGroupPanelProps) {
   return (
-    <div className="flex flex-col flex-1 border rounded border-gray-300 px-5 py-3">
+    <div className="flex flex-col flex-1 border rounded border-gray-300 px-3 py-3 md:px-4">
       {/* List access */}
       <div className="flex-1">
         <div className="text-sm capitalize text-gray-500 mb-1">{group}</div>

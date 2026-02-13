@@ -162,7 +162,7 @@ export default function BibleForm({
   return (
     <div className="flex flex-col md:flex-row gap-5 mt-3">
       {/* Bible reference section */}
-      <div className="flex flex-col flex-0 gap-4 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-5 py-3">
+      <div className="flex flex-col flex-0 gap-4 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-3 py-3 md:px-4">
         {/* Bible Book */}
         <div className="flex flex-col gap-1">
           <label
@@ -239,7 +239,7 @@ export default function BibleForm({
         minHeight="150px"
         className="w-full"
       >
-        <div className="flex flex-col flex-1 gap-3 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-5 py-3">
+        <div className="flex flex-col flex-1 gap-3 border-2 border-gray-300 border-dotted rounded-lg bg-gray-200 px-3 py-3 md:px-4">
           <div className="flex justify-between items-center">
             <label
               htmlFor="bibleText"
