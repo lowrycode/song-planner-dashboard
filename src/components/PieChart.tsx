@@ -23,6 +23,8 @@ type PieChartProps = {
   labels: string[];
   colors?: string[];
   title?: string;
+  width?: number;
+  height?: number;
 };
 
 function PieChart({
@@ -30,6 +32,8 @@ function PieChart({
   labels,
   colors = [],
   title = "",
+  width = 350,
+  height = 150,
 }: PieChartProps) {
   const bgColors =
     colors.length > 0
@@ -63,7 +67,7 @@ function PieChart({
   return (
     <div className="flex flex-col">
       <h2 className="text-xl font-extrabold text-purple-900 mb-5">{title}</h2>
-      <div className="flex">
+      <div style={{ width: `${width}px`, height: `${height}px` }}>
         <Doughnut data={chartData} options={options} />
       </div>
     </div>

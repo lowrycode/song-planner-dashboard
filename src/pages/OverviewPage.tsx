@@ -207,11 +207,13 @@ export default function OverviewPage() {
               data={hymnPieData}
               labels={hymnPieLabels}
               title="Song Type"
+              width={250}
             />
             <PieChart
               data={keyPieData}
               labels={keyPieLabels}
               title="Song Key"
+              width={350}
             />
           </div>
         </FadeLoader>
