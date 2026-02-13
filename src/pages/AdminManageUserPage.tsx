@@ -318,7 +318,7 @@ export default function AdminManageUserPage() {
   }
 
   return (
-    <div className="flex flex-wrap gap-5 m-5">
+    <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
       {/* -- HEADER -- */}
       <DashboardPanel className="flex w-full justify-between items-center gap-5">
         {userDetails ? (

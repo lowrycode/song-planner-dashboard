@@ -92,7 +92,7 @@ export default function HeaderOverview({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-row flex-wrap justify-between gap-x-5 gap-y-2 my-2 mx-2 md:mx-4 "
+      className="flex flex-row flex-wrap justify-between gap-x-3 gap-y-2 my-2 mx-2 md:mx-3 "
     >
       <div className="flex flex-1 bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
         <div className="flex w-full flex-wrap gap-3 justify-between">

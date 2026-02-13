@@ -129,7 +129,7 @@ export default function SongDetailsPage() {
 
   return (
     <FadeLoader loading={isLoading} error={error}>
-      <div className="flex flex-row flex-wrap justify-between gap-5 m-5">
+      <div className="flex flex-row flex-wrap justify-between gap-2 md:gap-4 my-4 mx-2 md:mx-3">
         {error && <p className="text-red-500">{error}</p>}
         {/* Left */}
         <div className="flex flex-1 flex-wrap gap-5 lg:w-2/3">

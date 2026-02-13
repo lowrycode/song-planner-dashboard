@@ -215,7 +215,7 @@ export default function ComparePage() {
   }
   return (
     <FadeLoader loading={!filtersReady}>
-      <div className="flex flex-wrap gap-5 m-5">
+      <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
         {/* Select Target Church Activity */}
         <DashboardPanel>
           <TargetActivitySelector

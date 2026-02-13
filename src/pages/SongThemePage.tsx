@@ -96,7 +96,7 @@ export default function SongThemePage() {
   const searchKeys = ["first_line", "themes"];
 
   return (
-    <div className="flex flex-wrap gap-5 m-5">
+    <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
       <DashboardPanel className="w-full">
         <SongThemeForm handleSubmit={handleSubmit} loading={loading} />
         {error && <p className="text-red-500">Error: {error}</p>}

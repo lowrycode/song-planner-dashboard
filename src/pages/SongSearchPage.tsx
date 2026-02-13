@@ -216,7 +216,7 @@ export default function SongSearchPage() {
     : [];
 
   return (
-    <div className="flex flex-wrap gap-5 m-5">
+    <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
       <DashboardPanel className="w-full">
         <SongForm filters={filters} onFilterChange={handleFilterChange} />
       </DashboardPanel>

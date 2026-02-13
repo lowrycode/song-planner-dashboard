@@ -189,7 +189,7 @@ export default function OverviewPage() {
   const searchKeys = ["first_line"];
 
   return (
-    <div className="flex flex-wrap gap-5 m-5">
+    <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
       {/* Pie section */}
       <DashboardPanel className="flex flex-2 flex-wrap items-start gap-x-15 gap-y-5 min-h-[220px]">
         <PieChartController
