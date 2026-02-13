@@ -36,6 +36,7 @@ function processSongsForTable(songs: Song[]): TableRow[] {
       first_line: {
         display: song.first_line,
         to: `/songs/${song.id}`,
+        hover: "View song details",
       },
       themes: song.themes,
       match_score: song.match_score,

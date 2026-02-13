@@ -124,6 +124,7 @@ function processSongsForTable(
       first_line: {
         display: song.first_line,
         to: `/songs/${song.id}`,
+        hover: "View song details",
       },
       ...activityValues,
       ...(metric === "usage_count" && {
