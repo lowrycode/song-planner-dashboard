@@ -126,7 +126,7 @@ export default function SongThemeForm({
                 value={themes}
                 placeholder="Enter themes separated by commas..."
                 onChange={(e) => setThemes(e.target.value)}
-                rows={4}
+                rows={5}
               />
             </div>
 
