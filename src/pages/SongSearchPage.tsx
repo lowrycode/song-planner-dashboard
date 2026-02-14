@@ -21,6 +21,16 @@ interface TableRow {
   [key: string]: CellValue | number | string;
 }
 
+// Constants
+export const DEFAULT_SONG_FILTERS = {
+  lyric: "",
+  songType: "both",
+  songKey: "",
+  filterUsedInRange: true,
+  filterFirstUsedInRange: false,
+  filterLastUsedInRange: false,
+};
+
 // Helper functions
 function buildTableHeaderMap(
   activities: Activity[],
@@ -148,14 +158,8 @@ export default function SongSearchPage() {
   const [songs, setSongs] = useState<Song[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({
-    lyric: "",
-    songType: "both",
-    songKey: "",
-    filterUsedInRange: true,
-    filterFirstUsedInRange: false,
-    filterLastUsedInRange: false,
-  });
+  const [filters, setFilters] = useState(DEFAULT_SONG_FILTERS);
+
 
   const authFetch = useAuthFetch();
 
@@ -219,7 +223,7 @@ export default function SongSearchPage() {
   return (
     <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
       <DashboardPanel className="w-full">
-        <SongForm filters={filters} onFilterChange={handleFilterChange} />
+        <SongForm filters={filters} defaultFilters={DEFAULT_SONG_FILTERS} onFilterChange={handleFilterChange} />
       </DashboardPanel>
       {error && <p className="text-red-500">Error: {error}</p>}
 

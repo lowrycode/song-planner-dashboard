@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UsageRangeCheckboxes from "./UsageRangeCheckboxes";
 import type { UsageRangeFilters } from "../types/filters";
-
 
 interface SongFilter extends UsageRangeFilters {
   lyric: string;
@@ -11,13 +10,19 @@ interface SongFilter extends UsageRangeFilters {
 
 export default function SongForm({
   filters,
+  defaultFilters,
   onFilterChange,
 }: {
   filters: SongFilter;
+  defaultFilters: SongFilter;
   onFilterChange: (filters: SongFilter) => void;
 }) {
   // State
   const [localFilters, setLocalFilters] = useState(filters);
+
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
 
   // Update local state on input changes
   // Handles direct input events from native form elements within this component.
@@ -56,6 +61,15 @@ export default function SongForm({
     e.preventDefault();
     onFilterChange(localFilters);
   }
+
+  // Reset form
+  function handleReset() {
+    setLocalFilters(defaultFilters);
+    onFilterChange(defaultFilters); // triggers new search
+  }
+
+  const isDefaultFilters =
+    JSON.stringify(localFilters) === JSON.stringify(defaultFilters);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -129,19 +143,30 @@ export default function SongForm({
           </select>
         </div>
         {/* DIV - checkbox + submit */}
-        <div className="flex flex-1 gap-x-5 gap-y-3 justify-end items-end">
+        <div className="flex flex-1 gap-x-5 gap-y-3 justify-between items-end">
           <UsageRangeCheckboxes
             filterUsedInRange={localFilters.filterUsedInRange}
             filterFirstUsedInRange={localFilters.filterFirstUsedInRange}
             filterLastUsedInRange={localFilters.filterLastUsedInRange}
             onChange={handleCheckboxChange}
           />
+          <div className="flex flex-wrap gap-x-5 gap-y-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={isDefaultFilters}
+            className="bg-gray-700 w-full px-3 py-1 text-gray-50 rounded-md hover:bg-gray-500 hover:cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            Reset
+          </button>
           <button
             type="submit"
-            className="bg-purple-900 px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
+            className="bg-purple-900 w-full px-3 py-1 text-gray-50 rounded-md hover:bg-purple-700 hover:cursor-pointer"
           >
             Search
           </button>
+
+          </div>
         </div>
       </div>
     </form>
