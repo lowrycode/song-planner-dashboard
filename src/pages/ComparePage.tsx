@@ -230,7 +230,7 @@ export default function ComparePage() {
           <FadeLoader loading={tableLoading} error={tableError}>
             {tableError && <p className="text-red-500">{tableError}</p>}
             <div className="flex flex-wrap max-w-full gap-2 md:gap-4">
-              <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
+              <DashboardPanel className="flex flex-col flex-1 basis-[500px] min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMapTargetOnly}
                   data={songsDoneOnlyAtTarget}
@@ -240,7 +240,7 @@ export default function ComparePage() {
                   title={`Only used at ${targetActivity?.name || "Target"}`}
                 />
               </DashboardPanel>
-              <DashboardPanel className="flex flex-col flex-1 xl:max-w-1/2 min-h-[450px]">
+              <DashboardPanel className="flex flex-col flex-1 basis-[500px] min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMapOthersOnly}
                   data={songsDoneInOthersOnly}
@@ -250,7 +250,7 @@ export default function ComparePage() {
                   title="Only used elsewhere"
                 />
               </DashboardPanel>
-              <DashboardPanel className="flex flex-col flex-1 min-h-[450px]">
+              <DashboardPanel className="flex flex-col w-full min-h-[450px]">
                 <TableSortSearch
                   headerMap={headerMap}
                   data={songsDoneAtTargetAndOthers}
