@@ -46,10 +46,10 @@ export default function Sidebar({
     <nav
       className={`
         fixed md:static inset-y-0 left-0 z-40
-        bg-gray-900 text-gray-200 p-4
+        bg-gray-900 text-gray-200
         transition-transform duration-300
         flex flex-col
-        ${collapsed ? "w-16" : "w-56"}
+        ${collapsed ? "w-16 px-2 py-4" : "w-56 px-3 py-4"}
         ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
       `}
       aria-label="Main navigation"
