@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import type { Activity, HeaderFilter } from "../types/dashboard";
 import HeaderOverview from "../components/HeaderOverview";
 import { useAuthFetch } from "../hooks/useAuthFetch";
+import NoAccessPermissions from "../components/NoAccessPermissions";
 
 // Helper functions
 function oneYearAgoISO(): string {
@@ -72,21 +73,31 @@ export default function SongLayout() {
   }, [headerFilters]);
 
   const selectedActivities = activities.filter((a) =>
-    headerFilters.church_activities.includes(a.id.toString())
+    headerFilters.church_activities.includes(a.id.toString()),
   );
+
+  const showNoAccess = !activitiesLoading && activities.length === 0;
 
   return (
     <>
-      {/* Header */}
-      <HeaderOverview
-        activities={activities}
-        activitiesLoading={activitiesLoading}
-        activitiesError={activitiesError}
-        headerFilters={headerFilters}
-        setHeaderFilters={setHeaderFilters}
-      />
-      {/* Dashboard content */}
-      <Outlet context={{ headerFilters, selectedActivities, filtersReady }} />
+      {showNoAccess ? (
+        <NoAccessPermissions />
+      ) : (
+        <>
+          {/* Header */}
+          <HeaderOverview
+            activities={activities}
+            activitiesLoading={activitiesLoading}
+            activitiesError={activitiesError}
+            headerFilters={headerFilters}
+            setHeaderFilters={setHeaderFilters}
+          />
+          {/* Dashboard content */}
+          <Outlet
+            context={{ headerFilters, selectedActivities, filtersReady }}
+          />
+        </>
+      )}
     </>
   );
 }

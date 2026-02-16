@@ -317,6 +317,9 @@ export default function AdminManageUserPage() {
     }
   }
 
+  const hasNoAccess =
+    accesses && Object.values(accesses).every((arr) => arr.length === 0);
+
   return (
     <div className="flex flex-wrap gap-2 md:gap-4 my-4 mx-2 md:mx-3">
       {/* -- HEADER -- */}
@@ -333,6 +336,11 @@ export default function AdminManageUserPage() {
                   {new Date(userDetails.created_at).toLocaleDateString()}
                 </div>
               </div>
+              {hasNoAccess && (
+                <div className="flex flex-1 justify-center text-red-500 font-bold">
+                  User has no access permissions
+                </div>
+              )}
               <SliderSwitch
                 ariaLabel="Toggle Edit Mode"
                 label="Edit"
