@@ -1,5 +1,5 @@
 import type { User } from "../types/users";
-import { UserRoleLabels } from "../constants/user-role-labels";
+import { UserRoleLabelsDict } from "../constants/user-role-labels";
 
 type AccountDetailsInfoProps = {
   data: User;
@@ -16,7 +16,7 @@ export default function AccountDetailsInfo({ data }: AccountDetailsInfoProps) {
   const username = data.username;
   const network = data.network.name;
   const church = data.church.name;
-  const role = UserRoleLabels[data.role];
+  const role = UserRoleLabelsDict[data.role];
 
 
   return (

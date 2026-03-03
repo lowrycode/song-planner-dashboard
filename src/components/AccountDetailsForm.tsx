@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UserRoleLabels } from "../constants/user-role-labels";
+import { UserRoleLabelsDict } from "../constants/user-role-labels";
 import type { User, UserRole, Network, Church } from "../types/users";
 
 /* ---------- Types ---------- */
@@ -89,7 +89,7 @@ export default function AccountDetailsForm({
 
     if (!form.network_id) errors.network_id = "Network selection is required.";
     if (!form.church_id) errors.church_id = "Church selection is required.";
-    if (!(form.role in UserRoleLabels)) errors.role = "Invalid user role.";
+    if (!(form.role in UserRoleLabelsDict)) errors.role = "Invalid user role.";
 
     return errors;
   }
@@ -258,7 +258,7 @@ export default function AccountDetailsForm({
             onChange={(e) => update("role", Number(e.target.value) as UserRole)}
             className="border border-gray-300 bg-white rounded px-2 py-1 text-center hover:cursor-pointer"
           >
-            {Object.entries(UserRoleLabels).map(([role, label]) => (
+            {Object.entries(UserRoleLabelsDict).map(([role, label]) => (
               <option key={role} value={role}>
                 {label}
               </option>

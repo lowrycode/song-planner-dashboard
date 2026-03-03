@@ -4,7 +4,7 @@ import ExpandablePanel from "../components/ExpandablePanel.tsx";
 import TableSortSearch from "../components/TableSortSearch.tsx";
 import { useAuthFetch } from "../hooks/useAuthFetch.ts";
 import timeAgo from "../utils/time-ago.ts";
-import { UserRoleLabels } from "../constants/user-role-labels.ts";
+import { UserRoleLabelsDict } from "../constants/user-role-labels.ts";
 import type { UserWithAccesses } from "../types/users.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 
@@ -72,7 +72,7 @@ function processUsers(data: UserWithAccesses[]): [ApprovedUser[], UnapprovedUser
         },
         network: user.network?.name ?? "",
         church: user.church?.name ?? "",
-        role: UserRoleLabels[user.role],
+        role: UserRoleLabelsDict[user.role],
         scope: accessString,
       });
     }
