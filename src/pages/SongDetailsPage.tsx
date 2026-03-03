@@ -11,7 +11,7 @@ import { prepareUsageData } from "../utils/process-usage-data.ts";
 import { useAuthFetch } from "../hooks/useAuthFetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 import SongThemes from "../components/SongThemes.tsx";
-
+import SongYouTubeLinks from "../components/SongYouTubeLinks.tsx";
 
 function buildParams(headerFilters: HeaderFilter) {
   const params = new URLSearchParams();
@@ -50,6 +50,20 @@ interface SongUsagesType {
   church_activity_id: number;
 }
 
+interface SongYouTubeLinkWithUsageType {
+  id: number;
+  url: string;
+  start_seconds: number | null;
+  end_seconds: number | null;
+  is_featured: boolean;
+  title: string;
+  description: string | null;
+  thumbnail_key: string | null;
+  usage_id: number;
+  used_date: string;
+  church_activity_id: number;
+}
+
 export default function SongDetailsPage() {
   const { selectedActivities, headerFilters, filtersReady } =
     useOutletContext<DashboardContext>();
@@ -73,6 +87,9 @@ export default function SongDetailsPage() {
     },
   });
   const [songUsages, setSongUsages] = useState<SongUsagesType[]>([]);
+  const [youtubeLinks, setYoutubeLinks] = useState<
+    SongYouTubeLinkWithUsageType[]
+  >([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { songId } = useParams<{ songId: string }>();
@@ -96,21 +113,25 @@ export default function SongDetailsPage() {
       try {
         const params = buildParams(headerFilters).toString();
 
-        const [detailsRes, usageRes] = await Promise.all([
+        const [detailsRes, usageRes, linksRes] = await Promise.all([
           authFetch(`/songs/${songIdNum}`),
           authFetch(`/songs/${songIdNum}/usages?${params}`),
+          authFetch(`/songs/youtube-links?song_id=${songIdNum}&${params}`),
         ]);
 
         if (!detailsRes.ok) throw new Error("Failed to fetch song details");
         if (!usageRes.ok) throw new Error("Failed to fetch song usage");
+        if (!linksRes.ok) throw new Error("Failed to fetch youtube links");
 
-        const [detailsData, usageData] = await Promise.all([
+        const [detailsData, usageData, linksData] = await Promise.all([
           detailsRes.json(),
           usageRes.json(),
+          linksRes.json(),
         ]);
 
         setSongDetails(detailsData);
         setSongUsages(usageData);
+        setYoutubeLinks(linksData);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -144,9 +165,7 @@ export default function SongDetailsPage() {
 
           <DashboardPanel className="overflow-y-auto overflow-x-hidden">
             {/* Song Themes */}
-            <SongThemes
-              themes={songDetails.themes || "No theme info"}
-            />
+            <SongThemes themes={songDetails.themes || "No theme info"} />
           </DashboardPanel>
 
           <DashboardPanel className="overflow-y-auto overflow-x-hidden">
@@ -165,6 +184,11 @@ export default function SongDetailsPage() {
           {/* Usage Chart */}
           <DashboardPanel className="w-full">
             <SongUsageChart labels={labels} datasets={datasets} />
+          </DashboardPanel>
+
+          {/* YouTube Links */}
+          <DashboardPanel className="w-full max-h-128 overflow-y-auto">
+            <SongYouTubeLinks links={youtubeLinks} />
           </DashboardPanel>
         </div>
         {/* Right */}
