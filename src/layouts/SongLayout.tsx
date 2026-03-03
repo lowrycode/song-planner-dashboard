@@ -6,9 +6,9 @@ import { useAuthFetch } from "../hooks/useAuthFetch";
 import NoAccessPermissions from "../components/NoAccessPermissions";
 
 // Helper functions
-function oneYearAgoISO(): string {
+function yearsAgoISO(years: number): string {
   const d = new Date();
-  d.setFullYear(d.getFullYear() - 1);
+  d.setFullYear(d.getFullYear() - years);
   return d.toISOString().split("T")[0];
 }
 
@@ -52,7 +52,7 @@ export default function SongLayout() {
 
     setHeaderFilters((prev) => ({
       ...prev,
-      from_date: prev.from_date || oneYearAgoISO(),
+      from_date: prev.from_date || yearsAgoISO(5),
       to_date: prev.to_date || new Date().toISOString().split("T")[0],
       church_activities:
         prev.church_activities.length === 0
