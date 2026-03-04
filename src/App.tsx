@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./providers/AuthProvider.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
+import EditorRoute from "./components/EditorRoute.tsx";
 import DashboardLayout from "./layouts/DashboardLayout";
 import SongLayout from "./layouts/SongLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -17,20 +18,25 @@ import SongThemePage from "./pages/SongThemePage.tsx";
 import SongDetailsPage from "./pages/SongDetailsPage.tsx";
 import AdminManageUsersPage from "./pages/AdminManageUsersPage.tsx";
 import AdminManageUserPage from "./pages/AdminManageUserPage.tsx";
+import EditSongLinkPage from "./pages/EditSongLinkPage.tsx";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* PUBLIC PAGES */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/register-success" element={<RegisterSuccessPage />} />
           </Route>
 
+          {/* PROTECTED PAGES */}
           <Route element={<ProtectedRoute />}>
+            {/* Redirect from root page */}
             <Route path="/" element={<Navigate to="/overview" replace />} />
+            {/* Dashboard pages */}
             <Route element={<DashboardLayout />}>
               <Route element={<SongLayout />}>
                 <Route path="/overview" element={<OverviewPage />} />
@@ -38,13 +44,23 @@ function App() {
                 <Route path="/search" element={<SongSearchPage />} />
                 <Route path="/theme" element={<SongThemePage />} />
                 <Route path="/compare" element={<ComparePage />} />
-                {/* Add more protected pages here */}
               </Route>
+              {/* Admin pages */}
               <Route element={<AdminRoute />}>
                 <Route path="/admin/users" element={<AdminManageUsersPage />} />
-                <Route path="/admin/users/:userId" element={<AdminManageUserPage />} />
-                {/* Add more admin pages here */}
+                <Route
+                  path="/admin/users/:userId"
+                  element={<AdminManageUserPage />}
+                />
               </Route>
+              {/* Editor pages */}
+              <Route element={<EditorRoute />}>
+                <Route
+                  path="/songs/links/:linkId/edit"
+                  element={<EditSongLinkPage />}
+                />
+              </Route>
+              {/* Non-song pages */}
               <Route path="/change-password" element={<ChangePasswordPage />} />
               <Route path="/logout" element={<LogoutPage />} />
             </Route>

@@ -12,6 +12,9 @@ import { useAuthFetch } from "../hooks/useAuthFetch.ts";
 import FadeLoader from "../components/FadeLoader.tsx";
 import SongThemes from "../components/SongThemes.tsx";
 import SongYouTubeLinks from "../components/SongYouTubeLinks.tsx";
+import { useAuth } from "../hooks/useAuth.ts";
+import { hasRequiredRole } from "../utils/has-required-role.ts";
+
 
 function buildParams(headerFilters: HeaderFilter) {
   const params = new URLSearchParams();
@@ -96,6 +99,10 @@ export default function SongDetailsPage() {
   const songIdNum = Number(songId);
 
   const authFetch = useAuthFetch();
+  
+  // Get authenticated user and role permissions
+  const { user } = useAuth();
+  const isEditor = hasRequiredRole(user?.role, "editor");
 
   // Guard against invalid song IDs
   if (!songIdNum || Number.isNaN(songIdNum)) {
@@ -188,7 +195,7 @@ export default function SongDetailsPage() {
 
           {/* YouTube Links */}
           <DashboardPanel className="w-full max-h-128 overflow-y-auto">
-            <SongYouTubeLinks links={youtubeLinks} />
+            <SongYouTubeLinks links={youtubeLinks} isEditor={isEditor} songId={songIdNum} />
           </DashboardPanel>
         </div>
         {/* Right */}

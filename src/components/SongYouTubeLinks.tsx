@@ -1,5 +1,8 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import CopyButton from "./CopyButton";
+import { FaRegEdit } from "react-icons/fa";
+import SliderSwitch from "./SliderSwitch";
 
 type SongYouTubeLinkWithUsageType = {
   id: number;
@@ -17,8 +20,9 @@ type SongYouTubeLinkWithUsageType = {
 
 type SongYouTubeLinksProps = {
   links: SongYouTubeLinkWithUsageType[];
+  isEditor: boolean;
+  songId: number;
 };
-
 
 function buildYouTubeUrl(url: string, start?: number | null) {
   const params = new URLSearchParams();
@@ -27,8 +31,13 @@ function buildYouTubeUrl(url: string, start?: number | null) {
   return `${url}&${params.toString()}`;
 }
 
+export default function SongYouTubeLinks({
+  links,
+  isEditor = false,
+  songId,
+}: SongYouTubeLinksProps) {
+  const [editMode, setEditMode] = useState<boolean>(false);
 
-export default function SongYouTubeLinks({ links }: SongYouTubeLinksProps) {
   // Sort links: featured first, then reverse chronological by used_date
   const sortedLinks = useMemo(() => {
     return [...links].sort((a, b) => {
@@ -53,16 +62,24 @@ export default function SongYouTubeLinks({ links }: SongYouTubeLinksProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-purple-900 font-extrabold uppercase text-xl">
-        YouTube Links
-      </h2>
+      <div className="flex justify-between">
+        <h2 className="text-purple-900 font-extrabold uppercase text-xl">
+          YouTube Links
+        </h2>
+        {links.length && isEditor && (
+          <SliderSwitch
+            ariaLabel="Toggle Edit Mode"
+            label="Edit"
+            checked={editMode}
+            setChecked={setEditMode}
+          />
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
         {sortedLinks.map((link) => {
           const thumbnail =
             link.thumbnail_key || "/images/video_placeholder.webp";
-
-          const watchUrl = buildYouTubeUrl(link.url, link.start_seconds);
 
           const title = link.title.split(" - ")[0];
 
@@ -72,12 +89,22 @@ export default function SongYouTubeLinks({ links }: SongYouTubeLinksProps) {
               className="group border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition hover:cursor-pointer bg-white relative"
             >
               {/* Clickable overlay */}
-              <a
-                href={watchUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="absolute inset-0 z-10"
-              />
+              {editMode ? (
+                <Link
+                  to={`/songs/links/${link.id}/edit`}
+                  state={{ songId: songId }}
+                  className="absolute inset-0 z-10"
+                  title="Go to edit page (opens in new tab)"
+                />
+              ) : (
+                <a
+                  href={buildYouTubeUrl(link.url, link.start_seconds)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="absolute inset-0 z-10"
+                  title="Watch on YouTube (opens in new tab)"
+                />
+              )}
 
               {/* Thumbnail */}
               <div className="relative w-full aspect-video overflow-hidden">
@@ -107,10 +134,15 @@ export default function SongYouTubeLinks({ links }: SongYouTubeLinksProps) {
                     </p>
                   )}
                 </div>
-                {/* Copy button must be above overlay */}
-                <div className="z-20">
-                  <CopyButton value={link.url} label="Copy url" />
-                </div>
+                {editMode ? (
+                  <div>
+                    <FaRegEdit />
+                  </div>
+                ) : (
+                  <div className="z-20">
+                    <CopyButton value={link.url} label="Copy url" />
+                  </div>
+                )}
               </div>
             </div>
           );
