@@ -76,7 +76,7 @@ export default function SongYouTubeLinks({
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-4">
         {sortedLinks.map((link) => {
           const thumbnail =
             link.thumbnail_key || "/images/video_placeholder.webp";
