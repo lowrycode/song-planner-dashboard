@@ -95,27 +95,27 @@ export default function HeaderOverview({
       className="flex flex-row flex-wrap justify-between gap-x-3 gap-y-2 my-2 mx-2 md:mx-3 "
     >
       <div className="flex flex-1 bg-gray-900 text-gray-50 py-2 px-4 rounded-lg shadow-md flex-wrap gap-x-5 gap-y-3">
-        <div className="flex w-full flex-wrap gap-3 justify-between">
+        <div className="flex w-full flex-wrap gap-3 justify-between text-sm">
           {/* Date Inputs */}
-          <div className="flex flex-wrap gap-x-5 gap-y-3">
-            <div className="flex gap-x-3 justify-end items-center">
+          <div className="flex gap-x-5 gap-y-3">
+            <div className="flex gap-x-2 justify-end items-center">
               <label htmlFor="from_date">From</label>
               <input
                 type="date"
                 name="from_date"
                 id="from_date"
-                className="bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-sm"
+                className="w-28 bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-xs"
                 value={localFilters.from_date}
                 onChange={handleChange}
               />
             </div>
-            <div className="flex gap-x-3 justify-end items-center">
+            <div className="flex gap-x-2 justify-end items-center">
               <label htmlFor="to_date">To</label>
               <input
                 type="date"
                 name="to_date"
                 id="to_date"
-                className="bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-sm"
+                className="w-28 bg-gray-50 text-gray-500 px-2 py-1 rounded-md text-xs"
                 value={localFilters.to_date}
                 onChange={handleChange}
               />
@@ -137,11 +137,11 @@ export default function HeaderOverview({
         </div>
         {/* Activities checkboxes */}
         <FadeLoader loading={activitiesLoading} error={activitiesError}>
-          <div className="flex w-full gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap min-h-8 max-h-16 overflow-y-auto">
+          <div className="flex w-full gap-x-5 bg-gray-800 border border-gray-700 rounded-md px-3 py-1 flex-wrap min-h-8 max-h-12 overflow-y-auto">
             {[...activities]
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(({ id, name }) => (
-                <label key={id} className="flex items-center gap-2 hover:cursor-pointer">
+                <label key={id} className="flex items-center gap-2 text-sm hover:cursor-pointer">
                   <input
                     type="checkbox"
                     className="accent-purple-500 hover:cursor-pointer"
