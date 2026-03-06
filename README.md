@@ -2,7 +2,7 @@
 
 A modern, responsive dashboard for analysing song usage data across a network of churches and assisting future song selection through AI tools.
 
-<a href="https://youtu.be/UsUPkk5hFJ0">
+<a href="https://youtu.be/0521uCzf5W8">
   <img src="https://github.com/user-attachments/assets/3d370984-5016-493d-863a-2774217da09a" width="600" alt="RAG Demo">
 </a>
 
