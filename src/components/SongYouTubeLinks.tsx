@@ -61,11 +61,9 @@ export default function SongYouTubeLinks({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div className="flex justify-between">
-        <h2 className="text-purple-900 font-extrabold uppercase text-xl">
-          YouTube Links
-        </h2>
+        <h2 className="text-purple-900 font-bold text-lg">YouTube Links</h2>
         {links.length && isEditor && (
           <SliderSwitch
             ariaLabel="Toggle Edit Mode"
@@ -75,78 +73,79 @@ export default function SongYouTubeLinks({
           />
         )}
       </div>
+      <div className="max-h-128 overflow-y-auto">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-4">
+          {sortedLinks.map((link) => {
+            const thumbnail =
+              link.thumbnail_key || "/images/video_placeholder.webp";
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-4">
-        {sortedLinks.map((link) => {
-          const thumbnail =
-            link.thumbnail_key || "/images/video_placeholder.webp";
+            const title = link.title.split(" - ")[0];
 
-          const title = link.title.split(" - ")[0];
-
-          return (
-            <div
-              key={link.id}
-              className="group border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition hover:cursor-pointer bg-white relative"
-            >
-              {/* Clickable overlay */}
-              {editMode ? (
-                <Link
-                  to={`/songs/links/${link.id}/edit`}
-                  state={{ songId: songId }}
-                  className="absolute inset-0 z-10"
-                  title="Go to edit page (opens in new tab)"
-                />
-              ) : (
-                <a
-                  href={buildYouTubeUrl(link.url, link.start_seconds)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="absolute inset-0 z-10"
-                  title="Watch on YouTube (opens in new tab)"
-                />
-              )}
-
-              {/* Thumbnail */}
-              <div className="relative w-full aspect-video overflow-hidden">
-                <img
-                  src={thumbnail}
-                  alt={link.title}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/video_placeholder.webp";
-                  }}
-                />
-
-                {link.is_featured && (
-                  <span className="absolute top-1 right-2 text-yellow-400 text-3xl z-20">
-                    ★
-                  </span>
+            return (
+              <div
+                key={link.id}
+                className="group border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition hover:cursor-pointer bg-white relative"
+              >
+                {/* Clickable overlay */}
+                {editMode ? (
+                  <Link
+                    to={`/songs/links/${link.id}/edit`}
+                    state={{ songId: songId }}
+                    className="absolute inset-0 z-10"
+                    title="Go to edit page (opens in new tab)"
+                  />
+                ) : (
+                  <a
+                    href={buildYouTubeUrl(link.url, link.start_seconds)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="absolute inset-0 z-10"
+                    title="Watch on YouTube (opens in new tab)"
+                  />
                 )}
-              </div>
 
-              {/* Text */}
-              <div className="p-3 flex justify-between items-start">
-                <div>
-                  <h4 className="font-semibold text-sm mb-1">{title}</h4>
-                  {link.description && (
-                    <p className="text-xs text-gray-600 line-clamp-2">
-                      {link.description}
-                    </p>
+                {/* Thumbnail */}
+                <div className="relative w-full aspect-video overflow-hidden">
+                  <img
+                    src={thumbnail}
+                    alt={link.title}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/video_placeholder.webp";
+                    }}
+                  />
+
+                  {link.is_featured && (
+                    <span className="absolute top-1 right-2 text-yellow-400 text-3xl z-20">
+                      ★
+                    </span>
                   )}
                 </div>
-                {editMode ? (
+
+                {/* Text */}
+                <div className="p-3 flex justify-between items-start">
                   <div>
-                    <FaRegEdit />
+                    <h4 className="font-semibold text-sm mb-1">{title}</h4>
+                    {link.description && (
+                      <p className="text-xs text-gray-600 line-clamp-2">
+                        {link.description}
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  <div className="z-20">
-                    <CopyButton value={link.url} label="Copy url" />
-                  </div>
-                )}
+                  {editMode ? (
+                    <div>
+                      <FaRegEdit />
+                    </div>
+                  ) : (
+                    <div className="z-20">
+                      <CopyButton value={link.url} label="Copy url" />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -46,7 +46,7 @@ function SongUsageChart({
 
   return (
     <>
-      <h2 className="text-xl font-extrabold text-purple-900 mb-5">{title}</h2>
+      <h2 className="text-lg font-bold text-purple-900 mb-5">{title}</h2>
       <div className="h-56">
         <Bar data={data} options={options} />
       </div>

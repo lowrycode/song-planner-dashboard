@@ -194,7 +194,7 @@ export default function SongDetailsPage() {
           </DashboardPanel>
 
           {/* YouTube Links */}
-          <DashboardPanel className="w-full max-h-128 overflow-y-auto">
+          <DashboardPanel className="w-full">
             <SongYouTubeLinks links={youtubeLinks} isEditor={isEditor} songId={songIdNum} />
           </DashboardPanel>
         </div>
