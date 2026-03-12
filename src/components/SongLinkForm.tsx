@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
+import parseTimeToSeconds from "../utils/parse-time-to-seconds";
+import formatSecondsToTimestamp from "../utils/format-seconds-to-timestamp";
 
 /* ---------- Types ---------- */
 
@@ -14,8 +16,8 @@ export interface SongYouTubeLinkFormType {
 }
 
 interface SongLinkFormState {
-  start_seconds: number | "";
-  end_seconds: number | "";
+  start_time: string;
+  end_time: string;
   is_featured: boolean;
   description: string;
 }
@@ -46,8 +48,8 @@ export default function SongLinkForm({
 }: SongLinkFormProps) {
   const initialFormState = useMemo<SongLinkFormState>(
     () => ({
-      start_seconds: link.start_seconds ?? "",
-      end_seconds: link.end_seconds ?? "",
+      start_time: formatSecondsToTimestamp(link.start_seconds),
+      end_time: formatSecondsToTimestamp(link.end_seconds),
       is_featured: link.is_featured,
       description: link.description ?? "",
     }),
@@ -71,26 +73,26 @@ export default function SongLinkForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function validate(form: SongLinkFormState) {
+  function validate(
+    start: number | null,
+    end: number | null,
+    description: string,
+  ) {
     const errors: Partial<Record<keyof SongLinkFormState, string>> = {};
 
-    if (form.start_seconds !== "" && Number(form.start_seconds) < 0) {
-      errors.start_seconds = "Start seconds cannot be negative.";
+    if (start !== null && start < 0) {
+      errors.start_time = "Start time cannot be negative.";
     }
 
-    if (form.end_seconds !== "" && Number(form.end_seconds) < 0) {
-      errors.end_seconds = "End seconds cannot be negative.";
+    if (end !== null && end < 0) {
+      errors.end_time = "End time cannot be negative.";
     }
 
-    if (
-      form.start_seconds !== "" &&
-      form.end_seconds !== "" &&
-      Number(form.end_seconds) <= Number(form.start_seconds)
-    ) {
-      errors.end_seconds = "End seconds must be greater than start seconds.";
+    if (start !== null && end !== null && end <= start) {
+      errors.end_time = "End time must be greater than start time.";
     }
 
-    if (form.description.length > 255) {
+    if (description.length > 255) {
       errors.description = "Description cannot exceed 255 characters.";
     }
 
@@ -100,14 +102,44 @@ export default function SongLinkForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const errors = validate(form);
-    setValidationErrors(errors);
-    if (Object.keys(errors).length > 0 || !isDirty) return;
+    const errors: Partial<Record<keyof SongLinkFormState, string>> = {};
+
+    let start: number | null = null;
+    let end: number | null = null;
+
+    // Parse start
+    try {
+      start = parseTimeToSeconds(form.start_time);
+    } catch {
+      errors.start_time = "Invalid start time format";
+    }
+
+    // Parse end
+    try {
+      end = parseTimeToSeconds(form.end_time);
+    } catch {
+      errors.end_time = "Invalid end time format";
+    }
+
+    // Stop early if parsing failed
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    // Logical validation
+    const logicalErrors = validate(start, end, form.description);
+
+    if (Object.keys(logicalErrors).length > 0 || !isDirty) {
+      setValidationErrors(logicalErrors);
+      return;
+    }
+
+    setValidationErrors({});
 
     onSubmit({
-      start_seconds:
-        form.start_seconds === "" ? null : Number(form.start_seconds),
-      end_seconds: form.end_seconds === "" ? null : Number(form.end_seconds),
+      start_seconds: start,
+      end_seconds: end,
       is_featured: form.is_featured,
       description:
         form.description.trim() === "" ? null : form.description.trim(),
@@ -206,44 +238,38 @@ export default function SongLinkForm({
           {/* Start seconds */}
           <div className="flex flex-1 flex-col">
             <label
-              htmlFor="start-seconds"
+              htmlFor="start-time"
               className="text-gray-500 text-sm mb-1"
             >
-              Start Seconds
+              Start Time
             </label>
             <input
-              id="start-seconds"
-              type="number"
-              min={0}
-              value={form.start_seconds}
+              id="start-time"
+              type="text"
+              inputMode="tel"
+              value={form.start_time}
+              placeholder="90, 01:30, 1:02:03"
+              title="Allowed formats - 90, 01:30, 1:02:03, 90s, 1m30s, 1h2m3s"
               disabled={submitting}
-              onChange={(e) =>
-                update(
-                  "start_seconds",
-                  e.target.value === "" ? "" : Number(e.target.value),
-                )
-              }
+              onChange={(e) => update("start_time", e.target.value)}
               className="border border-gray-300 bg-white rounded px-2 py-1 w-full"
             />
           </div>
 
           {/* End seconds */}
           <div className="flex flex-1 flex-col">
-            <label htmlFor="end-seconds" className="text-gray-500 text-sm mb-1">
-              End Seconds
+            <label htmlFor="end-time" className="text-gray-500 text-sm mb-1">
+              End Time
             </label>
             <input
-              id="end-seconds"
-              type="number"
-              min={0}
-              value={form.end_seconds}
+              id="end-time"
+              type="text"
+              inputMode="tel"
+              value={form.end_time}
+              placeholder="90, 01:30, 1:02:03"
+              title="Allowed formats - 90, 01:30, 1:02:03, 90s, 1m30s, 1h2m3s"
               disabled={submitting}
-              onChange={(e) =>
-                update(
-                  "end_seconds",
-                  e.target.value === "" ? "" : Number(e.target.value),
-                )
-              }
+              onChange={(e) => update("end_time", e.target.value)}
               className="border border-gray-300 bg-white rounded px-2 py-1 w-full"
             />
           </div>
