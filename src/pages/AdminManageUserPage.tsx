@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
 import { useAuthFetch } from "../hooks/useAuthFetch";
 import type {
@@ -27,6 +27,8 @@ type UpdateUserPayload = {
 };
 
 export default function AdminManageUserPage() {
+  const navigate = useNavigate();
+  
   /* --------------- Users --------------- */
   // User
   const { userId } = useParams<{ userId: string }>();
@@ -107,6 +109,14 @@ export default function AdminManageUserPage() {
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState<
     string | null
   >(null);
+
+  // Delete user
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteUserLoading, setDeleteUserLoading] = useState(false);
+  const [deleteUserError, setDeleteUserError] = useState<string | null>(null);
+  const [deleteUserSuccess, setDeleteUserSuccess] = useState<string | null>(
+    null,
+  );
 
   /* --------------- COMBINED STATE --------------- */
   const accountLoading = userDetailsLoading || networkChurchesLoading;
@@ -284,7 +294,7 @@ export default function AdminManageUserPage() {
 
     try {
       await authFetch(url, { method: "DELETE" });
-      
+
       // Refetch user accesses after success
       const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);
       const updatedAccesses = await updatedAccessesRes.json();
@@ -347,6 +357,29 @@ export default function AdminManageUserPage() {
       setResetPasswordError(err.message);
     } finally {
       setResetPasswordLoading(false);
+    }
+  }
+
+  async function handleDeleteUser() {
+    if (!userDetails) return;
+
+    setDeleteUserLoading(true);
+    setDeleteUserError(null);
+
+    try {
+      await authFetch(`/users/${userIdNum}`, { method: "DELETE" });
+
+      setDeleteUserSuccess("User deleted successfully.");
+
+      // Delay a bit to show the success message
+      setTimeout(() => {
+        navigate("/admin/users", { replace: true });
+      }, 1500);
+    } catch (err: any) {
+      setDeleteUserError(err.message || "Failed to delete user.");
+    } finally {
+      setDeleteUserLoading(false);
+      setShowDeleteModal(false); // close modal after attempt
     }
   }
 
@@ -442,16 +475,76 @@ export default function AdminManageUserPage() {
         )}
       </DashboardPanel>
 
-      {/* Change Password */}
       {editMode && (
-        <DashboardPanel className="flex w-full">
-          <ResetPasswordForm
-            onReset={handleResetPassword}
-            loading={resetPasswordLoading}
-            error={resetPasswordError}
-            success={resetPasswordSuccess}
-          />
-        </DashboardPanel>
+        <div className="flex flex-wrap flex-1 gap-3">
+        {/* Change Password */}
+          <DashboardPanel className="flex flex-1">
+            <ResetPasswordForm
+              onReset={handleResetPassword}
+              loading={resetPasswordLoading}
+              error={resetPasswordError}
+              success={resetPasswordSuccess}
+            />
+          </DashboardPanel>
+
+          {/* Delete User */}
+          <DashboardPanel className="flex flex-1 min-w-42 flex-col items-start gap-2">
+            <h3 className="text-lg font-bold text-red-700">Delete User</h3>
+            <p className="text-sm text-gray-600">
+              This action is irreversible. The user will lose all access.
+            </p>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-500"
+            >
+              Delete User
+            </button>
+            {deleteUserSuccess && (
+              <div
+                className="mt-2 bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded"
+                role="status"
+                aria-live="polite"
+              >
+                {deleteUserSuccess}
+              </div>
+            )}
+          </DashboardPanel>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-md max-w-sm w-full">
+            <h3 className="text-lg font-bold text-red-700 mb-2">
+              Confirm Delete
+            </h3>
+            <p className="mb-4">
+              Are you sure you want to delete{" "}
+              <strong>{userDetails?.username}</strong>? This action cannot be
+              undone.
+            </p>
+            {deleteUserError && (
+              <div className="mb-2 text-red-600">{deleteUserError}</div>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-3 py-1 border rounded hover:bg-gray-100"
+                disabled={deleteUserLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500"
+                disabled={deleteUserLoading}
+              >
+                {deleteUserLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
