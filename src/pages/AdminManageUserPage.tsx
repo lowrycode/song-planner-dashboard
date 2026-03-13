@@ -339,7 +339,7 @@ export default function AdminManageUserPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ new_password: password }),
+        body: JSON.stringify({ password: password }),
       });
       const data = await res.json();
       setResetPasswordSuccess(data.message || "Password updated successfully");
