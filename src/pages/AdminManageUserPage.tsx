@@ -16,6 +16,8 @@ import AccountDetailsInfo from "../components/AccountDetailsInfo";
 import FadeLoader from "../components/FadeLoader";
 import UserAccessPermissions from "../components/UserAccessPermissions.tsx";
 import ResetPasswordForm from "../components/ResetPasswordForm";
+import DeleteUserForm from "../components/DeleteUserForm";
+import DeleteUserModal from "../components/DeleteUserModal";
 
 type UpdateUserPayload = {
   username: string;
@@ -365,22 +367,23 @@ export default function AdminManageUserPage() {
 
     setDeleteUserLoading(true);
     setDeleteUserError(null);
+    setDeleteUserSuccess(null);
 
     try {
       await authFetch(`/users/${userIdNum}`, { method: "DELETE" });
 
       setDeleteUserSuccess("User deleted successfully.");
-
-      // Delay a bit to show the success message
-      setTimeout(() => {
-        navigate("/admin/users", { replace: true });
-      }, 1500);
+      // Don't close modal here - let the modal handle it after showing success
     } catch (err: any) {
       setDeleteUserError(err.message || "Failed to delete user.");
+      setShowDeleteModal(false); // close modal on error
     } finally {
       setDeleteUserLoading(false);
-      setShowDeleteModal(false); // close modal after attempt
     }
+  }
+
+  function handleDeleteSuccess() {
+    navigate("/admin/users", { replace: true });
   }
 
   const hasNoAccess =
@@ -488,64 +491,24 @@ export default function AdminManageUserPage() {
           </DashboardPanel>
 
           {/* Delete User */}
-          <DashboardPanel className="flex flex-1 min-w-42 flex-col items-start gap-2">
-            <h3 className="text-lg font-bold text-red-700">Delete User</h3>
-            <p className="text-sm text-gray-600">
-              This action is irreversible. The user will lose all access.
-            </p>
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-500"
-            >
-              Delete User
-            </button>
-            {deleteUserSuccess && (
-              <div
-                className="mt-2 bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded"
-                role="status"
-                aria-live="polite"
-              >
-                {deleteUserSuccess}
-              </div>
-            )}
+          <DashboardPanel className="flex flex-1">
+            <DeleteUserForm
+              onDeleteClick={() => setShowDeleteModal(true)}
+            />
           </DashboardPanel>
         </div>
       )}
 
-      {/* Delete Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md max-w-sm w-full">
-            <h3 className="text-lg font-bold text-red-700 mb-2">
-              Confirm Delete
-            </h3>
-            <p className="mb-4">
-              Are you sure you want to delete{" "}
-              <strong>{userDetails?.username}</strong>? This action cannot be
-              undone.
-            </p>
-            {deleteUserError && (
-              <div className="mb-2 text-red-600">{deleteUserError}</div>
-            )}
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-3 py-1 border rounded hover:bg-gray-100"
-                disabled={deleteUserLoading}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteUser}
-                className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500"
-                disabled={deleteUserLoading}
-              >
-                {deleteUserLoading ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteUserModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteUser}
+        user={userDetails}
+        loading={deleteUserLoading}
+        error={deleteUserError}
+        success={deleteUserSuccess}
+        onSuccess={handleDeleteSuccess}
+      />
     </div>
   );
 }
