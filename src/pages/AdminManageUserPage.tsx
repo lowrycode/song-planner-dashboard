@@ -283,12 +283,8 @@ export default function AdminManageUserPage() {
     }
 
     try {
-      const res = await authFetch(url, { method: "DELETE" });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || "Failed to delete access");
-      }
-
+      await authFetch(url, { method: "DELETE" });
+      
       // Refetch user accesses after success
       const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);
       const updatedAccesses = await updatedAccessesRes.json();
@@ -317,11 +313,7 @@ export default function AdminManageUserPage() {
     }
 
     try {
-      const res = await authFetch(url, { method: "POST" });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || "Failed to add access");
-      }
+      await authFetch(url, { method: "POST" });
 
       // Refetch user accesses after success
       const updatedAccessesRes = await authFetch(`/users/${userIdNum}/access`);

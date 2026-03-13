@@ -40,8 +40,8 @@ export async function authFetch(
       }
 
       if (!res.ok) {
-        if (res.status >= 500) throw new ServerError(res.status);
-        if (res.status >= 400) throw new ClientError(res.status);
+        if (res.status >= 500) throw new ServerError(res.status, res);
+        if (res.status >= 400) throw new ClientError(res.status, res);
       }
 
       return res;
