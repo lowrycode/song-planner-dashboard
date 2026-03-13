@@ -15,6 +15,7 @@ import AccountDetailsForm from "../components/AccountDetailsForm";
 import AccountDetailsInfo from "../components/AccountDetailsInfo";
 import FadeLoader from "../components/FadeLoader";
 import UserAccessPermissions from "../components/UserAccessPermissions.tsx";
+import ResetPasswordForm from "../components/ResetPasswordForm";
 
 type UpdateUserPayload = {
   username: string;
@@ -97,6 +98,15 @@ export default function AdminManageUserPage() {
     churches: "",
     church_activities: "",
   });
+
+  // Reset password
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
+  const [resetPasswordError, setResetPasswordError] = useState<string | null>(
+    null,
+  );
+  const [resetPasswordSuccess, setResetPasswordSuccess] = useState<
+    string | null
+  >(null);
 
   /* --------------- COMBINED STATE --------------- */
   const accountLoading = userDetailsLoading || networkChurchesLoading;
@@ -193,6 +203,16 @@ export default function AdminManageUserPage() {
       fetchChurchActivities(network.id);
     }
   }, [network]);
+
+  useEffect(() => {
+    if (!resetPasswordSuccess) return;
+
+    const timer = setTimeout(() => {
+      setResetPasswordSuccess(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [resetPasswordSuccess]);
 
   /* --------------- HELPER FUNCTIONS --------------- */
   function getAccessUrl(group: AccessGroup, id: number | "") {
@@ -317,6 +337,27 @@ export default function AdminManageUserPage() {
     }
   }
 
+  async function handleResetPassword(password: string) {
+    setResetPasswordLoading(true);
+    setResetPasswordError(null);
+    setResetPasswordSuccess(null);
+    try {
+      const res = await authFetch(`/users/${userIdNum}/password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ new_password: password }),
+      });
+      const data = await res.json();
+      setResetPasswordSuccess(data.message || "Password updated successfully");
+    } catch (err: any) {
+      setResetPasswordError(err.message);
+    } finally {
+      setResetPasswordLoading(false);
+    }
+  }
+
   const hasNoAccess =
     accesses && Object.values(accesses).every((arr) => arr.length === 0);
 
@@ -381,6 +422,7 @@ export default function AdminManageUserPage() {
         )}
         {/* </div> */}
       </DashboardPanel>
+
       {/* -- ACCESS PERMISSIONS -- */}
       <DashboardPanel className="flex flex-wrap items-start gap-x-15 gap-y-5">
         {accesses ? (
@@ -407,6 +449,18 @@ export default function AdminManageUserPage() {
           <p>Loading user access details...</p>
         )}
       </DashboardPanel>
+
+      {/* Change Password */}
+      {editMode && (
+        <DashboardPanel className="flex w-full">
+          <ResetPasswordForm
+            onReset={handleResetPassword}
+            loading={resetPasswordLoading}
+            error={resetPasswordError}
+            success={resetPasswordSuccess}
+          />
+        </DashboardPanel>
+      )}
     </div>
   );
 }
