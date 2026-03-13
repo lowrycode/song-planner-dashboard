@@ -49,7 +49,11 @@ export default function UserAccessPermissions({
     <>
       <div className="flex w-full flex-wrap gap-5 items-center mb-5">
         {/* Panel Heading */}
-        <h2 className="whitespace-nowrap text-lg font-bold text-gray-500">
+        <h2
+          className={`whitespace-nowrap text-lg font-bold ${
+            editMode ? "text-purple-900" : "text-gray-500"
+          }`}
+        >
           Access Permissions
         </h2>
         {/* Error message */}
@@ -82,7 +86,7 @@ export default function UserAccessPermissions({
                 options = churchActivities;
                 optionsLoading = churchActivitiesLoading;
                 optionsError = churchActivitiesError;
-                placeholder = "-- Select a church activity --"
+                placeholder = "-- Select a church activity --";
                 break;
             }
 

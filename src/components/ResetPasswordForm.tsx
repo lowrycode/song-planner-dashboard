@@ -30,7 +30,7 @@ export default function ResetPasswordForm({
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="whitespace-nowrap text-lg font-bold text-gray-500">Set New Password</h2>
+      <h2 className="whitespace-nowrap text-lg font-bold text-purple-900">Set New Password</h2>
       <p className="text-sm text-gray-600">
         Enter a temporary password for the user. They can change it after logging in.
       </p>
@@ -46,7 +46,7 @@ export default function ResetPasswordForm({
         <button
           type="submit"
           disabled={loading || !password.trim()}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Setting Password...' : 'Set Password'}
         </button>
