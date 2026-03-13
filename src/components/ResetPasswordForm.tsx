@@ -46,7 +46,7 @@ export default function ResetPasswordForm({
         <button
           type="submit"
           disabled={loading || !password.trim()}
-          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1 bg-purple-900 text-white rounded enabled:hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Setting Password...' : 'Set Password'}
         </button>

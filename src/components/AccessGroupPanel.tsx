@@ -90,7 +90,7 @@ export default function AccessGroupPanel({
             onClick={() => handleAddAccess(group, newSelection)}
             disabled={newSelection === "" || isLoadingGroup}
             className="flex items-center gap-2 rounded-lg text-gray-100 px-4 py-1
-              shadow-md bg-purple-900 hover:bg-purple-700 hover:cursor-pointer
+              shadow-md bg-purple-900 enabled:hover:bg-purple-700 hover:cursor-pointer
               disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FaPlus />
