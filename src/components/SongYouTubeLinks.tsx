@@ -138,7 +138,7 @@ export default function SongYouTubeLinks({
                     </div>
                   ) : (
                     <div className="z-20">
-                      <CopyButton value={link.url} label="Copy url" />
+                      <CopyButton value={buildYouTubeUrl(link.url, link.start_seconds)} label="Copy url" />
                     </div>
                   )}
                 </div>
